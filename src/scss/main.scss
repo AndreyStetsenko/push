@@ -1,0 +1,59 @@
+// Bootstrap - импорт функций, переменных и миксинов (без компонентов)
+@import 'bootstrap/scss/functions';
+@import 'bootstrap/scss/variables';
+@import 'bootstrap/scss/variables-dark';
+@import 'bootstrap/scss/maps';
+@import 'bootstrap/scss/mixins';
+
+// Swiper стили
+@import 'swiper/swiper';
+
+// Локальные файлы (переопределяют переменные Bootstrap при необходимости)
+@import 'fonts';
+@import 'variables';
+@import 'grid';
+
+
+// Базовые стили
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+// Динамический размер шрифта для html (основа для rem)
+// Это делает всю верстку резиновой при использовании rem
+// Минимальный размер: 14px (для мобильных)
+// Максимальный размер: 16px (для десктопов)
+// Между ними плавное изменение в зависимости от ширины экрана
+html {
+  font-size: clamp(14px, 0.8333vw, 16px); // 14px на 1680px, 16px на 1920px+
+}
+
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  font-family: $font-family-base;
+  font-size: $font-size-base;
+  line-height: $line-height-base;
+  color: $dark;
+  background-color: #fff;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@import 'components/header';
+@import 'components/hero';
+@import 'components/services';
+@import 'components/whyus';
+@import 'components/pushstart';
+@import 'components/cases';
+@import 'components/cases-modal';
+@import 'components/actors';
+@import 'components/collab';
+@import 'components/faq';
+@import 'components/bonus';
+@import 'components/scrolline';
+@import 'components/formfooter';
+@import 'components/footer';
+@import 'components/info';

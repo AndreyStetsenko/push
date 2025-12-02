@@ -1,0 +1,404 @@
+#cases {
+    padding-top: 100px;
+    padding-bottom: 100px;
+    min-height: 100vh;
+
+    @include media-breakpoint-down(lg) {
+        max-width: 100vw;
+        overflow-x: hidden;
+    }
+
+    .cases {
+        &__row {
+            flex-wrap: nowrap;
+            overflow: hidden;
+            margin-right: -4.1667%;
+
+            @include media-breakpoint-down(md) {
+                flex-direction: column;
+            }
+        }
+
+        &__wrap {
+            display: flex;
+            flex-direction: column;
+        }
+
+        &__title {
+            display: flex;
+            flex-direction: column;
+            font-family: $font-family-base;
+            font-size: rem(120px);
+            line-height: 107%;
+            letter-spacing: -2%;
+            font-weight: 700;
+            color: #000;
+            text-transform: uppercase;
+
+            @include media-breakpoint-down(md) {
+                font-size: 35px;
+            }
+
+            span {
+                &:not(:first-child) {
+                    color: #FA6000;
+                }
+            }
+        }
+
+        &__description {
+            margin-top: rem(10px);
+            font-size: fluid-font-size-rem(22px);
+            line-height: 140%;
+            letter-spacing: -2%;
+            color: #767676;
+        }
+
+        &__buttons {
+            margin-top: rem(60px);
+            display: flex;
+            flex-wrap: wrap;
+            gap: rem(16px);
+
+            button {
+                padding: rem(17px) rem(46px) rem(18px);
+                width: calc(50% - 16px);
+                font-family: $font-family-base;
+                font-weight: 500;
+                font-size: 16px;
+                line-height: 140%;
+                letter-spacing: -2%;
+                color: #B9B9B9;
+                border: 1px solid #B9B9B9;
+                border-radius: rem(6px);
+                background: #fff;
+                transition: all 0.2s ease;
+                cursor: pointer;
+
+                &:hover {
+                    background: #FA6000;
+                    color: #fff;
+                    border-color: #FA6000;
+                }
+
+                &.active {
+                    background: #FA6000;
+                    color: #fff;
+                    border-color: #FA6000;
+                }
+            }
+        }
+
+        &__nav-buttons {
+            margin-top: rem(30px);
+            display: flex;
+            gap: rem(16px);
+        }
+
+        &__nav-btn {
+            width: rem(48px);
+            height: rem(48px);
+            border-radius: rem(6px);
+            border: 1px solid #B9B9B9;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #B9B9B9;
+
+            &:hover {
+                background: #FA6000;
+                border-color: #FA6000;
+                color: #fff;
+            }
+
+            svg {
+                width: 24px;
+                height: 24px;
+            }
+        }
+
+        &__slider {
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        &__slider-container {
+            display: flex;
+            flex-direction: row;
+            gap: rem(20px);
+            transition: transform 0.3s ease;
+            will-change: transform;
+        }
+
+        &__slider-indicator {
+            margin-top: rem(30px);
+            width: 50%;
+            height: rem(10px);
+            background: #E0E0E0;
+            border-radius: rem(20px);
+            position: relative;
+            overflow: visible;
+            cursor: pointer;
+        }
+
+        &__slider-indicator-progress {
+            height: 100%;
+            background: #FA6000;
+            border-radius: rem(20px);
+            transition: left 0.3s ease, width 0.3s ease;
+            position: absolute;
+            width: 20%;
+            left: 0%;
+            cursor: grab;
+
+            &:active {
+                cursor: grabbing;
+            }
+        }
+
+        &__card {
+            flex-shrink: 0;
+            padding: rem(40px);
+            border-radius: rem(25px);
+            border: 1px solid #FA6000;
+            display: flex;
+            flex-direction: column;
+            width: rem(500px);
+            min-height: rem(500px);
+            height: auto;
+            position: relative;
+            transition: color 0.3s ease;
+            overflow: hidden;
+
+            &::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-image: url('../images/bg/back-case.png');
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                opacity: 0;
+                transition: opacity 0.5s ease;
+                z-index: 0;
+            }
+
+            > * {
+                position: relative;
+                z-index: 1;
+            }
+
+            &.active {
+                color: #fff;
+                border-color: transparent;
+
+                &::before {
+                    opacity: 1;
+                }
+
+                .cases__card-button {
+                    background: #fff;
+                    color: #000;
+                }
+
+                .cases__card-title,
+                .cases__card-kpi-value,
+                .cases__card-description {
+                    color: #fff;
+                }
+            }
+        }
+
+        &__card-title {
+            font-family: $font-family-base;
+            font-size: rem(40px);
+            font-weight: 700;
+            line-height: 96%;
+            letter-spacing: -2%;
+            text-transform: uppercase;
+            margin-bottom: rem(20px);
+            color: #FA6000;
+        }
+
+        &__card-description {
+            font-size: rem(20px);
+            line-height: 140%;
+            letter-spacing: -2%;
+            margin-bottom: rem(24px);
+            color: #767676;
+            flex-grow: 1;
+        }
+
+        &__card-button {
+            display: flex;
+            align-items: center;
+            gap: rem(23px);
+            margin-bottom: rem(140px);
+            padding: rem(7px) rem(6.5px) rem(7px) rem(22px);
+            border-radius: rem(6px);
+            font-family: $font-family-base;
+            font-weight: 500;
+            font-size: rem(16px);
+            line-height: 160%;
+            letter-spacing: -2%;
+            border: none;
+            background: #1A1A1A;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        &__card-button-icon {
+            width: rem(44px);
+            height: rem(44px);
+            background: #FA6000;
+            border-radius: rem(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+
+            svg {
+                width: rem(10px);
+                height: rem(10px);
+                fill: #fff;
+            }
+        }
+
+        &__card-kpi {
+            display: flex;
+            gap: rem(40px);
+            margin-top: auto;
+        }
+
+        &__card-kpi-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        &__card-kpi-value {
+            font-family: $font-family-base;
+            font-size: rem(40px);
+            font-weight: 500;
+            line-height: 83%;
+            letter-spacing: -2%;
+            color: #FA6000;
+        }
+
+        &__card-kpi-label {
+            font-size: rem(14px);
+            line-height: 140%;
+            letter-spacing: -2%;
+            margin-top: rem(8px);
+            opacity: 0.9;
+        }
+    }
+
+    // Мобильные стили
+    @media (max-width: 768px) {
+        padding-top: rem(60px);
+        padding-bottom: rem(60px);
+        min-height: auto;
+
+        .cases {
+            &__title {
+                width: 100%;
+                display: block;
+                font-size: rem(35px);
+                margin-bottom: 0;
+                text-align: center;
+                flex-direction: row;
+                gap: rem(6px);
+            }
+
+            &__description {
+                padding: 0 rem(8px);
+                font-size: rem(14px);
+                margin-top: rem(14px);
+                text-align: center;
+                font-family: $font-family-inter;
+                margin-bottom: 0;
+            }
+
+            &__buttons {
+                margin-top: rem(27px);
+                margin-bottom: rem(32px);
+                flex-direction: row;
+                gap: rem(14px);
+
+                button {
+                    width: calc(100% / 2 - rem(7px));
+                    padding: rem(12px);
+                    font-size: rem(12px);
+                    border-radius: rem(6px);
+                }
+            }
+
+            &__nav-buttons {
+                margin-top: rem(24px);
+            }
+
+            &__slider {
+                &-indicator {
+                    width: 100%;
+                }
+
+                &-container {
+                    gap: rem(14px);
+                }
+            }
+
+            &__card {
+                width: 80%;
+                min-height: rem(400px);
+                padding: rem(24px);
+                border-radius: 15px;
+
+                &-title {
+                    font-size: rem(20px);
+                    margin-bottom: rem(14px);
+                    font-weight: 500;
+                }
+
+                &-description {
+                    font-size: rem(14px);
+                    margin-bottom: rem(16px);
+                    font-family: $font-family-inter;
+                }
+
+                &-button {
+                    margin-bottom: rem(80px);
+                    padding: rem(6px) rem(6px) rem(6px) rem(16px);
+                    font-size: rem(14px);
+                    gap: rem(16px);
+
+                    &-icon {
+                        width: rem(36px);
+                        height: rem(36px);
+                    }
+                }
+
+                &-kpi {
+                    gap: rem(12px);
+                    justify-content: space-between;
+                }
+
+                &-kpi-value {
+                    font-size: rem(20px);
+                }
+
+                &-kpi-label {
+                    font-size: rem(14px);
+                    font-family: $font-family-inter;
+                }
+            }
+        }
+    }
+}

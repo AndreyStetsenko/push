@@ -1,0 +1,289 @@
+.cases-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+
+    &.is-open {
+        opacity: 1;
+        visibility: visible;
+
+        .cases-modal__content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    &__overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(4px);
+    }
+
+    &__content {
+        position: relative;
+        width: 100%;
+        margin-bottom: -10vh;
+        max-height: 90vh;
+        background: #fff;
+        border-radius: rem(50px) rem(50px) 0 0;
+        padding: rem(80px);
+        overflow-y: auto;
+        transform: translateY(20px);
+        opacity: 0;
+        transition: transform 0.3s ease, opacity 0.3s ease;
+        z-index: 1;
+
+        &::-webkit-scrollbar {
+            width: rem(8px);
+        }
+
+        &::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: rem(4px);
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: #FA6000;
+            border-radius: rem(4px);
+        }
+    }
+
+    &__close {
+        position: absolute;
+        top: rem(30px);
+        right: rem(30px);
+        width: rem(48px);
+        height: rem(48px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        color: #000;
+        transition: color 0.2s ease;
+        z-index: 10;
+
+        &:hover {
+            color: #FA6000;
+        }
+
+        svg {
+            width: rem(24px);
+            height: rem(24px);
+        }
+    }
+
+    &__header {
+        margin-bottom: rem(54px);
+        text-align: center;
+    }
+
+    &__title {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: rem(10px);
+        margin-bottom: rem(20px);
+        font-family: $font-family-base;
+        font-size: rem(120px);
+        font-weight: 500;
+        line-height: 96%;
+        letter-spacing: -2%;
+        text-transform: uppercase;
+
+        &-orange {
+            color: #FA6000;
+        }
+
+        &-black {
+            color: #000;
+        }
+    }
+
+    &__subtitle {
+        font-size: rem(20px);
+        line-height: 140%;
+        letter-spacing: -2%;
+        color: #767676;
+        font-family: $font-family-inter;
+    }
+
+    &__sub {
+        margin-top: rem(48px);
+        font-size: rem(40px);
+        font-weight: 500;
+        line-height: 106%;
+        letter-spacing: -2%;
+        color: #FA6000;
+        font-family: $font-family-base;
+    }
+
+    &__body {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: rem(60px);
+    }
+
+    &__content-left {
+        display: flex;
+        flex-direction: column;
+        gap: rem(64px);
+    }
+
+    &__content-right {
+        display: flex;
+        flex-direction: column;
+        gap: rem(20px);
+    }
+
+    &__section {
+        &-title {
+            font-family: $font-family-base;
+            font-size: rem(40px);
+            font-weight: 500;
+            line-height: 106%;
+            letter-spacing: -2%;
+            color: #FA6000;
+            margin-bottom: rem(16px);
+            text-transform: uppercase;
+        }
+
+        &-text {
+            font-size: rem(20px);
+            line-height: 140%;
+            letter-spacing: -2%;
+            color: #767676;
+            font-family: $font-family-inter;
+        }
+
+        &-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: rem(6px);
+
+            li {
+                font-size: rem(20px);
+                line-height: 140%;
+                letter-spacing: -2%;
+                color: #767676;
+                font-family: $font-family-inter;
+                position: relative;
+                padding-left: rem(24px);
+
+                &::before {
+                    content: '•';
+                    position: absolute;
+                    left: 0;
+                    color: #767676;
+                    font-size: rem(24px);
+                    line-height: 1;
+                }
+            }
+        }
+    }
+
+    &__image-placeholder {
+        width: 100%;
+        background: #E5E7EB;
+        border-radius: rem(12px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        // aspect-ratio: 1;
+        min-height: rem(200px);
+
+        &--small {
+            aspect-ratio: 1;
+            min-height: rem(150px);
+        }
+
+        &--video {
+            aspect-ratio: 16/9;
+            min-height: rem(200px);
+        }
+
+        svg {
+            opacity: 0.5;
+        }
+    }
+
+    &__images {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: rem(20px);
+    }
+
+    &__video {
+        width: 100%;
+    }
+
+    // Адаптивность
+    @media (max-width: 1024px) {
+        &__content {
+            padding: rem(40px) rem(40px);
+        }
+
+        &__body {
+            grid-template-columns: 1fr;
+            gap: rem(40px);
+        }
+
+        &__title {
+            &-orange,
+            &-black {
+                font-size: rem(40px);
+            }
+        }
+    }
+
+    @media (max-width: 768px) {
+        &__content {
+            width: 95%;
+            padding: rem(30px) rem(20px);
+            max-height: 95vh;
+        }
+
+        &__close {
+            top: rem(15px);
+            right: rem(15px);
+            width: rem(40px);
+            height: rem(40px);
+        }
+
+        &__title {
+            &-orange,
+            &-black {
+                font-size: rem(32px);
+            }
+        }
+
+        &__section {
+            &-title {
+                font-size: rem(24px);
+            }
+
+            &-text,
+            &-list li {
+                font-size: rem(16px);
+            }
+        }
+    }
+}
+

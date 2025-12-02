@@ -1,0 +1,296 @@
+#whyus {
+    padding-top: 100px;
+    padding-bottom: 100px;
+    min-height: 100vh;
+    background-color: #491509;
+    max-width: 100vw;
+    position: relative;
+
+    @include media-breakpoint-down(lg) {
+        max-width: 100vw;
+        width: 100%;
+    }
+
+    // Light элементы, созданные через JS
+    .whyus-light {
+        position: absolute;
+        z-index: 0;
+        pointer-events: none;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+
+        .light-1 {
+            .l1, .l2, .l3 {
+                border-radius: 100%;
+                background: #FA6000;
+                position: absolute;
+            }
+
+            .l1 {
+                width: rem(380px);
+                height: rem(300px);
+                filter: blur(170px);
+            }
+
+            .l2 {
+                width: rem(540px);
+                height: rem(430px);
+                filter: blur(500px);
+            }
+
+            .l3 {
+                width: rem(650px);
+                height: rem(520px);
+                filter: blur(500px);
+            }
+        }
+
+        .light-2 {
+            .l1, .l2, .l3, .l4 {
+                border-radius: 100%;
+                background: #FA6000;
+                position: absolute;
+            }
+
+            .l1 {
+                width: rem(215px);
+                height: rem(215px);
+                filter: blur(170px);
+            }
+
+            .l2 {
+                width: rem(295px);
+                height: rem(295px);
+                filter: blur(170px);
+            }
+
+            .l3 {
+                width: rem(420px);
+                height: rem(420px);
+                filter: blur(500px);
+            }
+
+            .l4 {
+                width: rem(510px);
+                height: rem(510px);
+                filter: blur(500px);
+            }
+        }
+
+        // Мобильные стили для light элементов
+        @media (max-width: 768px) {
+            display: none;
+        }
+    }
+
+    .row-2 {
+        margin-top: rem(16px);
+
+        @include media-breakpoint-down(md) {
+            margin-top: 0;
+        }
+    }
+
+    .whyus {
+        &__emoji {
+            z-index: 1;
+            width: rem(320px);
+            height: rem(300px);
+
+            @include media-breakpoint-down(md) {
+                width: rem(85px);
+                height: rem(109px);
+                display: none;
+            }
+
+            img {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+            }
+
+            &.mob {
+                display: none;
+
+                @include media-breakpoint-down(md) {
+                    height: auto;
+                    display: block;
+                    flex-shrink: 100%;
+                }
+            }
+        }
+
+        &__head {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+        
+        &__title {
+            display: flex;
+            flex-direction: column;
+            font-family: $font-family-base;
+            font-size: rem(120px);
+            line-height: 82%;
+            letter-spacing: -2%;
+            font-weight: 700;
+            color: #fff;
+            text-transform: uppercase;
+
+            @include media-breakpoint-down(md) {
+                font-size: 35px;
+                margin-left: rem(22px);
+            }
+
+            span {
+                &:not(:first-child) {
+                    color: #FA6000;
+                }
+            }
+        }
+
+        &__wrapp {
+            margin-top: rem(80px);
+
+            .col-1, .col-2, .col-3, .col-4, .col-3-4 {
+                padding: 0 8px;
+            }
+        }
+
+        &__item {
+            height: 100%;
+
+            &.colorist {
+                .content {
+                    background-size: cover;
+                    background-position: center;
+                    background-repeat: no-repeat;
+
+                    .num, .title, .description {
+                        color: #fff;
+                    }
+                }
+            }
+
+            &.item-3 {
+                position: relative;
+
+                &::before {
+                    content: 'push smm agency';
+                    font-size: fluid-rem(120px, 156px);
+                    font-weight: 700;
+                    font-family: $font-family-base;
+                    line-height: 101%;
+                    letter-spacing: -2%;
+                    text-transform: uppercase;
+                    text-align: right;
+                    color: #541200;
+                    position: absolute;
+                    top: -20px;
+                    right: -50%;
+                    z-index: 1;
+                    white-space: nowrap;
+                }
+
+                .light {
+                    display: none; // Скрываем оригинальные light, они будут созданы через JS
+                }
+            }
+
+            .content {
+                height: 100%;
+                border-radius: rem(25px);
+                padding: rem(31px) rem(51px) rem(32px) rem(32px);
+                background: #fff;
+                filter: drop-shadow(0px 0px 110px rgba(0, 0, 0, 0.16));
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                z-index: 11;
+            }
+
+            .num {
+                font-family: $font-family-base;
+                font-size: fluid-rem(40px, 50px);
+                font-weight: 500;
+                letter-spacing: -2%;
+                color: #FA6000;
+                text-transform: uppercase;
+            }
+
+            .title {
+                margin-top: fluid-spacing-rem(45px, 72px);
+                font-family: $font-family-base;
+                font-size: fluid-rem(20px, 30px);
+                font-weight: 500;
+                line-height: 100%;
+                letter-spacing: -2%;
+                color: #1A1A1A;
+                text-transform: uppercase;
+            }
+
+            .description {
+                margin-top: rem(16px);
+                font-family: $font-family-base;
+                font-size: fluid-rem(14px, 20px);
+                line-height: 140%;
+                font-weight: 400;
+                letter-spacing: -2%;
+                color: #767676;
+            }
+        }
+    }
+
+    // Мобильные стили
+    @media (max-width: 768px) {
+        padding-top: rem(60px);
+        padding-bottom: rem(60px);
+        min-height: auto;
+
+        .whyus {
+            &__title {
+                font-size: rem(35px);
+                line-height: 85%;
+            }
+
+            &__wrapp {
+                margin-top: rem(32px);
+
+                .col-1, .col-2, .col-3, .col-4, .col-3-4 {
+                    padding: 0 rem(8px);
+                    margin-bottom: 0;
+                }
+            }
+
+            &__item {               
+                &.item-3 {
+                    &::before {
+                        display: none;
+                    }
+                }
+
+                .content {
+                    margin-bottom: rem(14px);
+                    padding: rem(14px);
+                    height: auto;
+                }
+
+                .num {
+                    font-size: rem(18px);
+                }
+
+                .title {
+                    margin-top: rem(40px);
+                    font-size: rem(16px);
+                }
+
+                .description {
+                    margin-top: rem(8px);
+                    font-size: rem(12px);
+                }
+            }
+        }
+    }
+}

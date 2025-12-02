@@ -1,0 +1,116 @@
+#formfooter {
+    margin-top: rem(120px);
+    
+    .formfooter {
+        &__title {
+            display: flex;
+            flex-direction: column;
+            font-family: $font-family-base;
+            font-size: rem(30px);
+            line-height: 96%;
+            letter-spacing: -2%;
+            font-weight: 500;
+            text-transform: uppercase;
+
+            &-first {
+                color: #000;
+            }
+
+            &-second {
+                color: #FA6000;
+            }
+        }
+        &__form {
+            display: flex;
+            flex-direction: row;
+            gap: rem(16px);
+
+            input {
+                width: 33%;
+                padding: rem(29px) rem(32px) rem(31px);
+                line-height: 160%;
+                letter-spacing: -2%;
+                border: 1px solid #B9B9B9;
+                border-radius: 10px;
+            }
+        }
+
+        &__button {
+            padding: rem(10px);
+            padding-left: rem(50px);
+            background: #1A1A1A;
+            font-family: $font-family-base;
+            font-size: fluid-font-size-rem(20px);
+            font-weight: 500;
+            color: #fff;
+            border: 1px solid #1A1A1A;
+            border-radius: rem(10px);
+            display: flex;
+            align-items: center;
+            text-wrap: nowrap;
+            gap: rem(50px);
+
+            .icon-wrap {
+                width: rem(66px);
+                height: rem(66px);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 10px;
+                background: #FA6000;
+
+                .icon {
+                    width: rem(14px);
+                    height: rem(14px);
+                }
+            }
+        }
+    }
+
+    // Мобильные стили
+    @media (max-width: 768px) {
+        margin-top: rem(60px);
+
+        .formfooter {
+            &__title {
+                font-size: rem(20px);
+                text-align: center;
+            }
+
+            &__form {
+                flex-direction: column;
+                gap: rem(14px);
+                margin-top: rem(24px);
+
+                input {
+                    width: 100%;
+                    padding: rem(15px) rem(24px) rem(16px);
+                    font-size: rem(12px);
+                    border-radius: rem(6px);
+                }
+            }
+
+            &__button {
+                width: 80%;
+                margin: rem(24px) auto 0;
+                padding: rem(6px);
+                padding-left: rem(24px);
+                font-size: rem(16px);
+                gap: rem(24px);
+                justify-content: space-between;
+                border-radius: rem(6px);
+
+                .icon-wrap {
+                    width: rem(38px);
+                    height: rem(38px);
+                    border-radius: rem(5px);
+
+                    .icon {
+                        width: rem(8px);
+                        height: rem(8px);
+                    }
+                }
+            }
+        }
+    }
+}

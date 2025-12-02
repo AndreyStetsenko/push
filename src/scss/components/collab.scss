@@ -1,0 +1,277 @@
+#collab {
+    padding-top: 100px;
+    padding-bottom: 100px;
+    min-height: 100vh;
+
+    @include media-breakpoint-down(lg) {
+        max-width: 100vw;
+        overflow-x: hidden;
+    }
+
+    .collab {
+        &__title {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            .title {
+                font-size: rem(120px);
+                line-height: 85%;
+                letter-spacing: -2%;
+                font-weight: 700;
+                font-family: $font-family-base;
+                color: #000;
+                text-transform: uppercase;
+
+                @include media-breakpoint-down(md) {
+                    font-size: rem(35px);
+                }
+
+                span {
+                    color: #FA6000;
+                }
+            }
+
+            .sub {
+                max-width: rem(620px);
+                margin-top: rem(20px);
+                font-size: rem(22px);
+                line-height: 140%;
+                letter-spacing: -2%;
+                font-weight: 400;
+                font-family: $font-family-base;
+                color: #767676;
+                text-align: center;
+            }
+
+            .buttons {
+                margin-top: rem(45px);
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+
+                &__item {
+                    height: rem(200px);
+                    background-size: cover;
+                    background-position: center right;
+                    background-repeat: no-repeat;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+
+                    @include media-breakpoint-down(md) {
+                        height: rem(64px);
+                    }
+
+                    span {
+                        font-size: rem(32px);
+                        line-height: 85%;
+                        letter-spacing: -2%;
+                        font-weight: 700;
+                        font-family: $font-family-base;
+                        color: #000;
+                        text-transform: uppercase;
+
+                        @include media-breakpoint-down(md) {
+                            font-size: 12px;
+                        }
+                    }
+                }
+
+                .button {
+                    &-1 {
+                        width: rem(205px);
+                        background-image: url('../images/collab/collab-btn-1.png');
+
+                        @include media-breakpoint-down(md) {
+                            width: rem(66px);
+                        }
+
+                        span {
+                            color: #fff;
+                        }
+                    }
+
+                    &-2 {
+                        width: rem(205px);
+                        background-image: url('../images/collab/collab-btn-2.png');
+
+                        @include media-breakpoint-down(md) {
+                            width: rem(66px);
+                        }
+                    }
+
+                    &-3 {
+                        width: rem(345px);
+                        background-image: url('../images/collab/collab-btn-3.png');
+
+                        @include media-breakpoint-down(md) {
+                            width: rem(112px);
+                        }
+                    }
+                }
+            }
+        }
+
+        &__steps {
+            margin-top: rem(80px);
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            // justify-content: center;
+            flex-wrap: wrap;
+            gap: rem(16px);
+
+            .item {
+                width: calc(50% - rem(8px));
+                padding: rem(24px);
+                padding-right: rem(56px);
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                gap: rem(48px);
+                border: 1px solid #FA6000;
+                border-radius: rem(25px);
+
+                @include media-breakpoint-down(md) {
+                    width: 100%;
+                }
+
+                .num {
+                    flex-shrink: 0;
+                    font-family: $font-family-base;
+                    font-size: rem(40px);
+                    line-height: 107%;
+                    letter-spacing: -2%;
+                    font-weight: 500;
+                    color: #fff;
+                    text-transform: uppercase;
+                    background: #FA6000;
+                    background-image: url('../images/collab/back-collab.png');
+                    background-size: cover;
+                    background-position: center;
+                    background-repeat: no-repeat;
+                    border-radius: rem(10px);
+                    width: rem(120px);
+                    height: rem(120px);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+                
+                .content {
+                    display: flex;
+                    flex-direction: column;
+                    gap: rem(8px);
+
+                    .title {
+                        font-family: $font-family-base;
+                        font-size: rem(30px);
+                        line-height: 106%;
+                        letter-spacing: -2%;
+                        font-weight: 500;
+                        color: #FA6000;
+                        text-transform: uppercase;
+                    }
+
+                    .description {
+                        margin-bottom: 0;
+                        font-size: rem(20px);
+                        line-height: 140%;
+                        letter-spacing: -2%;
+                        font-weight: 400;
+                        color: #767676;
+                    }
+                }
+            }
+        }
+    }
+
+    // Мобильные стили
+    @media (max-width: 768px) {
+        padding-top: rem(60px);
+        padding-bottom: rem(60px);
+        min-height: auto;
+
+        .collab {
+            &__title {
+                text-align: center;
+
+                .title {
+                    font-size: rem(35px);
+                    display: flex;
+                    flex-direction: column;
+                }
+
+                .sub {
+                    font-size: rem(14px);
+                    margin-top: rem(14px);
+                    font-family: $font-family-inter;
+                }
+
+                .buttons {
+                    margin-top: rem(24px);
+                    flex-wrap: wrap;
+
+                    &__item {
+                        height: rem(64px);
+
+                        span {
+                            font-size: rem(10px);
+                        }
+                    }
+
+                    .button {
+                        &-1 {
+                            width: rem(66px);
+                        }
+
+                        &-2 {
+                            width: rem(66px);
+                        }
+
+                        &-3 {
+                            width: rem(112px);
+                        }
+                    }
+                }
+            }
+
+            &__steps {
+                margin-top: rem(48px);
+                gap: rem(12px);
+
+                .item {
+                    width: 100%;
+                    padding: rem(14px);
+                    gap: rem(14px);
+                    align-items: flex-start;
+                    border-radius: rem(15px);
+
+                    .num {
+                        width: rem(47px);
+                        height: rem(47px);
+                        font-size: rem(18px);
+                        border-radius: rem(6px);
+                    }
+
+                    .content {
+                        gap: rem(4px);
+
+                        .title {
+                            font-size: rem(16px);
+                        }
+
+                        .description {
+                            font-size: rem(12px);
+                            font-family: $font-family-inter;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

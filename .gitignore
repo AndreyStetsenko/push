@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Build outputs
+assets/css/*.css
+assets/css/*.css.map
+assets/js/*.js
+assets/js/*.js.map
+
+# Keep directories
+!assets/css/.gitkeep
+!assets/js/.gitkeep
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
