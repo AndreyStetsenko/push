@@ -24,8 +24,10 @@ export function initCasesSlider() {
     const getTranslateX = () => {
         let translateX = 0;
         for (let i = 0; i < currentIndex; i++) {
-            translateX -= getCardWidth(i) + gap;
+            translateX -= getCardWidth(i);
         }
+        // gap уже учтен в CSS через flex gap
+        translateX -= currentIndex * gap;
         return translateX;
     };
 

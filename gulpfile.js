@@ -8,6 +8,7 @@ const sourcemaps = require('gulp-sourcemaps');
 const babel = require('gulp-babel');
 const filter = require('gulp-filter');
 const webpack = require('webpack-stream');
+const browserSync = require('browser-sync').create();
 
 // Пути
 const paths = {
@@ -21,6 +22,22 @@ const paths = {
     js: 'assets/js'
   }
 };
+
+// Инициализация BrowserSync
+function initBrowserSync(done) {
+  browserSync.init({
+    proxy: 'http://pushw.test', // Замените на ваш локальный URL WordPress
+    notify: false,
+    open: false
+  });
+  done();
+}
+
+// Перезагрузка браузера
+function reload(done) {
+  browserSync.reload();
+  done();
+}
 
 // Компиляция SCSS в CSS
 function compileSCSS() {
@@ -39,7 +56,8 @@ function compileSCSS() {
     .pipe(cleanCSS())
     .pipe(rename({ suffix: '.min' }))
     .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest(paths.dist.css));
+    .pipe(gulp.dest(paths.dist.css))
+    .pipe(browserSync.stream());
 }
 
 // Компиляция JS файлов через webpack (для бандлинга модулей)
@@ -98,7 +116,8 @@ const build = gulp.series(
 // Отслеживание изменений
 function watch() {
   gulp.watch('src/scss/**/*.scss', compileSCSS); // Отслеживаем все .scss файлы, но компилируем только main.scss
-  gulp.watch('src/js/**/*.js', compileJSFiles); // Отслеживаем все .js файлы, но компилируем только main.js через webpack
+  gulp.watch('src/js/**/*.js', gulp.series(compileJSFiles, minifyJSFiles, reload)); // Отслеживаем все .js файлы и перезагружаем браузер
+  gulp.watch('**/*.php', reload); // Отслеживаем все .php файлы и перезагружаем браузер
 }
 
 // Экспорт задач
@@ -106,6 +125,6 @@ exports.compileSCSS = compileSCSS;
 exports.compileJS = compileJSFiles;
 exports.minifyJS = minifyJSFiles;
 exports.build = build;
-exports.watch = gulp.series(build, watch);
+exports.watch = gulp.series(build, initBrowserSync, watch);
 exports.default = build;
 

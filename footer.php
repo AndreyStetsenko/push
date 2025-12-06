@@ -127,30 +127,37 @@
                     <div class="footer__nav">
                         <span class="title">меню</span>
                         <div class="menu">
-                            <ul>
-                                <li><a href="#">Головна</a></li>
-                                <li><a href="#">Послуги</a></li>
-                                <li><a href="#">Чому ми</a></li>
-                                <li><a href="#">Кейси</a></li>
-                            </ul>
-                            <ul>
-                                <li><a href="#">Актори</a></li>
-                                <li><a href="#">Етапи співпраці</a></li>
-                                <li><a href="#">FAQ</a></li>
-                                <li><a href="#" class="img"><img src="<?= img_url('icons/surprise.png'); ?>" alt="surprise"></a></li>
-                            </ul>
+                            <?php
+                            wp_nav_menu(array(
+                                'theme_location' => 'primary',
+                                'container'      => false,
+                                'menu_class'     => '',
+                                'items_wrap'     => '<ul>%3$s</ul>',
+                                'fallback_cb'    => false,
+                                'walker'         => new Footer_Menu_Walker(),
+                            ));
+                            ?>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="row">
-                <div class="col-1">
-                    <a href="#" class="footer__privacy">Політика конфіденційності</a>
-                </div>
-                <div class="col-2">
-                    <a href="#" class="footer__privacy">Умови використання сайту</a>
-                </div>
+                <?php
+                if (has_nav_menu('footer')) {
+                    wp_nav_menu(array(
+                        'theme_location' => 'footer',
+                        'container'      => false,
+                        'menu_class'     => '',
+                        'items_wrap'     => '%3$s',
+                        'fallback_cb'    => false,
+                        'walker'         => new Footer_Privacy_Walker(),
+                    ));
+                } else {
+                    echo '<div class="col-1"><a href="#" class="footer__privacy">Політика конфіденційності</a></div>';
+                    echo '<div class="col-2"><a href="#" class="footer__privacy">Умови використання сайту</a></div>';
+                }
+                ?>
             </div>
         </div>
     </footer>

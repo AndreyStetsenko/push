@@ -29,6 +29,10 @@ export function initWhyusLight() {
 
     // Функция для обновления позиций
     const updatePositions = () => {
+        // Проверяем, мобильное ли устройство
+        const isMobile = window.innerWidth <= 768;
+        const scale = isMobile ? 0.2 : 1;
+
         lightElements.forEach(({ item, light }) => {
             // Вычисляем позицию относительно #whyus
             // Используем простой способ: получаем позицию элемента и вычитаем позицию родителя
@@ -43,11 +47,14 @@ export function initWhyusLight() {
                 parent = parent.offsetParent;
             }
 
-            // Устанавливаем позицию
+            // Устанавливаем позицию с учетом масштаба
+            const width = item.offsetWidth * scale;
+            const height = item.offsetHeight * scale;
+            
             light.style.top = `${itemTop}px`;
             light.style.left = `${itemLeft}px`;
-            light.style.width = `${item.offsetWidth}px`;
-            light.style.height = `${item.offsetHeight}px`;
+            light.style.width = `${width}px`;
+            light.style.height = `${height}px`;
 
             // Позиционируем элементы light-1
             const light1 = light.querySelector('.light-1');

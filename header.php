@@ -17,18 +17,15 @@
                 </div>
                 <div class="header__navigation">
                     <div class="header__menu">
-                        <ul>
-                            <li><a href="<?= home_url(); ?>">Головна</a></li>
-                            <li><a href="#">Послуги</a></li>
-                            <li><a href="#">Чому ми</a></li>
-                            <li><a href="#">Кейси</a></li>
-                            <li><a href="#">Актори</a></li>
-                            <li><a href="#">Етапи співпраці</a></li>
-                            <li><a href="#">FAQ</a></li>
-                            <li class="img"><a href="#">
-                                <img src="<?= img_url('icons/surprise.png'); ?>" alt="surprise">
-                            </a></li>
-                        </ul>
+                        <?php
+                        wp_nav_menu(array(
+                            'theme_location' => 'primary',
+                            'container'      => false,
+                            'menu_class'     => '',
+                            'items_wrap'     => '<ul>%3$s</ul>',
+                            'fallback_cb'    => false,
+                        ));
+                        ?>
                     </div>
 
                     <div class="header__lang">
@@ -83,17 +80,18 @@
             </button>
             
             <nav class="mobile-menu__nav">
-                <a href="#" class="mobile-menu__item mobile-menu__item--active">Головна</a>
-                <a href="#" class="mobile-menu__item">Послуги</a>
-                <a href="#" class="mobile-menu__item">Чому ми?</a>
-                <a href="#" class="mobile-menu__item">Кейси</a>
-                <a href="#" class="mobile-menu__item">Актори</a>
-                <a href="#" class="mobile-menu__item">Етапи співпраці</a>
-                <a href="#" class="mobile-menu__item">FAQ</a>
-                
-                <div class="mobile-menu__gift">
-                    <img src="<?= img_url('icons/surprise.png'); ?>" alt="gift">
-                </div>
+                <?php
+                wp_nav_menu(array(
+                    'theme_location' => 'primary',
+                    'container'      => false,
+                    'menu_class'     => '',
+                    'items_wrap'     => '<div class="mobile-menu__items">%3$s</div>',
+                    'fallback_cb'    => false,
+                    'link_before'    => '',
+                    'link_after'     => '',
+                    'walker'         => new Mobile_Menu_Walker(),
+                ));
+                ?>
             </nav>
 
             <a href="#" class="mobile-menu__contacts">
