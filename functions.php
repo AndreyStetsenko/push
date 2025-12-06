@@ -268,6 +268,26 @@ if( file_exists(get_template_directory() . '/acf-fields.php') ) {
     require_once get_template_directory() . '/acf-fields.php';
 }
 
+// Закрытие всех postbox по умолчанию в настройках темы
+function push_close_acf_postboxes() {
+    $screen = get_current_screen();
+    if ($screen && ($screen->id === 'toplevel_page_acf-options' || strpos($screen->id, 'acf-options') !== false)) {
+        ?>
+        <script type="text/javascript">
+        jQuery(document).ready(function($) {
+            // Закрываем все postbox по умолчанию
+            $('.postbox').addClass('closed');
+            // Также закрываем все внутри repeater полей
+            $('.acf-repeater .acf-row').not('.acf-clone').addClass('-collapsed');
+            // Закрываем все группы полей внутри postbox
+            $('.acf-fields > .acf-field-group').addClass('-collapsed');
+        });
+        </script>
+        <?php
+    }
+}
+add_action('admin_footer', 'push_close_acf_postboxes');
+
 // Кастомный Walker для нижних ссылок в футере
 class Footer_Privacy_Walker extends Walker_Nav_Menu {
     private $item_count = 0;
