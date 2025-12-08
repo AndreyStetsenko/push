@@ -6,7 +6,7 @@
     <?php wp_head(); ?>
 </head>
 <body <?php body_class(); ?>>
-<?php wp_body_open(); ?>
+<?php if (function_exists('wp_body_open')) wp_body_open(); ?>
 
 <div id="page" class="site">
     <div class="header<?php echo !is_front_page() ? ' info' : ''; ?>">
@@ -30,7 +30,7 @@
 
                     <div class="header__lang">
                         <button class="header__lang-toggle" type="button" aria-expanded="false">
-                            <span class="header__lang-current"><?php echo mb_strtoupper(acf_multilang_get_current_lang()); ?></span>
+                            <span class="header__lang-current"><?php echo mb_strtoupper(function_exists('acf_multilang_get_current_lang') ? acf_multilang_get_current_lang() : 'UK'); ?></span>
                             <div class="header__lang-icon">
                                 <svg class="header__lang-chevron" width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M1 1L6 6L11 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>

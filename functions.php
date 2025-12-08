@@ -79,7 +79,7 @@ function img_url($path) {
 
 // Кастомный Walker для мобильного меню
 class Mobile_Menu_Walker extends Walker_Nav_Menu {
-    function start_el(&$output, $item, $depth = 0, $args = null, $id = 0) {
+    function start_el(&$output, $item, $depth = 0, $args = array(), $id = 0) {
         $classes = empty($item->classes) ? array() : (array) $item->classes;
         $classes[] = 'menu-item-' . $item->ID;
         
@@ -94,7 +94,7 @@ class Mobile_Menu_Walker extends Walker_Nav_Menu {
         $output .= '</a>';
     }
     
-    function end_el(&$output, $item, $depth = 0, $args = null) {
+    function end_el(&$output, $item, $depth = 0, $args = array()) {
         $output .= '';
     }
 }
@@ -230,15 +230,15 @@ add_filter('nav_menu_item_title', 'push_nav_menu_item_title', 10, 4);
 class Footer_Menu_Walker extends Walker_Nav_Menu {
     private $item_count = 0;
     
-    function start_lvl(&$output, $depth = 0, $args = null) {
+    function start_lvl(&$output, $depth = 0, $args = array()) {
         // Не добавляем вложенные списки
     }
     
-    function end_lvl(&$output, $depth = 0, $args = null) {
+    function end_lvl(&$output, $depth = 0, $args = array()) {
         // Не закрываем вложенные списки
     }
     
-    function start_el(&$output, $item, $depth = 0, $args = null, $id = 0) {
+    function start_el(&$output, $item, $depth = 0, $args = array(), $id = 0) {
         $this->item_count++;
         
         // Если это 5-й элемент, закрываем первый список и открываем второй
@@ -290,7 +290,7 @@ class Footer_Menu_Walker extends Walker_Nav_Menu {
         $output .= '<a href="' . esc_attr($item->url) . '">' . $link_content . '</a>';
     }
     
-    function end_el(&$output, $item, $depth = 0, $args = null) {
+    function end_el(&$output, $item, $depth = 0, $args = array()) {
         $output .= '</li>';
     }
 }
@@ -324,15 +324,15 @@ add_action('admin_footer', 'push_close_acf_postboxes');
 class Footer_Privacy_Walker extends Walker_Nav_Menu {
     private $item_count = 0;
     
-    function start_lvl(&$output, $depth = 0, $args = null) {
+    function start_lvl(&$output, $depth = 0, $args = array()) {
         // Не добавляем вложенные списки
     }
     
-    function end_lvl(&$output, $depth = 0, $args = null) {
+    function end_lvl(&$output, $depth = 0, $args = array()) {
         // Не закрываем вложенные списки
     }
     
-    function start_el(&$output, $item, $depth = 0, $args = null, $id = 0) {
+    function start_el(&$output, $item, $depth = 0, $args = array(), $id = 0) {
         $this->item_count++;
         
         // Первый элемент в col-1, второй в col-2
@@ -345,7 +345,7 @@ class Footer_Privacy_Walker extends Walker_Nav_Menu {
         $output .= '</div>';
     }
     
-    function end_el(&$output, $item, $depth = 0, $args = null) {
+    function end_el(&$output, $item, $depth = 0, $args = array()) {
         // Закрытие уже в start_el
     }
 }
