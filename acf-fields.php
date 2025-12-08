@@ -31,7 +31,7 @@ function crb_attach_theme_options() {
         array( 'title' => 'Cases Section - Секция кейсов', 'slug' => 'cases_section.php' ),
         array( 'title' => 'Actors Section - Секция актеров', 'slug' => 'actors_section.php' ),
         array( 'title' => 'Collab Section - Секция этапов сотрудничества', 'slug' => 'collab_section.php' ),
-        array( 'title' => 'FAQ Section - Секция FAQ', 'slug' => 'faq_section.php' ),
+        array( 'title' => 'FAQ Section - Секция FAQ', 'slug' => 'faq_section_-_faq.php' ),
         array( 'title' => 'Bonus Section - Секция бонуса', 'slug' => 'bonus_section.php' ),
     );
     
