@@ -391,6 +391,13 @@
                         }
 
                         .contacts {
+                            &__wrapp {
+                                display: flex;
+                                flex-direction: row;
+                                justify-content: space-between;
+                                gap: rem(48px);
+                            }
+
                             &__info {
                                 display: flex;
                                 flex-direction: column;

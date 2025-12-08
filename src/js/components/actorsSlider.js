@@ -29,15 +29,15 @@ export function initActorsSlider() {
     console.log('Found slides:', slides.length);
 
     // Вычисляем начальный слайд (средний)
-    const initialSlide = Math.floor(slides.length / 2);
+    // const initialSlide = Math.floor(slides.length / 2); // закомментированно для того чтобы начать с первого слайда
 
     // Инициализируем Swiper для слайдера акторов
     const actorsSwiper = new Swiper(actorsSliderContainer, {
-        slidesPerView: 4,
+        slidesPerView: 2,
         spaceBetween: 30,
         centeredSlides: true,
-        initialSlide: initialSlide,
-        loop: false,
+        initialSlide: 0,
+        loop: true,
         grabCursor: true,
         watchSlidesProgress: true,
         breakpoints: {
@@ -81,7 +81,8 @@ function initServicesSlider() {
         return;
     }
     
-    let active = Math.min(5, Math.floor(items.length / 2));
+    // let active = Math.min(5, Math.floor(items.length / 2));
+    let active = 0;
     
     // Функция для получения значения смещения в зависимости от размера экрана
     function getOffsetValue() {
@@ -90,6 +91,11 @@ function initServicesSlider() {
     
     function loadShow(){
         if (!items[active]) return;
+        
+        // Удаляем все классы prev и next
+        items.forEach(item => {
+            item.classList.remove('prev', 'next');
+        });
         
         items[active].style.transform = `none`;
         items[active].style.zIndex = 1;
@@ -106,6 +112,7 @@ function initServicesSlider() {
             items[i].style.transform = `translateX(${offset*stt}px) scale(${1 - 0.2*stt}) perspective(16px) rotateY(-1deg)`;
             items[i].style.opacity = stt > 2 ? 0 : 0.6;
             items[i].classList.remove('active');
+            items[i].classList.add('next');
         }
         stt = 0;
         for(var i = (active - 1); i >= 0; i --){
@@ -113,6 +120,7 @@ function initServicesSlider() {
             items[i].style.transform = `translateX(${-offset*stt}px) scale(${1 - 0.2*stt}) perspective(16px) rotateY(1deg)`;
             items[i].style.opacity = stt > 2 ? 0 : 0.6;
             items[i].classList.remove('active');
+            items[i].classList.add('prev');
         }
     }
     loadShow();
@@ -148,11 +156,11 @@ function initServicesSlider() {
             
             if (Math.abs(diffX) > threshold) {
                 if (diffX > 0) {
-                    // Свайп влево - следующий слайд
-                    active = active + 1 < items.length ? active + 1 : active;
+                    // Свайп влево - следующий слайд (зациклено)
+                    active = active + 1 < items.length ? active + 1 : 0;
                 } else {
-                    // Свайп вправо - предыдущий слайд
-                    active = active - 1 >= 0 ? active - 1 : active;
+                    // Свайп вправо - предыдущий слайд (зациклено)
+                    active = active - 1 >= 0 ? active - 1 : items.length - 1;
                 }
                 loadShow();
             }
@@ -186,11 +194,11 @@ function initServicesSlider() {
             
             if (Math.abs(diffX) > threshold) {
                 if (diffX > 0) {
-                    // Свайп влево - следующий слайд
-                    active = active + 1 < items.length ? active + 1 : active;
+                    // Свайп влево - следующий слайд (зациклено)
+                    active = active + 1 < items.length ? active + 1 : 0;
                 } else {
-                    // Свайп вправо - предыдущий слайд
-                    active = active - 1 >= 0 ? active - 1 : active;
+                    // Свайп вправо - предыдущий слайд (зациклено)
+                    active = active - 1 >= 0 ? active - 1 : items.length - 1;
                 }
                 loadShow();
             }

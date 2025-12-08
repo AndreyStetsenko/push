@@ -26,7 +26,7 @@ acf_add_local_field_group(array(
                     'instructions' => 'Первая строка заголовка (например: "Стильний")',
                     'default_value' => 'Стильний',
                     'placeholder' => 'Стильний',
-                    'required' => 1,
+                    'required' => 0,
                 ),
                 array(
                     'key' => 'field_hero_title_line2',
@@ -36,7 +36,7 @@ acf_add_local_field_group(array(
                     'instructions' => 'Вторая строка заголовка (например: "SMM для тебе")',
                     'default_value' => 'SMM для тебе',
                     'placeholder' => 'SMM для тебе',
-                    'required' => 1,
+                    'required' => 0,
                 ),
             ),
         ),
@@ -49,7 +49,7 @@ acf_add_local_field_group(array(
             'instructions' => 'Текст описания в hero секции',
             'default_value' => 'Ми – Push Agency, креативне агентство для соцмереж, яке поєднує системний підхід і нестандартні ідеї. Тут ти знайдеш сучасний дизайн, зрозумілу навігацію і рішення, які реально працюють.',
             'rows' => 4,
-            'required' => 1,
+            'required' => 0,
         ),
         // Группа: Кнопка
         array(

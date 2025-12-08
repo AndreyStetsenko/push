@@ -7,6 +7,7 @@ import { initBonusBox } from './components/bonusBox.js';
 import { initMobileMenu } from './components/mobileMenu.js';
 import { initWhyusLight } from './components/whyusLight.js';
 import { initInfoTitle } from './components/infoTitle.js';
+import { initHeroTitle } from './components/heroTitle.js';
 
 // Инициализация слайдеров
 document.addEventListener('DOMContentLoaded', () => {
@@ -18,4 +19,5 @@ document.addEventListener('DOMContentLoaded', () => {
     initMobileMenu();
     initWhyusLight();
     initInfoTitle();
+    initHeroTitle();
 });

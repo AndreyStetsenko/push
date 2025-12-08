@@ -30,7 +30,7 @@
 
                     <div class="header__lang">
                         <button class="header__lang-toggle" type="button" aria-expanded="false">
-                            <span class="header__lang-current">Укр</span>
+                            <span class="header__lang-current"><?php echo mb_strtoupper(acf_multilang_get_current_lang()); ?></span>
                             <div class="header__lang-icon">
                                 <svg class="header__lang-chevron" width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M1 1L6 6L11 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>

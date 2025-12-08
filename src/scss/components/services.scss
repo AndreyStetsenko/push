@@ -116,6 +116,13 @@
                 //     position: relative;
                 // }
 
+                &.prev {
+                    .title {
+                            text-align: right;
+                            float: right;
+                    }
+                }
+
                 &.active {
                     .item {
                         padding: rem(40px) rem(32px);
@@ -125,6 +132,10 @@
                         &-head {
                             height: rem(415px);
                             transition: all 0.2s ease;
+
+                            img {
+                                filter: grayscale(0%);
+                            }
                         }
                         
                         &-body {
@@ -192,6 +203,7 @@
                         font-weight: 500;
                         color: #FA6000;
                         text-transform: uppercase;
+                        hyphens: none;
                     }
 
                     .description {

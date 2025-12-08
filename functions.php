@@ -106,6 +106,19 @@ function push_nav_menu_css_class($classes, $item, $args) {
         if (in_array('img', $item->classes)) {
             $classes[] = 'img';
         }
+        
+        // Если передан параметр add_li_class, добавляем его ко всем элементам
+        if (isset($args->add_li_class) && !empty($args->add_li_class)) {
+            $add_classes = is_array($args->add_li_class) ? $args->add_li_class : array($args->add_li_class);
+            $classes = array_merge($classes, $add_classes);
+        }
+        
+        // Добавляем кастомные классы из админки
+        $custom_classes = get_post_meta($item->ID, '_menu_item_custom_classes', true);
+        if (!empty($custom_classes)) {
+            $custom_classes_array = array_filter(array_map('trim', explode(' ', $custom_classes)));
+            $classes = array_merge($classes, $custom_classes_array);
+        }
     }
     return $classes;
 }
@@ -115,6 +128,7 @@ add_filter('nav_menu_css_class', 'push_nav_menu_css_class', 10, 3);
 function push_add_menu_image_field($item_id, $item) {
     $menu_image = get_post_meta($item_id, '_menu_item_image', true);
     $menu_image_alt = get_post_meta($item_id, '_menu_item_image_alt', true);
+    $menu_custom_classes = get_post_meta($item_id, '_menu_item_custom_classes', true);
     ?>
     <p class="field-image description description-wide">
         <label for="edit-menu-item-image-<?php echo esc_attr($item_id); ?>">
@@ -135,6 +149,17 @@ function push_add_menu_image_field($item_id, $item) {
                    value="<?php echo esc_attr($menu_image_alt); ?>"/>
         </label>
     </p>
+    <p class="field-custom-classes description description-wide">
+        <label for="edit-menu-item-custom-classes-<?php echo esc_attr($item_id); ?>">
+            <?php _e('Дополнительные CSS классы тега li'); ?><br />
+            <input type="text" id="edit-menu-item-custom-classes-<?php echo esc_attr($item_id); ?>" 
+                   class="widefat edit-menu-item-custom-classes" 
+                   name="menu-item-custom-classes[<?php echo esc_attr($item_id); ?>]" 
+                   value="<?php echo esc_attr($menu_custom_classes); ?>"
+                   placeholder="class1 class2 class3"/>
+            <span class="description"><?php _e('Укажите дополнительные CSS классы через пробел'); ?></span>
+        </label>
+    </p>
     <?php
 }
 add_action('wp_nav_menu_item_custom_fields', 'push_add_menu_image_field', 10, 2);
@@ -153,6 +178,13 @@ function push_save_menu_image_field($menu_id, $menu_item_db_id) {
         update_post_meta($menu_item_db_id, '_menu_item_image_alt', $image_alt);
     } else {
         delete_post_meta($menu_item_db_id, '_menu_item_image_alt');
+    }
+    
+    if (isset($_POST['menu-item-custom-classes'][$menu_item_db_id])) {
+        $custom_classes = sanitize_text_field($_POST['menu-item-custom-classes'][$menu_item_db_id]);
+        update_post_meta($menu_item_db_id, '_menu_item_custom_classes', $custom_classes);
+    } else {
+        delete_post_meta($menu_item_db_id, '_menu_item_custom_classes');
     }
 }
 add_action('wp_update_nav_menu_item', 'push_save_menu_image_field', 10, 2);
