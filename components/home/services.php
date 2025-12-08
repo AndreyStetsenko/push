@@ -1,5 +1,5 @@
 <?php
-// Получаем данные из ACF полей для Services секции
+// Получаем данные из Carbon Fields для Services секции
 $services_title_group = get_field('services_title_group', 'option');
 $services_title_part1 = $services_title_group && isset($services_title_group['part1']) ? $services_title_group['part1'] : '';
 $services_title_part2 = $services_title_group && isset($services_title_group['part2']) ? $services_title_group['part2'] : '';
@@ -20,9 +20,12 @@ $services_items = get_field('services_items', 'option');
             <?php if ($services_items && is_array($services_items) && !empty($services_items)): ?>
                 <?php foreach ($services_items as $service): ?>
                     <?php 
-                    $service_image = isset($service['image']) ? $service['image'] : null;
+                    $service_image_id = isset($service['image']) ? $service['image'] : null;
                     $service_title = isset($service['title']) ? $service['title'] : '';
                     $service_description = isset($service['description']) ? $service['description'] : '';
+                    
+                    // Преобразуем ID изображения в массив с url и alt
+                    $service_image = $service_image_id ? crb_get_image($service_image_id) : null;
                     ?>
                     <?php if ($service_image && isset($service_image['url'])): ?>
                         <div class="slide">

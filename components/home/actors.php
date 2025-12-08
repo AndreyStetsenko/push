@@ -1,5 +1,5 @@
 <?php
-// Получаем данные из ACF полей для Actors секции
+// Получаем данные из Carbon Fields для Actors секции
 $actors_emoji = get_field('actors_emoji', 'option');
 $actors_title_group = get_field('actors_title_group', 'option');
 $actors_title_part1 = $actors_title_group && isset($actors_title_group['part1']) ? $actors_title_group['part1'] : '';
@@ -15,8 +15,14 @@ $actors_items = get_field('actors_items', 'option');
                 <div class="sub"><?php echo wp_kses_post($actors_subtitle); ?></div>
             </div>
             <div class="actors__emoji">
-                <?php if ($actors_emoji && isset($actors_emoji['url'])): ?>
-                    <img src="<?php echo esc_url($actors_emoji['url']); ?>" alt="<?php echo esc_attr($actors_emoji['alt'] ?: 'emoji'); ?>">
+                <?php if ($actors_emoji): ?>
+                    <?php 
+                    $emoji_image = crb_get_image($actors_emoji);
+                    if ($emoji_image && isset($emoji_image['url'])): ?>
+                        <img src="<?php echo esc_url($emoji_image['url']); ?>" alt="<?php echo esc_attr($emoji_image['alt'] ?: 'emoji'); ?>">
+                    <?php else: ?>
+                        <img src="<?= img_url('actors/emoji.png'); ?>" alt="emoji">
+                    <?php endif; ?>
                 <?php else: ?>
                     <img src="<?= img_url('actors/emoji.png'); ?>" alt="emoji">
                 <?php endif; ?>
@@ -29,8 +35,11 @@ $actors_items = get_field('actors_items', 'option');
                     <?php if ($actors_items && is_array($actors_items) && !empty($actors_items)): ?>
                         <?php foreach ($actors_items as $actor): ?>
                             <?php 
-                            $actor_image = isset($actor['image']) ? $actor['image'] : null;
+                            $actor_image_id = isset($actor['image']) ? $actor['image'] : null;
                             $actor_title = isset($actor['title']) ? $actor['title'] : '';
+                            
+                            // Преобразуем ID изображения в массив с url и alt
+                            $actor_image = $actor_image_id ? crb_get_image($actor_image_id) : null;
                             ?>
                             <?php if ($actor_image && isset($actor_image['url'])): ?>
                                 <div class="swiper-slide">

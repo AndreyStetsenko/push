@@ -28,6 +28,17 @@ export function initActorsSlider() {
 
     console.log('Found slides:', slides.length);
 
+    // Костыль: дублируем слайды для правильной работы слайдера (когда слайдов мало)
+    const swiperWrapper = actorsSliderContainer.querySelector('.swiper-wrapper');
+    if (swiperWrapper && slides.length > 0) {
+        // Клонируем все слайды и добавляем их в конец
+        slides.forEach((slide) => {
+            const clonedSlide = slide.cloneNode(true);
+            swiperWrapper.appendChild(clonedSlide);
+        });
+        console.log('Slides duplicated. Total slides now:', swiperWrapper.querySelectorAll('.swiper-slide').length);
+    }
+
     // Вычисляем начальный слайд (средний)
     // const initialSlide = Math.floor(slides.length / 2); // закомментированно для того чтобы начать с первого слайда
 

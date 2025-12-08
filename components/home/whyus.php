@@ -1,18 +1,21 @@
 <?php
-// Получаем данные из ACF полей для Why Us секции
+// Получаем данные из Carbon Fields для Why Us секции
 $whyus_emoji = get_field('whyus_emoji', 'option');
 $whyus_title_group = get_field('whyus_title_group', 'option');
 $whyus_title_first = $whyus_title_group && isset($whyus_title_group['first']) ? $whyus_title_group['first'] : '';
 $whyus_title_second = $whyus_title_group && isset($whyus_title_group['second']) ? $whyus_title_group['second'] : '';
 $whyus_items = get_field('whyus_items', 'option');
+
+// Преобразуем ID изображения эмодзи в массив
+$whyus_emoji_image = $whyus_emoji ? crb_get_image($whyus_emoji) : null;
 ?>
 <div class="whyus" id="whyus">
     <div class="container">
         <div class="row">
             <div class="col-1">
                 <div class="whyus__emoji-wrapp" style="display: none;">
-                    <?php if ($whyus_emoji && isset($whyus_emoji['url'])): ?>
-                        <img src="<?php echo esc_url($whyus_emoji['url']); ?>" alt="<?php echo esc_attr($whyus_emoji['alt'] ?: 'emoji'); ?>" class="whyus__emoji">
+                    <?php if ($whyus_emoji_image && isset($whyus_emoji_image['url'])): ?>
+                        <img src="<?php echo esc_url($whyus_emoji_image['url']); ?>" alt="<?php echo esc_attr($whyus_emoji_image['alt'] ?: 'emoji'); ?>" class="whyus__emoji">
                     <?php else: ?>
                         <img src="<?= img_url('whyus/blckbtn.png'); ?>" alt="emoji" class="whyus__emoji">
                     <?php endif; ?>
@@ -21,8 +24,8 @@ $whyus_items = get_field('whyus_items', 'option');
             <div class="col">
                 <div class="whyus__head">
                     <div class="whyus__emoji-wrapp">
-                        <?php if ($whyus_emoji && isset($whyus_emoji['url'])): ?>
-                            <img src="<?php echo esc_url($whyus_emoji['url']); ?>" alt="<?php echo esc_attr($whyus_emoji['alt'] ?: 'emoji'); ?>" class="whyus__emoji mob">
+                        <?php if ($whyus_emoji_image && isset($whyus_emoji_image['url'])): ?>
+                            <img src="<?php echo esc_url($whyus_emoji_image['url']); ?>" alt="<?php echo esc_attr($whyus_emoji_image['alt'] ?: 'emoji'); ?>" class="whyus__emoji mob">
                         <?php else: ?>
                             <img src="<?= img_url('whyus/blckbtn.png'); ?>" alt="emoji" class="whyus__emoji mob">
                         <?php endif; ?>
@@ -61,8 +64,12 @@ $whyus_items = get_field('whyus_items', 'option');
                             <?php 
                             $item = $first_row_items[1];
                             $css_classes = !empty($item['css_classes']) ? esc_attr($item['css_classes']) : '';
-                            $bg_image = isset($item['bg_image']) ? $item['bg_image'] : null;
+                            $bg_image_id = isset($item['bg_image']) ? $item['bg_image'] : null;
                             $has_light = !empty($item['has_light']);
+                            
+                            // Преобразуем ID изображения в массив
+                            $bg_image = $bg_image_id ? crb_get_image($bg_image_id) : null;
+                            
                             $bg_style = '';
                             if ($bg_image && isset($bg_image['url'])) {
                                 $bg_style = 'style="background-image: url(\'' . esc_url($bg_image['url']) . '\');"';
@@ -104,8 +111,12 @@ $whyus_items = get_field('whyus_items', 'option');
                             <?php 
                             $item = $second_row_items[0];
                             $css_classes = !empty($item['css_classes']) ? esc_attr($item['css_classes']) : '';
-                            $bg_image = isset($item['bg_image']) ? $item['bg_image'] : null;
+                            $bg_image_id = isset($item['bg_image']) ? $item['bg_image'] : null;
                             $has_light = !empty($item['has_light']);
+                            
+                            // Преобразуем ID изображения в массив
+                            $bg_image = $bg_image_id ? crb_get_image($bg_image_id) : null;
+                            
                             $bg_style = '';
                             if ($bg_image && isset($bg_image['url'])) {
                                 $bg_style = 'style="background-image: url(\'' . esc_url($bg_image['url']) . '\');"';

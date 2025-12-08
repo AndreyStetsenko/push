@@ -406,15 +406,28 @@ if ( ! function_exists( 'get_field' ) ) {
             $value = carbon_get_theme_option( $field_name_with_prefix );
             
             // Для complex полей Carbon Fields возвращает массив массивов
-            // Если это массив с одним элементом-массивом, возвращаем первый элемент
-            // Это нужно для совместимости с ACF group полями
+            // Нужно различать group поля (один элемент) и repeater поля (несколько элементов)
             if ( is_array( $value ) && ! empty( $value ) && isset( $value[0] ) && is_array( $value[0] ) ) {
-                $first_item = $value[0];
-                // Проверяем, что это не числовой массив (не repeater)
-                $keys = array_keys( $first_item );
-                if ( ! empty( $keys ) && ! is_numeric( $keys[0] ) ) {
-                    // Это complex поле с одним элементом (group), возвращаем первый элемент
-                    return $first_item;
+                // Проверяем, является ли массив числовым (индексированным числами) на верхнем уровне
+                $top_level_keys = array_keys( $value );
+                $is_numeric_array = ! empty( $top_level_keys ) && is_numeric( $top_level_keys[0] );
+                
+                // Если это числовой массив (repeater), возвращаем весь массив
+                // Если это не числовой массив или массив с одним элементом, проверяем дальше
+                if ( $is_numeric_array && count( $value ) > 1 ) {
+                    // Это точно repeater с несколькими элементами, возвращаем весь массив
+                    return $value;
+                }
+                
+                // Если массив с одним элементом, проверяем, является ли это group полем
+                if ( count( $value ) === 1 ) {
+                    $first_item = $value[0];
+                    $item_keys = array_keys( $first_item );
+                    // Если ключи элементов - строки (не числа), это group поле
+                    if ( ! empty( $item_keys ) && ! is_numeric( $item_keys[0] ) ) {
+                        // Это complex поле с одним элементом (group), возвращаем первый элемент
+                        return $first_item;
+                    }
                 }
             }
             

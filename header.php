@@ -100,7 +100,7 @@
                                         <?php if ($is_current): ?>
                                             <button type="button" class="header__lang-option header__lang-option--active" data-lang="<?php echo esc_attr($lang_code); ?>" disabled><?php echo esc_html($lang_name); ?></button>
                                         <?php else: ?>
-                                            <button type="button" onclick="window.location.href='<?php echo esc_url($lang_url); ?>'" class="header__lang-option" data-lang="<?php echo esc_attr($lang_code); ?>"><?php echo esc_html($lang_name); ?></button>
+                                            <button type="button" class="header__lang-option" data-lang="<?php echo esc_attr($lang_code); ?>" data-lang-url="<?php echo esc_url($lang_url); ?>"><?php echo esc_html($lang_name); ?></button>
                                         <?php endif; ?>
                                     </li>
                                 <?php endforeach; ?>
@@ -120,7 +120,7 @@
                                                 <?php if ($is_current): ?>
                                                     <button type="button" class="header__lang-option header__lang-option--active" data-lang="<?php echo esc_attr($slug); ?>" disabled><?php echo esc_html($lang_name); ?></button>
                                                 <?php else: ?>
-                                                    <button type="button" onclick="window.location.href='<?php echo esc_url($lang_url); ?>'" class="header__lang-option" data-lang="<?php echo esc_attr($slug); ?>"><?php echo esc_html($lang_name); ?></button>
+                                                    <button type="button" class="header__lang-option" data-lang="<?php echo esc_attr($slug); ?>" data-lang-url="<?php echo esc_url($lang_url); ?>"><?php echo esc_html($lang_name); ?></button>
                                                 <?php endif; ?>
                                             </li>
                                             <?php

@@ -1,5 +1,5 @@
 <?php
-// Получаем данные из ACF полей для Cases секции
+// Получаем данные из Carbon Fields для Cases секции
 $cases_title_group = get_field('cases_title_group', 'option');
 $cases_title_part1 = $cases_title_group && isset($cases_title_group['part1']) ? $cases_title_group['part1'] : '';
 $cases_title_part2 = $cases_title_group && isset($cases_title_group['part2']) ? $cases_title_group['part2'] : '';

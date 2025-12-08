@@ -1,6 +1,6 @@
 <?php
-// Получаем данные из ACF полей для Push Start секции
-$pushstart_cursor_image = get_field('pushstart_cursor_image', 'option');
+// Получаем данные из Carbon Fields для Push Start секции
+$pushstart_cursor_image_id = get_field('pushstart_cursor_image', 'option');
 $pushstart_title_group = get_field('pushstart_title_group', 'option');
 $pushstart_title_line1 = $pushstart_title_group && isset($pushstart_title_group['line1']) ? $pushstart_title_group['line1'] : '';
 $pushstart_title_line2 = $pushstart_title_group && isset($pushstart_title_group['line2']) ? $pushstart_title_group['line2'] : '';
@@ -12,7 +12,8 @@ $pushstart_button_text = $pushstart_form_group && isset($pushstart_form_group['b
 $pushstart_form_action = $pushstart_form_group && isset($pushstart_form_group['form_action']) ? $pushstart_form_group['form_action'] : '';
 $pushstart_social_link = get_field('pushstart_social_link', 'option') ?: '#';
 
-// Определяем URL для курсора
+// Преобразуем ID изображения курсора в массив и определяем URL
+$pushstart_cursor_image = $pushstart_cursor_image_id ? crb_get_image($pushstart_cursor_image_id) : null;
 $cursor_url = '';
 if ($pushstart_cursor_image && isset($pushstart_cursor_image['url'])) {
     $cursor_url = $pushstart_cursor_image['url'];

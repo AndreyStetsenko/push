@@ -1,5 +1,5 @@
 <?php
-// Получаем данные из ACF полей для Collab секции
+// Получаем данные из Carbon Fields для Collab секции
 $collab_title_group = get_field('collab_title_group', 'option');
 $collab_title_part1 = $collab_title_group && isset($collab_title_group['part1']) ? $collab_title_group['part1'] : '';
 $collab_title_part2 = $collab_title_group && isset($collab_title_group['part2']) ? $collab_title_group['part2'] : '';

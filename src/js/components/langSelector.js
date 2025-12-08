@@ -22,21 +22,41 @@ class LangSelector {
             this.toggleDropdown();
         });
 
-        // Обработчики выбора языка (для ссылок)
+        // Обработчики выбора языка (для ссылок и кнопок)
         this.options.forEach(option => {
-            // Если это ссылка (не disabled кнопка), закрываем список при клике
-            if (option.tagName === 'A' && !option.hasAttribute('disabled')) {
-                option.addEventListener('click', () => {
-                    // Закрываем список перед переходом
-                    this.close();
+            // Если это не disabled кнопка, обрабатываем клик
+            if (!option.hasAttribute('disabled')) {
+                option.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    // Если это кнопка с data-lang-url, переходим по URL
+                    const langUrl = option.getAttribute('data-lang-url');
+                    if (langUrl && option.tagName === 'BUTTON') {
+                        e.preventDefault();
+                        // Закрываем список перед переходом
+                        this.close();
+                        // Небольшая задержка для визуального закрытия
+                        setTimeout(() => {
+                            window.location.href = langUrl;
+                        }, 100);
+                    } else {
+                        // Закрываем список перед переходом
+                        this.close();
+                    }
                 });
             }
         });
 
         // Закрытие при клике вне компонента
+        // Используем setTimeout чтобы обработчик сработал после обработчика toggle
         document.addEventListener('click', (e) => {
+            // Проверяем, что клик был не на элементах компонента
             if (!this.container.contains(e.target)) {
-                this.close();
+                // Небольшая задержка, чтобы обработчик toggle успел сработать
+                setTimeout(() => {
+                    if (this.isOpen()) {
+                        this.close();
+                    }
+                }, 0);
             }
         });
 
@@ -79,11 +99,6 @@ export function initLangSelector() {
         new LangSelector(langContainer);
     }
 }
-
-// Автоматическая инициализация при загрузке DOM (для обратной совместимости)
-document.addEventListener('DOMContentLoaded', () => {
-    initLangSelector();
-});
 
 export default LangSelector;
 
