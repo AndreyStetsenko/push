@@ -1,1403 +1,642 @@
 <?php
 /**
- * Регистрация ACF полей для темы Push
+ * Регистрация Carbon Fields для темы Push
  */
 
-if( function_exists('acf_add_local_field_group') ):
+use Carbon_Fields\Container;
+use Carbon_Fields\Field;
 
-acf_add_local_field_group(array(
-    'key' => 'group_hero_section',
-    'title' => 'Hero Section - Главная секция',
-    'fields' => array(
-        // Группа: Заголовок
-        array(
-            'key' => 'field_hero_title_group',
-            'label' => 'Заголовок',
-            'name' => 'hero_title_group',
-            'type' => 'group',
-            'instructions' => 'Настройки заголовка hero секции',
-            'layout' => 'block',
-            'sub_fields' => array(
-                array(
-                    'key' => 'field_hero_title_line1',
-                    'label' => 'Первая строка',
-                    'name' => 'line1',
-                    'type' => 'text',
-                    'instructions' => 'Первая строка заголовка (например: "Стильний")',
-                    'default_value' => 'Стильний',
-                    'placeholder' => 'Стильний',
-                    'required' => 0,
-                ),
-                array(
-                    'key' => 'field_hero_title_line2',
-                    'label' => 'Вторая строка',
-                    'name' => 'line2',
-                    'type' => 'text',
-                    'instructions' => 'Вторая строка заголовка (например: "SMM для тебе")',
-                    'default_value' => 'SMM для тебе',
-                    'placeholder' => 'SMM для тебе',
-                    'required' => 0,
-                ),
-            ),
-        ),
-        // Описание
-        array(
-            'key' => 'field_hero_description',
-            'label' => 'Описание',
-            'name' => 'hero_description',
-            'type' => 'textarea',
-            'instructions' => 'Текст описания в hero секции',
-            'default_value' => 'Ми – Push Agency, креативне агентство для соцмереж, яке поєднує системний підхід і нестандартні ідеї. Тут ти знайдеш сучасний дизайн, зрозумілу навігацію і рішення, які реально працюють.',
-            'rows' => 4,
-            'required' => 0,
-        ),
-        // Группа: Кнопка
-        array(
-            'key' => 'field_hero_button_group',
-            'label' => 'Кнопка',
-            'name' => 'hero_button_group',
-            'type' => 'group',
-            'instructions' => 'Настройки кнопки в hero секции',
-            'layout' => 'block',
-            'sub_fields' => array(
-                array(
-                    'key' => 'field_hero_button_text',
-                    'label' => 'Текст кнопки',
-                    'name' => 'text',
-                    'type' => 'text',
-                    'instructions' => 'Текст на кнопке',
-                    'default_value' => 'Зв\'язатись з нами',
-                    'placeholder' => 'Зв\'язатись з нами',
-                    'required' => 1,
-                ),
-                array(
-                    'key' => 'field_hero_button_link',
-                    'label' => 'Ссылка',
-                    'name' => 'link',
-                    'type' => 'url',
-                    'instructions' => 'URL ссылки кнопки',
-                    'default_value' => '#',
-                    'placeholder' => '#',
-                    'required' => 1,
-                ),
-                array(
-                    'key' => 'field_hero_button_target',
-                    'label' => 'Целевая ссылка',
-                    'name' => 'target',
-                    'type' => 'select',
-                    'instructions' => 'Куда откроется ссылка (сайт, новое окно)',
-                    'choices' => array(
-                        '_self' => 'На текущей странице',
-                        '_blank' => 'В новом окне',
-                    ),
-                    'default_value' => '_self',
-                    'required' => 1,
-                ),
-            ),
-        ),
-        // Изображение Push
-        array(
-            'key' => 'field_hero_push_image',
-            'label' => 'Изображение Push',
-            'name' => 'hero_push_image',
-            'type' => 'image',
-            'instructions' => 'Изображение Push в hero секции (если не указано, будет использовано изображение по умолчанию)',
-            'return_format' => 'array',
-            'preview_size' => 'medium',
-            'library' => 'all',
-            'required' => 0,
-        ),
-        // Фоновые элементы (Repeater)
-        array(
-            'key' => 'field_hero_bg_items',
-            'label' => 'Фоновые элементы (соцсети)',
-            'name' => 'hero_bg_items',
-            'type' => 'repeater',
-            'instructions' => 'Добавьте элементы фона (иконки соцсетей). Если не заполнено, будут использованы элементы по умолчанию.',
-            'layout' => 'block',
-            'button_label' => 'Добавить элемент',
-            'collapsed' => 'field_hero_bg_item_class',
-            'sub_fields' => array(
-                array(
-                    'key' => 'field_hero_bg_item_image',
-                    'label' => 'Изображение',
-                    'name' => 'image',
-                    'type' => 'image',
-                    'instructions' => 'Изображение иконки соцсети',
-                    'return_format' => 'array',
-                    'preview_size' => 'thumbnail',
-                    'library' => 'all',
-                    'required' => 1,
-                ),
-                array(
-                    'key' => 'field_hero_bg_item_class',
-                    'label' => 'CSS класс',
-                    'name' => 'css_class',
-                    'type' => 'text',
-                    'instructions' => 'CSS класс для элемента (например: item-inst, item-fb, item-tiktok)',
-                    'default_value' => '',
-                    'placeholder' => 'item-inst',
-                    'required' => 1,
-                ),
-                array(
-                    'key' => 'field_hero_bg_item_alt',
-                    'label' => 'Alt текст',
-                    'name' => 'alt',
-                    'type' => 'text',
-                    'instructions' => 'Alt текст для изображения',
-                    'default_value' => '',
-                    'placeholder' => 'inst',
-                    'required' => 0,
-                ),
-                array(
-                    'key' => 'field_hero_bg_item_shadows',
-                    'label' => 'Количество теней',
-                    'name' => 'shadows_count',
-                    'type' => 'number',
-                    'instructions' => 'Количество элементов теней (0-3). Если 0, тени не будут отображаться.',
-                    'default_value' => 0,
-                    'min' => 0,
-                    'max' => 3,
-                    'step' => 1,
-                    'required' => 0,
-                ),
-            ),
-        ),
-    ),
-    'location' => array(
-        array(
-            array(
-                'param' => 'options_page',
-                'operator' => '==',
-                'value' => 'acf-options',
-            ),
-        ),
-    ),
-    'menu_order' => 0,
-    'position' => 'normal',
-    'style' => 'default',
-    'label_placement' => 'top',
-    'instruction_placement' => 'label',
-    'hide_on_screen' => '',
-    'active' => true,
-    'description' => 'Настройки для Hero секции на главной странице',
-));
-
-// Группа полей для Services секции
-acf_add_local_field_group(array(
-    'key' => 'group_services_section',
-    'title' => 'Services Section - Секция услуг',
-    'fields' => array(
-        // Заголовок
-        array(
-            'key' => 'field_services_title_group',
-            'label' => 'Заголовок',
-            'name' => 'services_title_group',
-            'type' => 'group',
-            'instructions' => 'Настройки заголовка секции услуг',
-            'layout' => 'block',
-            'sub_fields' => array(
-                array(
-                    'key' => 'field_services_title_part1',
-                    'label' => 'Первая часть',
-                    'name' => 'part1',
-                    'type' => 'text',
-                    'instructions' => 'Первая часть заголовка (например: "Наші")',
-                    'default_value' => 'Наші',
-                    'placeholder' => 'Наші',
-                    'required' => 1,
-                ),
-                array(
-                    'key' => 'field_services_title_part2',
-                    'label' => 'Вторая часть (в span)',
-                    'name' => 'part2',
-                    'type' => 'text',
-                    'instructions' => 'Вторая часть заголовка, которая будет в span (например: "послуги")',
-                    'default_value' => 'послуги',
-                    'placeholder' => 'послуги',
-                    'required' => 1,
-                ),
-            ),
-        ),
-        // Repeater для услуг
-        array(
-            'key' => 'field_services_items',
-            'label' => 'Услуги',
-            'name' => 'services_items',
-            'type' => 'repeater',
-            'instructions' => 'Добавьте услуги для отображения в слайдере. Если не заполнено, будут использованы услуги по умолчанию.',
-            'layout' => 'block',
-            'button_label' => 'Добавить услугу',
-            'collapsed' => 'field_services_item_title',
-            'sub_fields' => array(
-                array(
-                    'key' => 'field_services_item_image',
-                    'label' => 'Иконка',
-                    'name' => 'image',
-                    'type' => 'image',
-                    'instructions' => 'Иконка услуги',
-                    'return_format' => 'array',
-                    'preview_size' => 'thumbnail',
-                    'library' => 'all',
-                    'required' => 1,
-                ),
-                array(
-                    'key' => 'field_services_item_title',
-                    'label' => 'Заголовок',
-                    'name' => 'title',
-                    'type' => 'text',
-                    'instructions' => 'Заголовок услуги (например: "01/SMM-консалтинг")',
-                    'default_value' => '',
-                    'placeholder' => '01/SMM-консалтинг',
-                    'required' => 1,
-                ),
-                array(
-                    'key' => 'field_services_item_description',
-                    'label' => 'Описание',
-                    'name' => 'description',
-                    'type' => 'textarea',
-                    'instructions' => 'Описание услуги',
-                    'default_value' => '',
-                    'placeholder' => 'Повний аудит профілю з обговоренням і наданням SMM стратегії',
-                    'rows' => 3,
-                    'required' => 1,
-                ),
-            ),
-        ),
-    ),
-    'location' => array(
-        array(
-            array(
-                'param' => 'options_page',
-                'operator' => '==',
-                'value' => 'acf-options',
-            ),
-        ),
-    ),
-    'menu_order' => 1,
-    'position' => 'normal',
-    'style' => 'default',
-    'label_placement' => 'top',
-    'instruction_placement' => 'label',
-    'hide_on_screen' => '',
-    'active' => true,
-    'description' => 'Настройки для секции услуг на главной странице',
-));
-
-// Группа полей для Why Us секции
-acf_add_local_field_group(array(
-    'key' => 'group_whyus_section',
-    'title' => 'Why Us Section - Секция "Почему мы"',
-    'fields' => array(
-        // Эмодзи изображение
-        array(
-            'key' => 'field_whyus_emoji',
-            'label' => 'Эмодзи изображение',
-            'name' => 'whyus_emoji',
-            'type' => 'image',
-            'instructions' => 'Изображение эмодзи для секции (если не указано, будет использовано изображение по умолчанию)',
-            'return_format' => 'array',
-            'preview_size' => 'medium',
-            'library' => 'all',
-            'required' => 0,
-        ),
-        // Заголовок
-        array(
-            'key' => 'field_whyus_title_group',
-            'label' => 'Заголовок',
-            'name' => 'whyus_title_group',
-            'type' => 'group',
-            'instructions' => 'Настройки заголовка секции',
-            'layout' => 'block',
-            'sub_fields' => array(
-                array(
-                    'key' => 'field_whyus_title_first',
-                    'label' => 'Первая часть',
-                    'name' => 'first',
-                    'type' => 'text',
-                    'instructions' => 'Первая часть заголовка (например: "чому")',
-                    'default_value' => 'чому',
-                    'placeholder' => 'чому',
-                    'required' => 1,
-                ),
-                array(
-                    'key' => 'field_whyus_title_second',
-                    'label' => 'Вторая часть',
-                    'name' => 'second',
-                    'type' => 'text',
-                    'instructions' => 'Вторая часть заголовка (например: "саме ми?")',
-                    'default_value' => 'саме ми?',
-                    'placeholder' => 'саме ми?',
-                    'required' => 1,
-                ),
-            ),
-        ),
-        // Repeater для элементов
-        array(
-            'key' => 'field_whyus_items',
-            'label' => 'Элементы',
-            'name' => 'whyus_items',
-            'type' => 'repeater',
-            'instructions' => 'Добавьте элементы для секции "Почему мы". Если не заполнено, будут использованы элементы по умолчанию.',
-            'layout' => 'block',
-            'button_label' => 'Добавить элемент',
-            'collapsed' => 'field_whyus_item_title',
-            'sub_fields' => array(
-                array(
-                    'key' => 'field_whyus_item_number',
-                    'label' => 'Номер',
-                    'name' => 'number',
-                    'type' => 'text',
-                    'instructions' => 'Номер элемента (например: "01", "02")',
-                    'default_value' => '',
-                    'placeholder' => '01',
-                    'required' => 1,
-                ),
-                array(
-                    'key' => 'field_whyus_item_title',
-                    'label' => 'Заголовок',
-                    'name' => 'title',
-                    'type' => 'text',
-                    'instructions' => 'Заголовок элемента',
-                    'default_value' => '',
-                    'placeholder' => 'Кожен крок має сенс',
-                    'required' => 1,
-                ),
-                array(
-                    'key' => 'field_whyus_item_description',
-                    'label' => 'Описание',
-                    'name' => 'description',
-                    'type' => 'textarea',
-                    'instructions' => 'Описание элемента',
-                    'default_value' => '',
-                    'placeholder' => 'Ми робимо тільки те, що реально працює...',
-                    'rows' => 3,
-                    'required' => 1,
-                ),
-                array(
-                    'key' => 'field_whyus_item_bg_image',
-                    'label' => 'Фоновое изображение',
-                    'name' => 'bg_image',
-                    'type' => 'image',
-                    'instructions' => 'Фоновое изображение для элемента (опционально, для элементов с эффектами)',
-                    'return_format' => 'array',
-                    'preview_size' => 'medium',
-                    'library' => 'all',
-                    'required' => 0,
-                ),
-                array(
-                    'key' => 'field_whyus_item_css_classes',
-                    'label' => 'CSS классы',
-                    'name' => 'css_classes',
-                    'type' => 'text',
-                    'instructions' => 'CSS классы для элемента (например: "colorist item-3 i1" для элементов с эффектами)',
-                    'default_value' => '',
-                    'placeholder' => 'colorist item-3 i1',
-                    'required' => 0,
-                ),
-                array(
-                    'key' => 'field_whyus_item_has_light',
-                    'label' => 'Эффекты света',
-                    'name' => 'has_light',
-                    'type' => 'true_false',
-                    'instructions' => 'Включить эффекты света для элемента',
-                    'default_value' => 0,
-                    'ui' => 1,
-                    'required' => 0,
-                ),
-            ),
-        ),
-    ),
-    'location' => array(
-        array(
-            array(
-                'param' => 'options_page',
-                'operator' => '==',
-                'value' => 'acf-options',
-            ),
-        ),
-    ),
-    'menu_order' => 2,
-    'position' => 'normal',
-    'style' => 'default',
-    'label_placement' => 'top',
-    'instruction_placement' => 'label',
-    'hide_on_screen' => '',
-    'active' => true,
-    'description' => 'Настройки для секции "Почему мы" на главной странице',
-));
-
-// Группа полей для Push Start секции
-acf_add_local_field_group(array(
-    'key' => 'group_pushstart_section',
-    'title' => 'Push Start Section - Секция формы',
-    'fields' => array(
-        // Изображение курсора
-        array(
-            'key' => 'field_pushstart_cursor_image',
-            'label' => 'Изображение курсора',
-            'name' => 'pushstart_cursor_image',
-            'type' => 'image',
-            'instructions' => 'Изображение курсора (если не указано, будет использовано изображение по умолчанию)',
-            'return_format' => 'array',
-            'preview_size' => 'thumbnail',
-            'library' => 'all',
-            'required' => 0,
-        ),
-        // Заголовок
-        array(
-            'key' => 'field_pushstart_title_group',
-            'label' => 'Заголовок',
-            'name' => 'pushstart_title_group',
-            'type' => 'group',
-            'instructions' => 'Настройки заголовка секции',
-            'layout' => 'block',
-            'sub_fields' => array(
-                array(
-                    'key' => 'field_pushstart_title_line1',
-                    'label' => 'Первая строка',
-                    'name' => 'line1',
-                    'type' => 'text',
-                    'instructions' => 'Первая строка заголовка (например: "PUSH-СТАРТ")',
-                    'default_value' => 'PUSH-СТАРТ',
-                    'placeholder' => 'PUSH-СТАРТ',
-                    'required' => 1,
-                ),
-                array(
-                    'key' => 'field_pushstart_title_line2',
-                    'label' => 'Вторая строка',
-                    'name' => 'line2',
-                    'type' => 'text',
-                    'instructions' => 'Вторая строка заголовка (например: "ДЛЯ ТВОГО БРЕНДУ")',
-                    'default_value' => 'ДЛЯ ТВОГО БРЕНДУ',
-                    'placeholder' => 'ДЛЯ ТВОГО БРЕНДУ',
-                    'required' => 1,
-                ),
-            ),
-        ),
-        // Описание
-        array(
-            'key' => 'field_pushstart_description',
-            'label' => 'Описание',
-            'name' => 'pushstart_description',
-            'type' => 'textarea',
-            'instructions' => 'Текст описания в секции',
-            'default_value' => 'Залиш свій телефон і ім\'я, і ми швидко зв\'яжемося з тобою, щоб зрозуміти твої цілі, підібрати найефективнішу стратегію, показати, як твої соцмережі можуть реально продавати.',
-            'rows' => 4,
-            'required' => 1,
-        ),
-        // Группа: Форма
-        array(
-            'key' => 'field_pushstart_form_group',
-            'label' => 'Настройки формы',
-            'name' => 'pushstart_form_group',
-            'type' => 'group',
-            'instructions' => 'Настройки формы обратной связи',
-            'layout' => 'block',
-            'sub_fields' => array(
-                array(
-                    'key' => 'field_pushstart_form_name_placeholder',
-                    'label' => 'Плейсхолдер для имени',
-                    'name' => 'name_placeholder',
-                    'type' => 'text',
-                    'instructions' => 'Текст плейсхолдера для поля имени',
-                    'default_value' => 'Ваше Ім\'я',
-                    'placeholder' => 'Ваше Ім\'я',
-                    'required' => 1,
-                ),
-                array(
-                    'key' => 'field_pushstart_form_phone_placeholder',
-                    'label' => 'Плейсхолдер для телефона',
-                    'name' => 'phone_placeholder',
-                    'type' => 'text',
-                    'instructions' => 'Текст плейсхолдера для поля телефона',
-                    'default_value' => 'Номер телефону',
-                    'placeholder' => 'Номер телефону',
-                    'required' => 1,
-                ),
-                array(
-                    'key' => 'field_pushstart_form_button_text',
-                    'label' => 'Текст кнопки',
-                    'name' => 'button_text',
-                    'type' => 'text',
-                    'instructions' => 'Текст на кнопке отправки',
-                    'default_value' => 'Зв\'язатись з нами',
-                    'placeholder' => 'Зв\'язатись з нами',
-                    'required' => 1,
-                ),
-                array(
-                    'key' => 'field_pushstart_form_action',
-                    'label' => 'Action формы',
-                    'name' => 'form_action',
-                    'type' => 'url',
-                    'instructions' => 'URL для отправки формы (оставьте пустым для текущей страницы)',
-                    'default_value' => '',
-                    'placeholder' => '',
-                    'required' => 0,
-                ),
-            ),
-        ),
-        // Социальная ссылка
-        array(
-            'key' => 'field_pushstart_social_link',
-            'label' => 'Социальная ссылка',
-            'name' => 'pushstart_social_link',
-            'type' => 'url',
-            'instructions' => 'Ссылка на социальную сеть (Telegram, WhatsApp и т.д.)',
-            'default_value' => '#',
-            'placeholder' => '#',
-            'required' => 0,
-        ),
-    ),
-    'location' => array(
-        array(
-            array(
-                'param' => 'options_page',
-                'operator' => '==',
-                'value' => 'acf-options',
-            ),
-        ),
-    ),
-    'menu_order' => 3,
-    'position' => 'normal',
-    'style' => 'default',
-    'label_placement' => 'top',
-    'instruction_placement' => 'label',
-    'hide_on_screen' => '',
-    'active' => true,
-    'description' => 'Настройки для секции формы "Push Start" на главной странице',
-));
-
-// Группа полей для Cases секции
-acf_add_local_field_group(array(
-    'key' => 'group_cases_section',
-    'title' => 'Cases Section - Секция кейсов',
-    'fields' => array(
-        // Заголовок
-        array(
-            'key' => 'field_cases_title_group',
-            'label' => 'Заголовок',
-            'name' => 'cases_title_group',
-            'type' => 'group',
-            'instructions' => 'Настройки заголовка секции',
-            'layout' => 'block',
-            'sub_fields' => array(
-                array(
-                    'key' => 'field_cases_title_part1',
-                    'label' => 'Первая часть',
-                    'name' => 'part1',
-                    'type' => 'text',
-                    'instructions' => 'Первая часть заголовка (например: "Наші")',
-                    'default_value' => 'Наші',
-                    'placeholder' => 'Наші',
-                    'required' => 1,
-                ),
-                array(
-                    'key' => 'field_cases_title_part2',
-                    'label' => 'Вторая часть',
-                    'name' => 'part2',
-                    'type' => 'text',
-                    'instructions' => 'Вторая часть заголовка (например: "Кейси")',
-                    'default_value' => 'Кейси',
-                    'placeholder' => 'Кейси',
-                    'required' => 1,
-                ),
-            ),
-        ),
-        // Описание
-        array(
-            'key' => 'field_cases_description',
-            'label' => 'Описание',
-            'name' => 'cases_description',
-            'type' => 'textarea',
-            'instructions' => 'Текст описания в секции кейсов',
-            'default_value' => 'Ми створюємо стратегії, які приносять реальні результати. Подивись, як ми допомагаємо брендам розвиватися в соціальних мережах, формувати впізнаваність і збільшувати продажі.',
-            'rows' => 4,
-            'required' => 1,
-        ),
-        // Кнопки фильтров
-        array(
-            'key' => 'field_cases_filter_buttons',
-            'label' => 'Кнопки фильтров',
-            'name' => 'cases_filter_buttons',
-            'type' => 'repeater',
-            'instructions' => 'Добавьте кнопки фильтров для категорий кейсов',
-            'layout' => 'table',
-            'button_label' => 'Добавить кнопку',
-            'sub_fields' => array(
-                array(
-                    'key' => 'field_cases_filter_button_text',
-                    'label' => 'Текст кнопки',
-                    'name' => 'text',
-                    'type' => 'text',
-                    'instructions' => 'Текст на кнопке фильтра',
-                    'default_value' => '',
-                    'placeholder' => 'SMM-консалтинг',
-                    'required' => 1,
-                ),
-                array(
-                    'key' => 'field_cases_filter_button_index',
-                    'label' => 'Индекс слайда',
-                    'name' => 'slide_index',
-                    'type' => 'number',
-                    'instructions' => 'Индекс слайда для фильтрации (data-slide-index)',
-                    'default_value' => 0,
-                    'min' => 0,
-                    'required' => 1,
-                ),
-            ),
-        ),
-        // Карточки кейсов
-        array(
-            'key' => 'field_cases_cards',
-            'label' => 'Карточки кейсов',
-            'name' => 'cases_cards',
-            'type' => 'repeater',
-            'instructions' => 'Добавьте карточки кейсов. Если не заполнено, будут использованы карточки по умолчанию.',
-            'layout' => 'block',
-            'button_label' => 'Добавить кейс',
-            'collapsed' => 'field_cases_card_title',
-            'sub_fields' => array(
-                array(
-                    'key' => 'field_cases_card_title',
-                    'label' => 'Заголовок',
-                    'name' => 'title',
-                    'type' => 'text',
-                    'instructions' => 'Заголовок кейса',
-                    'default_value' => '',
-                    'placeholder' => 'СТРАТЕГІЯ РОСТУ ДЛЯ GLOWUP STUDIO',
-                    'required' => 1,
-                ),
-                array(
-                    'key' => 'field_cases_card_description',
-                    'label' => 'Описание',
-                    'name' => 'description',
-                    'type' => 'textarea',
-                    'instructions' => 'Описание кейса',
-                    'default_value' => '',
-                    'placeholder' => 'Ми допомогли сформувати сильний бренд...',
-                    'rows' => 4,
-                    'required' => 1,
-                ),
-                array(
-                    'key' => 'field_cases_card_button_text',
-                    'label' => 'Текст кнопки',
-                    'name' => 'button_text',
-                    'type' => 'text',
-                    'instructions' => 'Текст на кнопке "Детальніше"',
-                    'default_value' => 'Детальніше',
-                    'placeholder' => 'Детальніше',
-                    'required' => 0,
-                ),
-                array(
-                    'key' => 'field_cases_card_kpi',
-                    'label' => 'KPI метрики',
-                    'name' => 'kpi',
-                    'type' => 'repeater',
-                    'instructions' => 'Добавьте KPI метрики для кейса',
-                    'layout' => 'table',
-                    'button_label' => 'Добавить метрику',
-                    'sub_fields' => array(
-                        array(
-                            'key' => 'field_cases_card_kpi_value',
-                            'label' => 'Значение',
-                            'name' => 'value',
-                            'type' => 'text',
-                            'instructions' => 'Значение метрики (например: "+450", "320%")',
-                            'default_value' => '',
-                            'placeholder' => '+450',
-                            'required' => 1,
-                        ),
-                        array(
-                            'key' => 'field_cases_card_kpi_label',
-                            'label' => 'Подпись',
-                            'name' => 'label',
-                            'type' => 'text',
-                            'instructions' => 'Подпись метрики (например: "продажів за місяць")',
-                            'default_value' => '',
-                            'placeholder' => 'продажів за місяць',
-                            'required' => 1,
-                        ),
-                    ),
-                ),
-            ),
-        ),
-    ),
-    'location' => array(
-        array(
-            array(
-                'param' => 'options_page',
-                'operator' => '==',
-                'value' => 'acf-options',
-            ),
-        ),
-    ),
-    'menu_order' => 4,
-    'position' => 'normal',
-    'style' => 'default',
-    'label_placement' => 'top',
-    'instruction_placement' => 'label',
-    'hide_on_screen' => '',
-    'active' => true,
-    'description' => 'Настройки для секции кейсов на главной странице',
-));
-
-// Группа полей для Actors секции
-acf_add_local_field_group(array(
-    'key' => 'group_actors_section',
-    'title' => 'Actors Section - Секция актеров',
-    'fields' => array(
-        // Эмодзи изображение
-        array(
-            'key' => 'field_actors_emoji',
-            'label' => 'Эмодзи изображение',
-            'name' => 'actors_emoji',
-            'type' => 'image',
-            'instructions' => 'Изображение эмодзи для секции (если не указано, будет использовано изображение по умолчанию)',
-            'return_format' => 'array',
-            'preview_size' => 'medium',
-            'library' => 'all',
-            'required' => 0,
-        ),
-        // Заголовок
-        array(
-            'key' => 'field_actors_title_group',
-            'label' => 'Заголовок',
-            'name' => 'actors_title_group',
-            'type' => 'group',
-            'instructions' => 'Настройки заголовка секции',
-            'layout' => 'block',
-            'sub_fields' => array(
-                array(
-                    'key' => 'field_actors_title_part1',
-                    'label' => 'Первая часть',
-                    'name' => 'part1',
-                    'type' => 'text',
-                    'instructions' => 'Первая часть заголовка (например: "наші")',
-                    'default_value' => 'наші',
-                    'placeholder' => 'наші',
-                    'required' => 1,
-                ),
-                array(
-                    'key' => 'field_actors_title_part2',
-                    'label' => 'Вторая часть (в span)',
-                    'name' => 'part2',
-                    'type' => 'text',
-                    'instructions' => 'Вторая часть заголовка, которая будет в span (например: "актори")',
-                    'default_value' => 'актори',
-                    'placeholder' => 'актори',
-                    'required' => 1,
-                ),
-            ),
-        ),
-        // Подзаголовок
-        array(
-            'key' => 'field_actors_subtitle',
-            'label' => 'Подзаголовок',
-            'name' => 'actors_subtitle',
-            'type' => 'text',
-            'instructions' => 'Подзаголовок секции',
-            'default_value' => 'Команда, яка вміє працювати на камеру.',
-            'placeholder' => 'Команда, яка вміє працювати на камеру.',
-            'required' => 1,
-        ),
-        // Repeater для актеров
-        array(
-            'key' => 'field_actors_items',
-            'label' => 'Актеры',
-            'name' => 'actors_items',
-            'type' => 'repeater',
-            'instructions' => 'Добавьте актеров для слайдера. Если не заполнено, будут использованы актеры по умолчанию.',
-            'layout' => 'block',
-            'button_label' => 'Добавить актера',
-            'collapsed' => 'field_actors_item_title',
-            'sub_fields' => array(
-                array(
-                    'key' => 'field_actors_item_image',
-                    'label' => 'Фото актера',
-                    'name' => 'image',
-                    'type' => 'image',
-                    'instructions' => 'Фотография актера',
-                    'return_format' => 'array',
-                    'preview_size' => 'medium',
-                    'library' => 'all',
-                    'required' => 1,
-                ),
-                array(
-                    'key' => 'field_actors_item_title',
-                    'label' => 'Заголовок',
-                    'name' => 'title',
-                    'type' => 'text',
-                    'instructions' => 'Заголовок актера (например: "#Актор 1")',
-                    'default_value' => '',
-                    'placeholder' => '#Актор 1',
-                    'required' => 1,
-                ),
-            ),
-        ),
-    ),
-    'location' => array(
-        array(
-            array(
-                'param' => 'options_page',
-                'operator' => '==',
-                'value' => 'acf-options',
-            ),
-        ),
-    ),
-    'menu_order' => 5,
-    'position' => 'normal',
-    'style' => 'default',
-    'label_placement' => 'top',
-    'instruction_placement' => 'label',
-    'hide_on_screen' => '',
-    'active' => true,
-    'description' => 'Настройки для секции актеров на главной странице',
-));
-
-// Группа полей для Collab секции
-acf_add_local_field_group(array(
-    'key' => 'group_collab_section',
-    'title' => 'Collab Section - Секция этапов сотрудничества',
-    'fields' => array(
-        // Заголовок
-        array(
-            'key' => 'field_collab_title_group',
-            'label' => 'Заголовок',
-            'name' => 'collab_title_group',
-            'type' => 'group',
-            'instructions' => 'Настройки заголовка секции',
-            'layout' => 'block',
-            'sub_fields' => array(
-                array(
-                    'key' => 'field_collab_title_part1',
-                    'label' => 'Первая часть',
-                    'name' => 'part1',
-                    'type' => 'text',
-                    'instructions' => 'Первая часть заголовка (например: "етапи")',
-                    'default_value' => 'етапи',
-                    'placeholder' => 'етапи',
-                    'required' => 1,
-                ),
-                array(
-                    'key' => 'field_collab_title_part2',
-                    'label' => 'Вторая часть (в span)',
-                    'name' => 'part2',
-                    'type' => 'text',
-                    'instructions' => 'Вторая часть заголовка, которая будет в span (например: "співпраці")',
-                    'default_value' => 'співпраці',
-                    'placeholder' => 'співпраці',
-                    'required' => 1,
-                ),
-            ),
-        ),
-        // Подзаголовок
-        array(
-            'key' => 'field_collab_subtitle',
-            'label' => 'Подзаголовок',
-            'name' => 'collab_subtitle',
-            'type' => 'text',
-            'instructions' => 'Подзаголовок секции',
-            'default_value' => 'Ми розробляємо кожен крок співпраці з тобою, щоб створити найкращий результат.',
-            'placeholder' => 'Ми розробляємо кожен крок співпраці з тобою, щоб створити найкращий результат.',
-            'required' => 1,
-        ),
-        // Кнопки
-        array(
-            'key' => 'field_collab_buttons',
-            'label' => 'Кнопки',
-            'name' => 'collab_buttons',
-            'type' => 'repeater',
-            'instructions' => 'Добавьте кнопки (обычно 3: Push, your, business)',
-            'layout' => 'table',
-            'button_label' => 'Добавить кнопку',
-            'sub_fields' => array(
-                array(
-                    'key' => 'field_collab_button_text',
-                    'label' => 'Текст',
-                    'name' => 'text',
-                    'type' => 'text',
-                    'instructions' => 'Текст на кнопке',
-                    'default_value' => '',
-                    'placeholder' => 'Push',
-                    'required' => 1,
-                ),
-                array(
-                    'key' => 'field_collab_button_class',
-                    'label' => 'CSS класс',
-                    'name' => 'css_class',
-                    'type' => 'text',
-                    'instructions' => 'CSS класс для кнопки (например: button-1, button-2, button-3)',
-                    'default_value' => '',
-                    'placeholder' => 'button-1',
-                    'required' => 1,
-                ),
-            ),
-        ),
-        // Этапы сотрудничества
-        array(
-            'key' => 'field_collab_steps',
-            'label' => 'Этапы сотрудничества',
-            'name' => 'collab_steps',
-            'type' => 'repeater',
-            'instructions' => 'Добавьте этапы сотрудничества. Если не заполнено, будут использованы этапы по умолчанию.',
-            'layout' => 'block',
-            'button_label' => 'Добавить этап',
-            'collapsed' => 'field_collab_step_title',
-            'sub_fields' => array(
-                array(
-                    'key' => 'field_collab_step_number',
-                    'label' => 'Номер',
-                    'name' => 'number',
-                    'type' => 'text',
-                    'instructions' => 'Номер этапа (например: "01", "02")',
-                    'default_value' => '',
-                    'placeholder' => '01',
-                    'required' => 1,
-                ),
-                array(
-                    'key' => 'field_collab_step_title',
-                    'label' => 'Заголовок',
-                    'name' => 'title',
-                    'type' => 'text',
-                    'instructions' => 'Заголовок этапа',
-                    'default_value' => '',
-                    'placeholder' => 'Бриф',
-                    'required' => 1,
-                ),
-                array(
-                    'key' => 'field_collab_step_description',
-                    'label' => 'Описание',
-                    'name' => 'description',
-                    'type' => 'textarea',
-                    'instructions' => 'Описание этапа',
-                    'default_value' => '',
-                    'placeholder' => 'Заповнюєш форму, де розповідаєш про бізнес...',
-                    'rows' => 3,
-                    'required' => 1,
-                ),
-            ),
-        ),
-    ),
-    'location' => array(
-        array(
-            array(
-                'param' => 'options_page',
-                'operator' => '==',
-                'value' => 'acf-options',
-            ),
-        ),
-    ),
-    'menu_order' => 6,
-    'position' => 'normal',
-    'style' => 'default',
-    'label_placement' => 'top',
-    'instruction_placement' => 'label',
-    'hide_on_screen' => '',
-    'active' => true,
-    'description' => 'Настройки для секции этапов сотрудничества на главной странице',
-));
-
-// Группа полей для FAQ секции
-acf_add_local_field_group(array(
-    'key' => 'group_faq_section',
-    'title' => 'FAQ Section - Секция FAQ',
-    'fields' => array(
-        // Заголовок
-        array(
-            'key' => 'field_faq_title',
-            'label' => 'Заголовок',
-            'name' => 'faq_title',
-            'type' => 'text',
-            'instructions' => 'Заголовок секции FAQ',
-            'default_value' => 'FAQ',
-            'placeholder' => 'FAQ',
-            'required' => 1,
-        ),
-        // Папки (folders)
-        array(
-            'key' => 'field_faq_folders',
-            'label' => 'Папки FAQ',
-            'name' => 'faq_folders',
-            'type' => 'repeater',
-            'instructions' => 'Добавьте папки с вопросами. Если не заполнено, будут использованы папки по умолчанию.',
-            'layout' => 'block',
-            'button_label' => 'Добавить папку',
-            'collapsed' => 'field_faq_folder_tab_title',
-            'sub_fields' => array(
-                array(
-                    'key' => 'field_faq_folder_type',
-                    'label' => 'Тип папки',
-                    'name' => 'folder_type',
-                    'type' => 'select',
-                    'instructions' => 'Выберите тип папки: обычная с вопросами или контакты',
-                    'choices' => array(
-                        'questions' => 'Обычная (с вопросами)',
-                        'contacts' => 'Контакты',
-                    ),
-                    'default_value' => 'questions',
-                    'required' => 1,
-                ),
-                array(
-                    'key' => 'field_faq_folder_tab_title',
-                    'label' => 'Заголовок вкладки',
-                    'name' => 'tab_title',
-                    'type' => 'text',
-                    'instructions' => 'Заголовок вкладки папки (оставьте пустым для папки контактов)',
-                    'default_value' => '',
-                    'placeholder' => 'SMM-консалтинг',
-                    'required' => 0,
-                    'conditional_logic' => array(
-                        array(
-                            array(
-                                'field' => 'field_faq_folder_type',
-                                'operator' => '==',
-                                'value' => 'questions',
-                            ),
-                        ),
-                    ),
-                ),
-                array(
-                    'key' => 'field_faq_folder_color',
-                    'label' => 'Цвет папки',
-                    'name' => 'color',
-                    'type' => 'select',
-                    'instructions' => 'Выберите цвет папки',
-                    'choices' => array(
-                        'black' => 'Черный',
-                        'orange' => 'Оранжевый',
-                    ),
-                    'default_value' => 'black',
-                    'required' => 1,
-                ),
-                array(
-                    'key' => 'field_faq_folder_number',
-                    'label' => 'Номер папки',
-                    'name' => 'number',
-                    'type' => 'number',
-                    'instructions' => 'Номер папки для CSS класса (folder--1, folder--2 и т.д.)',
-                    'default_value' => 1,
-                    'min' => 1,
-                    'required' => 1,
-                ),
-                array(
-                    'key' => 'field_faq_folder_image_type',
-                    'label' => 'Тип изображения',
-                    'name' => 'image_type',
-                    'type' => 'select',
-                    'instructions' => 'Выберите тип изображения: одно изображение или несколько (socials)',
-                    'choices' => array(
-                        'single' => 'Одно изображение',
-                        'multiple' => 'Несколько изображений (socials)',
-                    ),
-                    'default_value' => 'single',
-                    'required' => 1,
-                ),
-                array(
-                    'key' => 'field_faq_folder_image',
-                    'label' => 'Изображение',
-                    'name' => 'image',
-                    'type' => 'image',
-                    'instructions' => 'Изображение для папки (используется если выбран тип "Одно изображение")',
-                    'return_format' => 'array',
-                    'preview_size' => 'medium',
-                    'library' => 'all',
-                    'required' => 0,
-                    'conditional_logic' => array(
-                        array(
-                            array(
-                                'field' => 'field_faq_folder_image_type',
-                                'operator' => '==',
-                                'value' => 'single',
-                            ),
-                        ),
-                    ),
-                ),
-                array(
-                    'key' => 'field_faq_folder_socials',
-                    'label' => 'Изображения соцсетей',
-                    'name' => 'socials',
-                    'type' => 'repeater',
-                    'instructions' => 'Добавьте изображения соцсетей (используется если выбран тип "Несколько изображений")',
-                    'layout' => 'table',
-                    'button_label' => 'Добавить изображение',
-                    'sub_fields' => array(
-                        array(
-                            'key' => 'field_faq_folder_social_image',
-                            'label' => 'Изображение',
-                            'name' => 'image',
-                            'type' => 'image',
-                            'instructions' => 'Изображение соцсети',
-                            'return_format' => 'array',
-                            'preview_size' => 'thumbnail',
-                            'library' => 'all',
-                            'required' => 1,
-                        ),
-                    ),
-                    'conditional_logic' => array(
-                        array(
-                            array(
-                                'field' => 'field_faq_folder_image_type',
-                                'operator' => '==',
-                                'value' => 'multiple',
-                            ),
-                        ),
-                    ),
-                ),
-                array(
-                    'key' => 'field_faq_folder_items',
-                    'label' => 'Вопросы',
-                    'name' => 'items',
-                    'type' => 'repeater',
-                    'instructions' => 'Добавьте вопросы для этой папки',
-                    'layout' => 'table',
-                    'button_label' => 'Добавить вопрос',
-                    'sub_fields' => array(
-                        array(
-                            'key' => 'field_faq_folder_item_text',
-                            'label' => 'Текст вопроса',
-                            'name' => 'text',
-                            'type' => 'text',
-                            'instructions' => 'Текст вопроса',
-                            'default_value' => '',
-                            'placeholder' => '01/Що входить у послугу SMM-консалтингу?',
-                            'required' => 1,
-                        ),
-                        array(
-                            'key' => 'field_faq_folder_item_link',
-                            'label' => 'Ссылка',
-                            'name' => 'link',
-                            'type' => 'url',
-                            'instructions' => 'Ссылка на вопрос',
-                            'default_value' => '#',
-                            'placeholder' => '#',
-                            'required' => 0,
-                        ),
-                    ),
-                    'conditional_logic' => array(
-                        array(
-                            array(
-                                'field' => 'field_faq_folder_type',
-                                'operator' => '==',
-                                'value' => 'questions',
-                            ),
-                        ),
-                    ),
-                ),
-                // Поля для папки контактов
-                array(
-                    'key' => 'field_faq_folder_contacts_group',
-                    'label' => 'Контакты',
-                    'name' => 'contacts_group',
-                    'type' => 'group',
-                    'instructions' => 'Настройки контактов для папки',
-                    'layout' => 'block',
-                    'sub_fields' => array(
-                        array(
-                            'key' => 'field_faq_folder_contacts_title',
-                            'label' => 'Заголовок',
-                            'name' => 'title',
-                            'type' => 'text',
-                            'instructions' => 'Заголовок блока контактов',
-                            'default_value' => 'контакти',
-                            'placeholder' => 'контакти',
-                            'required' => 1,
-                        ),
-                        array(
-                            'key' => 'field_faq_folder_contacts_description',
-                            'label' => 'Описание',
-                            'name' => 'description',
-                            'type' => 'textarea',
-                            'instructions' => 'Описание блока контактов',
-                            'default_value' => 'Хочеш обговорити проект або просто дізнатися, як ми можемо допомогти твоєму бізнесу рости? Зв\'яжись з нами будь-яким зручним способом — ми швидко відповімо!',
-                            'rows' => 3,
-                            'required' => 1,
-                        ),
-                        array(
-                            'key' => 'field_faq_folder_contacts_buttons',
-                            'label' => 'Кнопки действий',
-                            'name' => 'action_buttons',
-                            'type' => 'repeater',
-                            'instructions' => 'Добавьте кнопки действий (например: "Заповнити бриф", "Зв\'язатись з нами")',
-                            'layout' => 'table',
-                            'button_label' => 'Добавить кнопку',
-                            'sub_fields' => array(
-                                array(
-                                    'key' => 'field_faq_folder_contacts_button_text',
-                                    'label' => 'Текст кнопки',
-                                    'name' => 'text',
-                                    'type' => 'text',
-                                    'instructions' => 'Текст на кнопке',
-                                    'default_value' => '',
-                                    'placeholder' => 'Заповнити бриф',
-                                    'required' => 1,
-                                ),
-                            ),
-                        ),
-                        array(
-                            'key' => 'field_faq_folder_contacts_list',
-                            'label' => 'Список контактов',
-                            'name' => 'contacts_list',
-                            'type' => 'repeater',
-                            'instructions' => 'Добавьте контакты (telegram, email, телефон и т.д.)',
-                            'layout' => 'table',
-                            'button_label' => 'Добавить контакт',
-                            'sub_fields' => array(
-                                array(
-                                    'key' => 'field_faq_folder_contacts_list_name',
-                                    'label' => 'Название',
-                                    'name' => 'name',
-                                    'type' => 'text',
-                                    'instructions' => 'Название контакта (например: "telegram", "email")',
-                                    'default_value' => '',
-                                    'placeholder' => 'telegram',
-                                    'required' => 1,
-                                ),
-                                array(
-                                    'key' => 'field_faq_folder_contacts_list_value',
-                                    'label' => 'Значение',
-                                    'name' => 'value',
-                                    'type' => 'text',
-                                    'instructions' => 'Значение контакта (например: "@pushsmmagency", "pushsmmagency@gmail.com")',
-                                    'default_value' => '',
-                                    'placeholder' => '@pushsmmagency',
-                                    'required' => 1,
-                                ),
-                            ),
-                        ),
-                    ),
-                    'conditional_logic' => array(
-                        array(
-                            array(
-                                'field' => 'field_faq_folder_type',
-                                'operator' => '==',
-                                'value' => 'contacts',
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-        ),
-    ),
-    'location' => array(
-        array(
-            array(
-                'param' => 'options_page',
-                'operator' => '==',
-                'value' => 'acf-options',
-            ),
-        ),
-    ),
-    'menu_order' => 7,
-    'position' => 'normal',
-    'style' => 'default',
-    'label_placement' => 'top',
-    'instruction_placement' => 'label',
-    'hide_on_screen' => '',
-    'active' => true,
-    'description' => 'Настройки для секции FAQ на главной странице',
-));
-
-// Группа полей для Bonus секции
-acf_add_local_field_group(array(
-    'key' => 'group_bonus_section',
-    'title' => 'Bonus Section - Секция бонуса',
-    'fields' => array(
-        // Заголовок
-        array(
-            'key' => 'field_bonus_title_group',
-            'label' => 'Заголовок',
-            'name' => 'bonus_title_group',
-            'type' => 'group',
-            'instructions' => 'Настройки заголовка секции',
-            'layout' => 'block',
-            'sub_fields' => array(
-                array(
-                    'key' => 'field_bonus_title_first',
-                    'label' => 'Первая строка',
-                    'name' => 'first',
-                    'type' => 'text',
-                    'instructions' => 'Первая строка заголовка',
-                    'default_value' => 'Натисни на подарунок, щоб',
-                    'placeholder' => 'Натисни на подарунок, щоб',
-                    'required' => 1,
-                ),
-                array(
-                    'key' => 'field_bonus_title_second',
-                    'label' => 'Вторая строка',
-                    'name' => 'second',
-                    'type' => 'text',
-                    'instructions' => 'Вторая строка заголовка',
-                    'default_value' => 'отримати бонус',
-                    'placeholder' => 'отримати бонус',
-                    'required' => 1,
-                ),
-            ),
-        ),
-        // Изображения
-        array(
-            'key' => 'field_bonus_image_close',
-            'label' => 'Изображение закрытого подарка',
-            'name' => 'bonus_image_close',
-            'type' => 'image',
-            'instructions' => 'Изображение закрытого подарка (если не указано, будет использовано изображение по умолчанию)',
-            'return_format' => 'array',
-            'preview_size' => 'medium',
-            'library' => 'all',
-            'required' => 0,
-        ),
-        array(
-            'key' => 'field_bonus_image_open',
-            'label' => 'Изображение открытого подарка',
-            'name' => 'bonus_image_open',
-            'type' => 'image',
-            'instructions' => 'Изображение открытого подарка (если не указано, будет использовано изображение по умолчанию)',
-            'return_format' => 'array',
-            'preview_size' => 'medium',
-            'library' => 'all',
-            'required' => 0,
-        ),
-        // Заголовок контента
-        array(
-            'key' => 'field_bonus_content_title',
-            'label' => 'Заголовок контента',
-            'name' => 'bonus_content_title',
-            'type' => 'text',
-            'instructions' => 'Заголовок, который отображается внутри открытого подарка',
-            'default_value' => 'Бонус',
-            'placeholder' => 'Бонус',
-            'required' => 1,
-        ),
-    ),
-    'location' => array(
-        array(
-            array(
-                'param' => 'options_page',
-                'operator' => '==',
-                'value' => 'acf-options',
-            ),
-        ),
-    ),
-    'menu_order' => 8,
-    'position' => 'normal',
-    'style' => 'default',
-    'label_placement' => 'top',
-    'instruction_placement' => 'label',
-    'hide_on_screen' => '',
-    'active' => true,
-    'description' => 'Настройки для секции бонуса на главной странице',
-));
-
-// Создаем страницу опций, если её нет
-if( function_exists('acf_add_options_page') ) {
-    acf_add_options_page(array(
-        'page_title'    => 'Настройки темы',
-        'menu_title'    => 'Настройки темы',
-        'menu_slug'     => 'acf-options',
-        'capability'    => 'edit_posts',
-        'redirect'      => false
-    ));
+/**
+ * Функция для добавления префикса мультиязычности к именам полей
+ * @return string Префикс языка (например: '_ru', '_en') или пустая строка
+ */
+function carbon_lang_prefix() {
+    $prefix = '';
+    if ( ! defined( 'ICL_LANGUAGE_CODE' ) ) {
+        return $prefix;
+    }
+    $prefix = '_' . ICL_LANGUAGE_CODE;
+    return $prefix;
 }
 
-endif;
+add_action( 'carbon_fields_register_fields', 'crb_attach_theme_options' );
+function crb_attach_theme_options() {
 
+    // Список всех подстраниц опций
+    $subpages = array(
+        array( 'title' => 'Hero Section - Главная секция', 'slug' => 'hero_section.php' ),
+        array( 'title' => 'Services Section - Секция услуг', 'slug' => 'services_section.php' ),
+        array( 'title' => 'Why Us Section - Секция "Почему мы"', 'slug' => 'why_us_section.php' ),
+        array( 'title' => 'Push Start Section - Секция формы', 'slug' => 'push_start_section.php' ),
+        array( 'title' => 'Cases Section - Секция кейсов', 'slug' => 'cases_section.php' ),
+        array( 'title' => 'Actors Section - Секция актеров', 'slug' => 'actors_section.php' ),
+        array( 'title' => 'Collab Section - Секция этапов сотрудничества', 'slug' => 'collab_section.php' ),
+        array( 'title' => 'FAQ Section - Секция FAQ', 'slug' => 'faq_section.php' ),
+        array( 'title' => 'Bonus Section - Секция бонуса', 'slug' => 'bonus_section.php' ),
+    );
+    
+    // Формируем HTML с ссылками
+    $nav_html = '<div style="padding: 20px; background: #f5f5f5; border-radius: 4px; margin-bottom: 20px;">
+        <h3 style="margin-top: 0; margin-bottom: 15px;">Быстрая навигация по разделам настроек:</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px;">';
+    
+    foreach ( $subpages as $subpage ) {
+        $page_url = admin_url( 'admin.php?page=crb_carbon_fields_container_' . $subpage['slug'] );
+        $nav_html .= '<a href="' . esc_url( $page_url ) . '" style="display: block; padding: 12px 16px; background: #fff; border: 1px solid #ddd; border-radius: 4px; text-decoration: none; color: #2271b1; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05);" onmouseover="this.style.background=\'#2271b1\'; this.style.color=\'#fff\'; this.style.borderColor=\'#2271b1\';" onmouseout="this.style.background=\'#fff\'; this.style.color=\'#2271b1\'; this.style.borderColor=\'#ddd\';">📄 ' . esc_html( $subpage['title'] ) . '</a>';
+    }
+    
+    $nav_html .= '</div>
+        <p style="margin-top: 15px; margin-bottom: 0; color: #666; font-size: 13px;">Нажмите на любую ссылку выше, чтобы перейти к настройкам соответствующего раздела.</p>
+    </div>';
+    
+    $options = Container::make( 'theme_options', 'Опции' )
+        ->set_icon( 'dashicons-palmtree' )
+        ->add_fields( array(
+            Field::make( 'html', 'crb_options_navigation', __( 'Навигация по разделам' ) )
+                ->set_html( $nav_html ),
+        ) );
+    
+    // Hero Section - Главная секция
+    Container::make( 'theme_options', __( 'Hero Section - Главная секция' ) )
+        ->set_page_parent($options)
+        ->set_page_menu_position( 0 )
+        ->add_fields( array(
+        // Группа: Заголовок
+            Field::make( 'complex', 'hero_title_group' . carbon_lang_prefix(), __( 'Заголовок' ) )
+                ->set_help_text( 'Настройки заголовка hero секции' )
+                ->set_layout( 'tabbed-vertical' )
+                ->add_fields( array(
+                    Field::make( 'text', 'line1', __( 'Первая строка' ) )
+                        ->set_help_text( 'Первая строка заголовка (например: "Стильний")' )
+                        ->set_default_value( 'Стильний' )
+                        ->set_attribute( 'placeholder', 'Стильний' ),
+                    Field::make( 'text', 'line2', __( 'Вторая строка' ) )
+                        ->set_help_text( 'Вторая строка заголовка (например: "SMM для тебе")' )
+                        ->set_default_value( 'SMM для тебе' )
+                        ->set_attribute( 'placeholder', 'SMM для тебе' ),
+                ) ),
+        // Описание
+            Field::make( 'textarea', 'hero_description' . carbon_lang_prefix(), __( 'Описание' ) )
+                ->set_help_text( 'Текст описания в hero секции' )
+                ->set_default_value( 'Ми – Push Agency, креативне агентство для соцмереж, яке поєднує системний підхід і нестандартні ідеї. Тут ти знайдеш сучасний дизайн, зрозумілу навігацію і рішення, які реально працюють.' )
+                ->set_rows( 4 ),
+        // Группа: Кнопка
+            Field::make( 'complex', 'hero_button_group' . carbon_lang_prefix(), __( 'Кнопка' ) )
+                ->set_help_text( 'Настройки кнопки в hero секции' )
+                ->set_layout( 'tabbed-vertical' )
+                ->add_fields( array(
+                    Field::make( 'text', 'text', __( 'Текст кнопки' ) )
+                        ->set_help_text( 'Текст на кнопке' )
+                        ->set_default_value( 'Зв\'язатись з нами' )
+                        ->set_attribute( 'placeholder', 'Зв\'язатись з нами' )
+                        ->set_required( true ),
+                    Field::make( 'text', 'link', __( 'Ссылка' ) )
+                        ->set_help_text( 'URL ссылки кнопки' )
+                        ->set_default_value( '#' )
+                        ->set_attribute( 'placeholder', '#' )
+                        ->set_required( true ),
+                    Field::make( 'select', 'target', __( 'Целевая ссылка' ) )
+                        ->set_help_text( 'Куда откроется ссылка (сайт, новое окно)' )
+                        ->set_options( array(
+                        '_self' => 'На текущей странице',
+                        '_blank' => 'В новом окне',
+                        ) )
+                        ->set_default_value( '_self' )
+                        ->set_required( true ),
+                ) ),
+        // Изображение Push
+            Field::make( 'image', 'hero_push_image' . carbon_lang_prefix(), __( 'Изображение Push' ) )
+                ->set_help_text( 'Изображение Push в hero секции (если не указано, будет использовано изображение по умолчанию)' ),
+            // Фоновые элементы (Complex вместо Repeater)
+            Field::make( 'complex', 'hero_bg_items' . carbon_lang_prefix(), __( 'Фоновые элементы (соцсети)' ) )
+                ->set_help_text( 'Добавьте элементы фона (иконки соцсетей). Если не заполнено, будут использованы элементы по умолчанию.' )
+                ->set_layout( 'tabbed-vertical' )
+                ->add_fields( array(
+                    Field::make( 'image', 'image', __( 'Изображение' ) )
+                        ->set_help_text( 'Изображение иконки соцсети' )
+                        ->set_required( true ),
+                    Field::make( 'text', 'css_class', __( 'CSS класс' ) )
+                        ->set_help_text( 'CSS класс для элемента (например: item-inst, item-fb, item-tiktok)' )
+                        ->set_attribute( 'placeholder', 'item-inst' )
+                        ->set_required( true ),
+                    Field::make( 'text', 'alt', __( 'Alt текст' ) )
+                        ->set_help_text( 'Alt текст для изображения' )
+                        ->set_attribute( 'placeholder', 'inst' ),
+                    Field::make( 'text', 'shadows_count', __( 'Количество теней' ) )
+                        ->set_help_text( 'Количество элементов теней (0-3). Если 0, тени не будут отображаться.' )
+                        ->set_default_value( 0 )
+                        ->set_attribute( 'type', 'number' )
+                        ->set_attribute( 'data-min', 0 )
+                        ->set_attribute( 'data-max', 3 )
+                        ->set_attribute( 'data-step', 1 ),
+                ) ),
+        ) );
+
+    // Services Section - Секция услуг
+    Container::make( 'theme_options', __( 'Services Section - Секция услуг' ) )
+        ->set_page_parent($options)
+        ->set_page_menu_position( 1 )
+        ->add_fields( array(
+        // Заголовок
+            Field::make( 'complex', 'services_title_group' . carbon_lang_prefix(), __( 'Заголовок' ) )
+                ->set_help_text( 'Настройки заголовка секции услуг' )
+                ->set_layout( 'tabbed-vertical' )
+                ->add_fields( array(
+                    Field::make( 'text', 'part1', __( 'Первая часть' ) )
+                        ->set_help_text( 'Первая часть заголовка (например: "Наші")' )
+                        ->set_default_value( 'Наші' )
+                        ->set_attribute( 'placeholder', 'Наші' )
+                        ->set_required( true ),
+                    Field::make( 'text', 'part2', __( 'Вторая часть (в span)' ) )
+                        ->set_help_text( 'Вторая часть заголовка, которая будет в span (например: "послуги")' )
+                        ->set_default_value( 'послуги' )
+                        ->set_attribute( 'placeholder', 'послуги' )
+                        ->set_required( true ),
+                ) ),
+        // Repeater для услуг
+            Field::make( 'complex', 'services_items' . carbon_lang_prefix(), __( 'Услуги' ) )
+                ->set_help_text( 'Добавьте услуги для отображения в слайдере. Если не заполнено, будут использованы услуги по умолчанию.' )
+                ->set_layout( 'tabbed-vertical' )
+                ->add_fields( array(
+                    Field::make( 'image', 'image', __( 'Иконка' ) )
+                        ->set_help_text( 'Иконка услуги' )
+                        ->set_required( true ),
+                    Field::make( 'text', 'title', __( 'Заголовок' ) )
+                        ->set_help_text( 'Заголовок услуги (например: "01/SMM-консалтинг")' )
+                        ->set_attribute( 'placeholder', '01/SMM-консалтинг' )
+                        ->set_required( true ),
+                    Field::make( 'textarea', 'description', __( 'Описание' ) )
+                        ->set_help_text( 'Описание услуги' )
+                        ->set_attribute( 'placeholder', 'Повний аудит профілю з обговоренням і наданням SMM стратегії' )
+                        ->set_rows( 3 )
+                        ->set_required( true ),
+                ) ),
+        ) );
+
+    // Why Us Section - Секция "Почему мы"
+    Container::make( 'theme_options', __( 'Why Us Section - Секция "Почему мы"' ) )
+        ->set_page_parent($options)
+        ->set_page_menu_position( 2 )
+        ->add_fields( array(
+        // Эмодзи изображение
+            Field::make( 'image', 'whyus_emoji' . carbon_lang_prefix(), __( 'Эмодзи изображение' ) )
+                ->set_help_text( 'Изображение эмодзи для секции (если не указано, будет использовано изображение по умолчанию)' ),
+        // Заголовок
+            Field::make( 'complex', 'whyus_title_group' . carbon_lang_prefix(), __( 'Заголовок' ) )
+                ->set_help_text( 'Настройки заголовка секции' )
+                ->set_layout( 'tabbed-vertical' )
+                ->add_fields( array(
+                    Field::make( 'text', 'first', __( 'Первая часть' ) )
+                        ->set_help_text( 'Первая часть заголовка (например: "чому")' )
+                        ->set_default_value( 'чому' )
+                        ->set_attribute( 'placeholder', 'чому' )
+                        ->set_required( true ),
+                    Field::make( 'text', 'second', __( 'Вторая часть' ) )
+                        ->set_help_text( 'Вторая часть заголовка (например: "саме ми?")' )
+                        ->set_default_value( 'саме ми?' )
+                        ->set_attribute( 'placeholder', 'саме ми?' )
+                        ->set_required( true ),
+                ) ),
+        // Repeater для элементов
+            Field::make( 'complex', 'whyus_items' . carbon_lang_prefix(), __( 'Элементы' ) )
+                ->set_help_text( 'Добавьте элементы для секции "Почему мы". Если не заполнено, будут использованы элементы по умолчанию.' )
+                ->set_layout( 'tabbed-vertical' )
+                ->add_fields( array(
+                    Field::make( 'text', 'number', __( 'Номер' ) )
+                        ->set_help_text( 'Номер элемента (например: "01", "02")' )
+                        ->set_attribute( 'placeholder', '01' )
+                        ->set_required( true ),
+                    Field::make( 'text', 'title', __( 'Заголовок' ) )
+                        ->set_help_text( 'Заголовок элемента' )
+                        ->set_attribute( 'placeholder', 'Кожен крок має сенс' )
+                        ->set_required( true ),
+                    Field::make( 'textarea', 'description', __( 'Описание' ) )
+                        ->set_help_text( 'Описание элемента' )
+                        ->set_attribute( 'placeholder', 'Ми робимо тільки те, що реально працює...' )
+                        ->set_rows( 3 )
+                        ->set_required( true ),
+                    Field::make( 'image', 'bg_image', __( 'Фоновое изображение' ) )
+                        ->set_help_text( 'Фоновое изображение для элемента (опционально, для элементов с эффектами)' ),
+                    Field::make( 'text', 'css_classes', __( 'CSS классы' ) )
+                        ->set_help_text( 'CSS классы для элемента (например: "colorist item-3 i1" для элементов с эффектами)' )
+                        ->set_attribute( 'placeholder', 'colorist item-3 i1' ),
+                    Field::make( 'checkbox', 'has_light', __( 'Эффекты света' ) )
+                        ->set_help_text( 'Включить эффекты света для элемента' )
+                        ->set_option_value( 'yes' ),
+                ) ),
+        ) );
+
+    // Push Start Section - Секция формы
+    Container::make( 'theme_options', __( 'Push Start Section - Секция формы' ) )
+        ->set_page_parent($options)
+        ->set_page_menu_position( 3 )
+        ->add_fields( array(
+        // Изображение курсора
+            Field::make( 'image', 'pushstart_cursor_image' . carbon_lang_prefix(), __( 'Изображение курсора' ) )
+                ->set_help_text( 'Изображение курсора (если не указано, будет использовано изображение по умолчанию)' ),
+        // Заголовок
+            Field::make( 'complex', 'pushstart_title_group' . carbon_lang_prefix(), __( 'Заголовок' ) )
+                ->set_help_text( 'Настройки заголовка секции' )
+                ->set_layout( 'tabbed-vertical' )
+                ->add_fields( array(
+                    Field::make( 'text', 'line1', __( 'Первая строка' ) )
+                        ->set_help_text( 'Первая строка заголовка (например: "PUSH-СТАРТ")' )
+                        ->set_default_value( 'PUSH-СТАРТ' )
+                        ->set_attribute( 'placeholder', 'PUSH-СТАРТ' )
+                        ->set_required( true ),
+                    Field::make( 'text', 'line2', __( 'Вторая строка' ) )
+                        ->set_help_text( 'Вторая строка заголовка (например: "ДЛЯ ТВОГО БРЕНДУ")' )
+                        ->set_default_value( 'ДЛЯ ТВОГО БРЕНДУ' )
+                        ->set_attribute( 'placeholder', 'ДЛЯ ТВОГО БРЕНДУ' )
+                        ->set_required( true ),
+                ) ),
+        // Описание
+            Field::make( 'textarea', 'pushstart_description' . carbon_lang_prefix(), __( 'Описание' ) )
+                ->set_help_text( 'Текст описания в секции' )
+                ->set_default_value( 'Залиш свій телефон і ім\'я, і ми швидко зв\'яжемося з тобою, щоб зрозуміти твої цілі, підібрати найефективнішу стратегію, показати, як твої соцмережі можуть реально продавати.' )
+                ->set_rows( 4 )
+                ->set_required( true ),
+        // Группа: Форма
+            Field::make( 'complex', 'pushstart_form_group' . carbon_lang_prefix(), __( 'Настройки формы' ) )
+                ->set_help_text( 'Настройки формы обратной связи' )
+                ->set_layout( 'tabbed-vertical' )
+                ->add_fields( array(
+                    Field::make( 'text', 'name_placeholder', __( 'Плейсхолдер для имени' ) )
+                        ->set_help_text( 'Текст плейсхолдера для поля имени' )
+                        ->set_default_value( 'Ваше Ім\'я' )
+                        ->set_attribute( 'placeholder', 'Ваше Ім\'я' )
+                        ->set_required( true ),
+                    Field::make( 'text', 'phone_placeholder', __( 'Плейсхолдер для телефона' ) )
+                        ->set_help_text( 'Текст плейсхолдера для поля телефона' )
+                        ->set_default_value( 'Номер телефону' )
+                        ->set_attribute( 'placeholder', 'Номер телефону' )
+                        ->set_required( true ),
+                    Field::make( 'text', 'button_text', __( 'Текст кнопки' ) )
+                        ->set_help_text( 'Текст на кнопке отправки' )
+                        ->set_default_value( 'Зв\'язатись з нами' )
+                        ->set_attribute( 'placeholder', 'Зв\'язатись з нами' )
+                        ->set_required( true ),
+                    Field::make( 'text', 'form_action', __( 'Action формы' ) )
+                        ->set_help_text( 'URL для отправки формы (оставьте пустым для текущей страницы)' )
+                        ->set_attribute( 'placeholder', '' ),
+                ) ),
+        // Социальная ссылка
+            Field::make( 'text', 'pushstart_social_link' . carbon_lang_prefix(), __( 'Социальная ссылка' ) )
+                ->set_help_text( 'Ссылка на социальную сеть (Telegram, WhatsApp и т.д.)' )
+                ->set_default_value( '#' )
+                ->set_attribute( 'placeholder', '#' ),
+        ) );
+
+    // Cases Section - Секция кейсов
+    Container::make( 'theme_options', __( 'Cases Section - Секция кейсов' ) )
+        ->set_page_parent($options)
+        ->set_page_menu_position( 4 )
+        ->add_fields( array(
+        // Заголовок
+            Field::make( 'complex', 'cases_title_group' . carbon_lang_prefix(), __( 'Заголовок' ) )
+                ->set_help_text( 'Настройки заголовка секции' )
+                ->set_layout( 'tabbed-vertical' )
+                ->add_fields( array(
+                    Field::make( 'text', 'part1', __( 'Первая часть' ) )
+                        ->set_help_text( 'Первая часть заголовка (например: "Наші")' )
+                        ->set_default_value( 'Наші' )
+                        ->set_attribute( 'placeholder', 'Наші' )
+                        ->set_required( true ),
+                    Field::make( 'text', 'part2', __( 'Вторая часть' ) )
+                        ->set_help_text( 'Вторая часть заголовка (например: "Кейси")' )
+                        ->set_default_value( 'Кейси' )
+                        ->set_attribute( 'placeholder', 'Кейси' )
+                        ->set_required( true ),
+                ) ),
+        // Описание
+            Field::make( 'textarea', 'cases_description' . carbon_lang_prefix(), __( 'Описание' ) )
+                ->set_help_text( 'Текст описания в секции кейсов' )
+                ->set_default_value( 'Ми створюємо стратегії, які приносять реальні результати. Подивись, як ми допомагаємо брендам розвиватися в соціальних мережах, формувати впізнаваність і збільшувати продажі.' )
+                ->set_rows( 4 )
+                ->set_required( true ),
+        // Кнопки фильтров
+            Field::make( 'complex', 'cases_filter_buttons' . carbon_lang_prefix(), __( 'Кнопки фильтров' ) )
+                ->set_help_text( 'Добавьте кнопки фильтров для категорий кейсов' )
+                ->set_layout( 'tabbed-vertical' )
+                ->add_fields( array(
+                    Field::make( 'text', 'text', __( 'Текст кнопки' ) )
+                        ->set_help_text( 'Текст на кнопке фильтра' )
+                        ->set_attribute( 'placeholder', 'SMM-консалтинг' )
+                        ->set_required( true ),
+                    Field::make( 'text', 'slide_index', __( 'Индекс слайда' ) )
+                        ->set_help_text( 'Индекс слайда для фильтрации (data-slide-index)' )
+                        ->set_default_value( 0 )
+                        ->set_attribute( 'type', 'number' )
+                        ->set_attribute( 'data-min', 0 )
+                        ->set_required( true ),
+                ) ),
+        // Карточки кейсов
+            Field::make( 'complex', 'cases_cards' . carbon_lang_prefix(), __( 'Карточки кейсов' ) )
+                ->set_help_text( 'Добавьте карточки кейсов. Если не заполнено, будут использованы карточки по умолчанию.' )
+                ->set_layout( 'tabbed-vertical' )
+                ->add_fields( array(
+                    Field::make( 'text', 'title', __( 'Заголовок' ) )
+                        ->set_help_text( 'Заголовок кейса' )
+                        ->set_attribute( 'placeholder', 'СТРАТЕГІЯ РОСТУ ДЛЯ GLOWUP STUDIO' )
+                        ->set_required( true ),
+                    Field::make( 'textarea', 'description', __( 'Описание' ) )
+                        ->set_help_text( 'Описание кейса' )
+                        ->set_attribute( 'placeholder', 'Ми допомогли сформувати сильний бренд...' )
+                        ->set_rows( 4 )
+                        ->set_required( true ),
+                    Field::make( 'text', 'button_text', __( 'Текст кнопки' ) )
+                        ->set_help_text( 'Текст на кнопке "Детальніше"' )
+                        ->set_default_value( 'Детальніше' )
+                        ->set_attribute( 'placeholder', 'Детальніше' ),
+                    // KPI метрики (вложенный complex)
+                    Field::make( 'complex', 'kpi', __( 'KPI метрики' ) )
+                        ->set_help_text( 'Добавьте KPI метрики для кейса' )
+                        ->set_layout( 'tabbed-vertical' )
+                        ->add_fields( array(
+                            Field::make( 'text', 'kpi_value', __( 'Значение' ) )
+                                ->set_help_text( 'Значение метрики (например: "+450", "320%")' )
+                                ->set_attribute( 'placeholder', '+450' )
+                                ->set_required( true ),
+                            Field::make( 'text', 'label', __( 'Подпись' ) )
+                                ->set_help_text( 'Подпись метрики (например: "продажів за місяць")' )
+                                ->set_attribute( 'placeholder', 'продажів за місяць' )
+                                ->set_required( true ),
+                        ) ),
+                ) ),
+        ) );
+
+    // Actors Section - Секция актеров
+    Container::make( 'theme_options', __( 'Actors Section - Секция актеров' ) )
+        ->set_page_parent($options)
+        ->set_page_menu_position( 5 )
+        ->add_fields( array(
+        // Эмодзи изображение
+            Field::make( 'image', 'actors_emoji' . carbon_lang_prefix(), __( 'Эмодзи изображение' ) )
+                ->set_help_text( 'Изображение эмодзи для секции (если не указано, будет использовано изображение по умолчанию)' ),
+        // Заголовок
+            Field::make( 'complex', 'actors_title_group' . carbon_lang_prefix(), __( 'Заголовок' ) )
+                ->set_help_text( 'Настройки заголовка секции' )
+                ->set_layout( 'tabbed-vertical' )
+                ->add_fields( array(
+                    Field::make( 'text', 'part1', __( 'Первая часть' ) )
+                        ->set_help_text( 'Первая часть заголовка (например: "наші")' )
+                        ->set_default_value( 'наші' )
+                        ->set_attribute( 'placeholder', 'наші' )
+                        ->set_required( true ),
+                    Field::make( 'text', 'part2', __( 'Вторая часть (в span)' ) )
+                        ->set_help_text( 'Вторая часть заголовка, которая будет в span (например: "актори")' )
+                        ->set_default_value( 'актори' )
+                        ->set_attribute( 'placeholder', 'актори' )
+                        ->set_required( true ),
+                ) ),
+        // Подзаголовок
+            Field::make( 'text', 'actors_subtitle' . carbon_lang_prefix(), __( 'Подзаголовок' ) )
+                ->set_help_text( 'Подзаголовок секции' )
+                ->set_default_value( 'Команда, яка вміє працювати на камеру.' )
+                ->set_attribute( 'placeholder', 'Команда, яка вміє працювати на камеру.' )
+                ->set_required( true ),
+        // Repeater для актеров
+            Field::make( 'complex', 'actors_items' . carbon_lang_prefix(), __( 'Актеры' ) )
+                ->set_help_text( 'Добавьте актеров для слайдера. Если не заполнено, будут использованы актеры по умолчанию.' )
+                ->set_layout( 'tabbed-vertical' )
+                ->add_fields( array(
+                    Field::make( 'image', 'image', __( 'Фото актера' ) )
+                        ->set_help_text( 'Фотография актера' )
+                        ->set_required( true ),
+                    Field::make( 'text', 'title', __( 'Заголовок' ) )
+                        ->set_help_text( 'Заголовок актера (например: "#Актор 1")' )
+                        ->set_attribute( 'placeholder', '#Актор 1' )
+                        ->set_required( true ),
+                ) ),
+        ) );
+
+    // Collab Section - Секция этапов сотрудничества
+    Container::make( 'theme_options', __( 'Collab Section - Секция этапов сотрудничества' ) )
+        ->set_page_parent($options)
+        ->set_page_menu_position( 6 )
+        ->add_fields( array(
+        // Заголовок
+            Field::make( 'complex', 'collab_title_group' . carbon_lang_prefix(), __( 'Заголовок' ) )
+                ->set_help_text( 'Настройки заголовка секции' )
+                ->set_layout( 'tabbed-vertical' )
+                ->add_fields( array(
+                    Field::make( 'text', 'part1', __( 'Первая часть' ) )
+                        ->set_help_text( 'Первая часть заголовка (например: "етапи")' )
+                        ->set_default_value( 'етапи' )
+                        ->set_attribute( 'placeholder', 'етапи' )
+                        ->set_required( true ),
+                    Field::make( 'text', 'part2', __( 'Вторая часть (в span)' ) )
+                        ->set_help_text( 'Вторая часть заголовка, которая будет в span (например: "співпраці")' )
+                        ->set_default_value( 'співпраці' )
+                        ->set_attribute( 'placeholder', 'співпраці' )
+                        ->set_required( true ),
+                ) ),
+        // Подзаголовок
+            Field::make( 'text', 'collab_subtitle' . carbon_lang_prefix(), __( 'Подзаголовок' ) )
+                ->set_help_text( 'Подзаголовок секции' )
+                ->set_default_value( 'Ми розробляємо кожен крок співпраці з тобою, щоб створити найкращий результат.' )
+                ->set_attribute( 'placeholder', 'Ми розробляємо кожен крок співпраці з тобою, щоб створити найкращий результат.' )
+                ->set_required( true ),
+        // Кнопки
+            Field::make( 'complex', 'collab_buttons' . carbon_lang_prefix(), __( 'Кнопки' ) )
+                ->set_help_text( 'Добавьте кнопки (обычно 3: Push, your, business)' )
+                ->set_layout( 'tabbed-vertical' )
+                ->add_fields( array(
+                    Field::make( 'text', 'text', __( 'Текст' ) )
+                        ->set_help_text( 'Текст на кнопке' )
+                        ->set_attribute( 'placeholder', 'Push' )
+                        ->set_required( true ),
+                    Field::make( 'text', 'css_class', __( 'CSS класс' ) )
+                        ->set_help_text( 'CSS класс для кнопки (например: button-1, button-2, button-3)' )
+                        ->set_attribute( 'placeholder', 'button-1' )
+                        ->set_required( true ),
+                ) ),
+        // Этапы сотрудничества
+            Field::make( 'complex', 'collab_steps' . carbon_lang_prefix(), __( 'Этапы сотрудничества' ) )
+                ->set_help_text( 'Добавьте этапы сотрудничества. Если не заполнено, будут использованы этапы по умолчанию.' )
+                ->set_layout( 'tabbed-vertical' )
+                ->add_fields( array(
+                    Field::make( 'text', 'number', __( 'Номер' ) )
+                        ->set_help_text( 'Номер этапа (например: "01", "02")' )
+                        ->set_attribute( 'placeholder', '01' )
+                        ->set_required( true ),
+                    Field::make( 'text', 'title', __( 'Заголовок' ) )
+                        ->set_help_text( 'Заголовок этапа' )
+                        ->set_attribute( 'placeholder', 'Бриф' )
+                        ->set_required( true ),
+                    Field::make( 'textarea', 'description', __( 'Описание' ) )
+                        ->set_help_text( 'Описание этапа' )
+                        ->set_attribute( 'placeholder', 'Заповнюєш форму, де розповідаєш про бізнес...' )
+                        ->set_rows( 3 )
+                        ->set_required( true ),
+                ) ),
+        ) );
+
+    // Bonus Section - Секция бонуса
+    Container::make( 'theme_options', __( 'Bonus Section - Секция бонуса' ) )
+        ->set_page_parent($options)
+        ->set_page_menu_position( 8 )
+        ->add_fields( array(
+        // Заголовок
+            Field::make( 'complex', 'bonus_title_group' . carbon_lang_prefix(), __( 'Заголовок' ) )
+                ->set_help_text( 'Настройки заголовка секции' )
+                ->set_layout( 'tabbed-vertical' )
+                ->add_fields( array(
+                    Field::make( 'text', 'first', __( 'Первая строка' ) )
+                        ->set_help_text( 'Первая строка заголовка' )
+                        ->set_default_value( 'Натисни на подарунок, щоб' )
+                        ->set_attribute( 'placeholder', 'Натисни на подарунок, щоб' )
+                        ->set_required( true ),
+                    Field::make( 'text', 'second', __( 'Вторая строка' ) )
+                        ->set_help_text( 'Вторая строка заголовка' )
+                        ->set_default_value( 'отримати бонус' )
+                        ->set_attribute( 'placeholder', 'отримати бонус' )
+                        ->set_required( true ),
+                ) ),
+        // Изображения
+            Field::make( 'image', 'bonus_image_close' . carbon_lang_prefix(), __( 'Изображение закрытого подарка' ) )
+                ->set_help_text( 'Изображение закрытого подарка (если не указано, будет использовано изображение по умолчанию)' ),
+            Field::make( 'image', 'bonus_image_open' . carbon_lang_prefix(), __( 'Изображение открытого подарка' ) )
+                ->set_help_text( 'Изображение открытого подарка (если не указано, будет использовано изображение по умолчанию)' ),
+        // Заголовок контента
+            Field::make( 'text', 'bonus_content_title' . carbon_lang_prefix(), __( 'Заголовок контента' ) )
+                ->set_help_text( 'Заголовок, который отображается внутри открытого подарка' )
+                ->set_default_value( 'Бонус' )
+                ->set_attribute( 'placeholder', 'Бонус' )
+                ->set_required( true ),
+        ) );
+
+    // FAQ Section - Секция FAQ
+    Container::make( 'theme_options', __( 'FAQ Section - Секция FAQ' ) )
+        ->set_page_parent($options)
+        ->set_page_menu_position( 7 )
+        ->add_fields( array(
+        // Заголовок секции
+            Field::make( 'text', 'faq_title' . carbon_lang_prefix(), __( 'Заголовок секции' ) )
+                ->set_help_text( 'Заголовок секции FAQ' )
+                ->set_default_value( 'FAQ' )
+                ->set_attribute( 'placeholder', 'FAQ' )
+                ->set_required( true ),
+        // Папки FAQ
+            Field::make( 'complex', 'faq_folders' . carbon_lang_prefix(), __( 'Папки FAQ' ) )
+                ->set_help_text( 'Добавьте папки для FAQ секции. Если не заполнено, будут использованы папки по умолчанию.' )
+                ->set_layout( 'tabbed-vertical' )
+                ->add_fields( array(
+                    Field::make( 'text', 'title', __( 'Название папки' ) )
+                        ->set_help_text( 'Название папки (например: "SMM-консалтинг")' )
+                        ->set_attribute( 'placeholder', 'SMM-консалтинг' )
+                        ->set_required( true ),
+                    Field::make( 'select', 'color', __( 'Цвет папки' ) )
+                        ->set_help_text( 'Цвет папки (black или orange)' )
+                        ->set_options( array(
+                            'black' => 'Черный',
+                            'orange' => 'Оранжевый',
+                        ) )
+                        ->set_default_value( 'black' )
+                        ->set_required( true ),
+                    Field::make( 'select', 'image_type', __( 'Тип изображения' ) )
+                        ->set_help_text( 'Тип изображения: одно изображение или социальные сети' )
+                        ->set_options( array(
+                            'single' => 'Одно изображение',
+                            'socials' => 'Социальные сети (3 изображения)',
+                            'none' => 'Без изображения',
+                        ) )
+                        ->set_default_value( 'single' )
+                        ->set_required( true ),
+                    Field::make( 'image', 'image', __( 'Изображение' ) )
+                        ->set_help_text( 'Изображение для папки (используется если тип "Одно изображение")' )
+                        ->set_conditional_logic( array(
+                            array(
+                                'field' => 'image_type',
+                                'value' => 'single',
+                            )
+                        ) ),
+                    Field::make( 'image', 'social_fb', __( 'Facebook иконка' ) )
+                        ->set_help_text( 'Иконка Facebook (используется если тип "Социальные сети")' )
+                        ->set_conditional_logic( array(
+                            array(
+                                'field' => 'image_type',
+                                'value' => 'socials',
+                            )
+                        ) ),
+                    Field::make( 'image', 'social_tt', __( 'TikTok иконка' ) )
+                        ->set_help_text( 'Иконка TikTok (используется если тип "Социальные сети")' )
+                        ->set_conditional_logic( array(
+                            array(
+                                'field' => 'image_type',
+                                'value' => 'socials',
+                            )
+                        ) ),
+                    Field::make( 'image', 'social_inst', __( 'Instagram иконка' ) )
+                        ->set_help_text( 'Иконка Instagram (используется если тип "Социальные сети")' )
+                        ->set_conditional_logic( array(
+                            array(
+                                'field' => 'image_type',
+                                'value' => 'socials',
+                            )
+                        ) ),
+                    Field::make( 'complex', 'questions', __( 'Вопросы' ) )
+                        ->set_help_text( 'Добавьте вопросы для этой папки' )
+                        ->set_layout( 'tabbed-vertical' )
+                        ->add_fields( array(
+                            Field::make( 'text', 'number', __( 'Номер вопроса' ) )
+                                ->set_help_text( 'Номер вопроса (например: "01", "02")' )
+                                ->set_attribute( 'placeholder', '01' )
+                                ->set_required( true ),
+                            Field::make( 'text', 'text', __( 'Текст вопроса' ) )
+                                ->set_help_text( 'Текст вопроса' )
+                                ->set_attribute( 'placeholder', 'Що входить у послугу SMM-консалтингу?' )
+                                ->set_required( true ),
+                            Field::make( 'text', 'link', __( 'Ссылка' ) )
+                                ->set_help_text( 'Ссылка на вопрос (оставьте пустым для #)' )
+                                ->set_default_value( '#' )
+                                ->set_attribute( 'placeholder', '#' ),
+                        ) ),
+                    Field::make( 'checkbox', 'is_contacts', __( 'Это секция контактов' ) )
+                        ->set_help_text( 'Отметьте, если это последняя папка с контактами' )
+                        ->set_option_value( 'yes' ),
+                ) ),
+        // Контакты (для последней папки)
+            Field::make( 'complex', 'faq_contacts' . carbon_lang_prefix(), __( 'Контакты' ) )
+                ->set_help_text( 'Настройки секции контактов в последней папке FAQ' )
+                ->set_layout( 'tabbed-vertical' )
+                ->add_fields( array(
+                    Field::make( 'text', 'title', __( 'Заголовок' ) )
+                        ->set_help_text( 'Заголовок секции контактов' )
+                        ->set_default_value( 'контакти' )
+                        ->set_attribute( 'placeholder', 'контакти' )
+                        ->set_required( true ),
+                    Field::make( 'textarea', 'description', __( 'Описание' ) )
+                        ->set_help_text( 'Описание секции контактов' )
+                        ->set_default_value( 'Хочеш обговорити проект або просто дізнатися, як ми можемо допомогти твоєму бізнесу рости? Зв\'яжись з нами будь-яким зручним способом — ми швидко відповімо!' )
+                        ->set_rows( 4 )
+                        ->set_required( true ),
+                    Field::make( 'complex', 'buttons', __( 'Кнопки действий' ) )
+                        ->set_help_text( 'Кнопки действий (Заповнити бриф, Зв\'язатись з нами)' )
+                        ->set_layout( 'tabbed-vertical' )
+                        ->add_fields( array(
+                            Field::make( 'text', 'text', __( 'Текст кнопки' ) )
+                                ->set_help_text( 'Текст на кнопке' )
+                                ->set_attribute( 'placeholder', 'Заповнити бриф' )
+                                ->set_required( true ),
+                            Field::make( 'text', 'link', __( 'Ссылка' ) )
+                                ->set_help_text( 'Ссылка кнопки' )
+                                ->set_default_value( '#' )
+                                ->set_attribute( 'placeholder', '#' ),
+                        ) ),
+                    Field::make( 'complex', 'contact_items', __( 'Контактные данные' ) )
+                        ->set_help_text( 'Контактные данные (Telegram, Email, Телефон)' )
+                        ->set_layout( 'tabbed-vertical' )
+                        ->add_fields( array(
+                            Field::make( 'text', 'name', __( 'Название' ) )
+                                ->set_help_text( 'Название контакта (например: "telegram", "email", "телефон")' )
+                                ->set_attribute( 'placeholder', 'telegram' )
+                                ->set_required( true ),
+                            Field::make( 'text', 'contact_value', __( 'Значение' ) )
+                                ->set_help_text( 'Значение контакта (например: "@pushsmmagency", "pushsmmagency@gmail.com")' )
+                                ->set_attribute( 'placeholder', '@pushsmmagency' )
+                                ->set_required( true ),
+                        ) ),
+                ) ),
+        ) );
+}

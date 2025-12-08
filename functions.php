@@ -77,6 +77,60 @@ function img_url($path) {
     return get_template_directory_uri() . '/assets/images/' . ltrim($path, '/');
 }
 
+/**
+ * Проверяет, является ли текущая страница главной, учитывая префиксы языков Polylang
+ * @return bool true если это главная страница (с учетом языковых префиксов)
+ */
+function push_is_front_page() {
+    // Стандартная проверка WordPress
+    if (is_front_page()) {
+        return true;
+    }
+    
+    // Если Polylang активен, проверяем через него
+    if (function_exists('pll_current_language')) {
+        // Получаем текущий URL без домена
+        $current_url = $_SERVER['REQUEST_URI'] ?? '';
+        $current_url = trim($current_url, '/');
+        
+        // Получаем текущий язык
+        $current_lang = pll_current_language();
+        
+        // Если URL состоит только из префикса языка (например: /ru/, /en/)
+        // или пустой (главная страница), то это главная страница
+        if (empty($current_url) || $current_url === $current_lang) {
+            return true;
+        }
+        
+        // Проверяем, является ли это главной страницей для текущего языка
+        if (function_exists('pll_home_url')) {
+            $home_url = pll_home_url($current_lang);
+            $current_full_url = home_url($_SERVER['REQUEST_URI'] ?? '');
+            
+            // Нормализуем URL (убираем trailing slash)
+            $home_url = untrailingslashit($home_url);
+            $current_full_url = untrailingslashit($current_full_url);
+            
+            if ($home_url === $current_full_url) {
+                return true;
+            }
+        }
+        
+        // Проверяем через is_home() и is_page() с ID главной страницы
+        if (is_home() && !is_paged()) {
+            return true;
+        }
+        
+        // Если установлена статическая главная страница, проверяем её ID
+        $page_on_front = get_option('page_on_front');
+        if ($page_on_front && is_page($page_on_front)) {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
 // Кастомный Walker для мобильного меню
 class Mobile_Menu_Walker extends Walker_Nav_Menu {
     function start_el(&$output, $item, $depth = 0, $args = array(), $id = 0) {
@@ -295,30 +349,129 @@ class Footer_Menu_Walker extends Walker_Nav_Menu {
     }
 }
 
-// Подключение ACF полей
+// Инициализация Carbon Fields
+add_action( 'after_setup_theme', 'crb_load' );
+function crb_load() {
+    // Проверяем наличие Carbon Fields
+    if ( file_exists( get_template_directory() . '/vendor/autoload.php' ) ) {
+        require_once get_template_directory() . '/vendor/autoload.php';
+    } elseif ( file_exists( ABSPATH . 'vendor/autoload.php' ) ) {
+        require_once ABSPATH . 'vendor/autoload.php';
+    }
+    
+    \Carbon_Fields\Carbon_Fields::boot();
+}
+
+// Подключение Carbon Fields полей
 if( file_exists(get_template_directory() . '/acf-fields.php') ) {
     require_once get_template_directory() . '/acf-fields.php';
 }
 
-// Закрытие всех postbox по умолчанию в настройках темы
-function push_close_acf_postboxes() {
-    $screen = get_current_screen();
-    if ($screen && ($screen->id === 'toplevel_page_acf-options' || strpos($screen->id, 'acf-options') !== false)) {
-        ?>
-        <script type="text/javascript">
-        jQuery(document).ready(function($) {
-            // Закрываем все postbox по умолчанию
-            $('.postbox').addClass('closed');
-            // Также закрываем все внутри repeater полей
-            $('.acf-repeater .acf-row').not('.acf-clone').addClass('-collapsed');
-            // Закрываем все группы полей внутри postbox
-            $('.acf-fields > .acf-field-group').addClass('-collapsed');
-        });
-        </script>
-        <?php
+// Вспомогательные функции для работы с Carbon Fields (совместимость с ACF)
+if ( ! function_exists( 'carbon_lang_prefix' ) ) {
+    /**
+     * Функция для добавления префикса мультиязычности к именам полей
+     * @return string Префикс языка (например: '_ru', '_en') или пустая строка
+     */
+    function carbon_lang_prefix() {
+        $prefix = '';
+        // Проверяем наличие константы ICL_LANGUAGE_CODE (WPML)
+        if ( ! defined( 'ICL_LANGUAGE_CODE' ) ) {
+            // Если WPML не активен, пробуем получить язык через Polylang
+            if ( function_exists( 'pll_current_language' ) ) {
+                $current_lang = pll_current_language();
+                if ( ! empty( $current_lang ) ) {
+                    $prefix = '_' . $current_lang;
+                }
+            }
+            return $prefix;
+        }
+        $prefix = '_' . ICL_LANGUAGE_CODE;
+        return $prefix;
     }
 }
-add_action('admin_footer', 'push_close_acf_postboxes');
+
+if ( ! function_exists( 'get_field' ) ) {
+    /**
+     * Получить значение поля из Carbon Fields (совместимость с ACF)
+     * Автоматически добавляет префикс языка для мультиязычности
+     * @param string $field_name Имя поля
+     * @param string|int $post_id ID поста или 'option' для опций темы
+     * @return mixed Значение поля
+     */
+    function get_field( $field_name, $post_id = null ) {
+        if ( $post_id === 'option' || $post_id === null ) {
+            // Добавляем префикс языка к имени поля
+            $field_name_with_prefix = $field_name . carbon_lang_prefix();
+            $value = carbon_get_theme_option( $field_name_with_prefix );
+            
+            // Для complex полей Carbon Fields возвращает массив массивов
+            // Если это массив с одним элементом-массивом, возвращаем первый элемент
+            // Это нужно для совместимости с ACF group полями
+            if ( is_array( $value ) && ! empty( $value ) && isset( $value[0] ) && is_array( $value[0] ) ) {
+                $first_item = $value[0];
+                // Проверяем, что это не числовой массив (не repeater)
+                $keys = array_keys( $first_item );
+                if ( ! empty( $keys ) && ! is_numeric( $keys[0] ) ) {
+                    // Это complex поле с одним элементом (group), возвращаем первый элемент
+                    return $first_item;
+                }
+            }
+            
+            return $value;
+        }
+        
+        return carbon_get_post_meta( $post_id, $field_name );
+    }
+}
+
+/**
+ * Получить URL изображения из Carbon Fields
+ * Carbon Fields возвращает ID изображения, эта функция преобразует его в URL
+ * @param int|string $image_id ID изображения или массив (для совместимости с ACF)
+ * @param string $size Размер изображения
+ * @return string|false URL изображения или false
+ */
+function crb_get_image_url( $image_id, $size = 'full' ) {
+    if ( is_array( $image_id ) && isset( $image_id['url'] ) ) {
+        // Совместимость с ACF форматом
+        return $image_id['url'];
+    }
+    
+    if ( is_numeric( $image_id ) ) {
+        return wp_get_attachment_image_url( $image_id, $size );
+    }
+    
+    return false;
+}
+
+/**
+ * Получить массив данных изображения из Carbon Fields (совместимость с ACF)
+ * @param int|string $image_id ID изображения или массив (для совместимости с ACF)
+ * @param string $size Размер изображения
+ * @return array|false Массив с url, alt, title или false
+ */
+function crb_get_image( $image_id, $size = 'full' ) {
+    if ( is_array( $image_id ) && isset( $image_id['url'] ) ) {
+        // Уже в формате ACF
+        return $image_id;
+    }
+    
+    if ( is_numeric( $image_id ) ) {
+        $url = wp_get_attachment_image_url( $image_id, $size );
+        $alt = get_post_meta( $image_id, '_wp_attachment_image_alt', true );
+        $title = get_the_title( $image_id );
+        
+        return array(
+            'url' => $url,
+            'alt' => $alt,
+            'title' => $title,
+            'id' => $image_id,
+        );
+    }
+    
+    return false;
+}
 
 // Кастомный Walker для нижних ссылок в футере
 class Footer_Privacy_Walker extends Walker_Nav_Menu {

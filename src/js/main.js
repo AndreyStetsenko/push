@@ -1,4 +1,4 @@
-import './components/langSelector.js';
+import { initLangSelector } from './components/langSelector.js';
 import { initCasesSlider } from './components/casesSlider.js';
 import { initCasesModal } from './components/casesModal.js';
 import { initActorsSlider } from './components/actorsSlider.js';
@@ -9,8 +9,9 @@ import { initWhyusLight } from './components/whyusLight.js';
 import { initInfoTitle } from './components/infoTitle.js';
 import { initHeroTitle } from './components/heroTitle.js';
 
-// Инициализация слайдеров
+// Инициализация всех компонентов
 document.addEventListener('DOMContentLoaded', () => {
+    initLangSelector();
     initCasesSlider();
     initCasesModal();
     initActorsSlider();

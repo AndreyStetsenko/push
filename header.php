@@ -9,7 +9,7 @@
 <?php if (function_exists('wp_body_open')) wp_body_open(); ?>
 
 <div id="page" class="site">
-    <div class="header<?php echo !is_front_page() ? ' info' : ''; ?>">
+    <div class="header<?php echo !push_is_front_page() ? ' info' : ''; ?>">
         <div class="container">
             <div class="header__wrapp">
                 <div class="header__logo">
@@ -29,8 +29,45 @@
                     </div>
 
                     <div class="header__lang">
+                        <?php
+                        // Получаем текущий язык и список языков из Polylang
+                        $current_lang = function_exists('pll_current_language') ? pll_current_language() : 'uk';
+                        
+                        // Получаем все языки с параметром hide_if_empty => false, чтобы показывать все языки
+                        $languages = function_exists('pll_the_languages') ? pll_the_languages(array(
+                            'raw' => 1,
+                            'hide_if_empty' => false,
+                            'hide_if_no_translation' => false,
+                            'force_home' => false
+                        )) : array();
+                        
+                        // Маппинг кодов языков на названия
+                        $lang_names = array(
+                            'uk' => 'Укр',
+                            'en' => 'Eng',
+                            'ru' => 'Рус'
+                        );
+                        
+                        // Получаем название текущего языка
+                        $current_lang_name = isset($lang_names[$current_lang]) ? $lang_names[$current_lang] : 'Укр';
+                        
+                        // Если языки не получены, пробуем альтернативный способ
+                        if (empty($languages) && function_exists('pll_languages_list')) {
+                            $lang_slugs = pll_languages_list();
+                            $languages = array();
+                            foreach ($lang_slugs as $slug) {
+                                $url = function_exists('pll_home_url') ? pll_home_url($slug) : home_url();
+                                $languages[] = array(
+                                    'slug' => $slug,
+                                    'name' => isset($lang_names[$slug]) ? $lang_names[$slug] : $slug,
+                                    'url' => $url,
+                                    'current_lang' => $slug === $current_lang
+                                );
+                            }
+                        }
+                        ?>
                         <button class="header__lang-toggle" type="button" aria-expanded="false">
-                            <span class="header__lang-current"><?php echo mb_strtoupper(function_exists('acf_multilang_get_current_lang') ? acf_multilang_get_current_lang() : 'UK'); ?></span>
+                            <span class="header__lang-current"><?php echo esc_html($current_lang_name); ?></span>
                             <div class="header__lang-icon">
                                 <svg class="header__lang-chevron" width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M1 1L6 6L11 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -38,15 +75,86 @@
                             </div>
                         </button>
                         <ul class="header__lang-list">
-                            <li class="header__lang-item">
-                                <button type="button" class="header__lang-option" data-lang="uk">Укр</button>
-                            </li>
-                            <li class="header__lang-item">
-                                <button type="button" class="header__lang-option" data-lang="en">Eng</button>
-                            </li>
-                            <li class="header__lang-item">
-                                <button type="button" class="header__lang-option" data-lang="ru">Рус</button>
-                            </li>
+                            <?php if (!empty($languages) && is_array($languages)): ?>
+                                <?php foreach ($languages as $lang): ?>
+                                    <?php 
+                                    // Проверяем структуру данных языка
+                                    $lang_code = isset($lang['slug']) ? $lang['slug'] : (isset($lang['code']) ? $lang['code'] : '');
+                                    if (empty($lang_code)) {
+                                        continue; // Пропускаем если нет кода языка
+                                    }
+                                    
+                                    $lang_name = isset($lang_names[$lang_code]) ? $lang_names[$lang_code] : (isset($lang['name']) ? $lang['name'] : $lang_code);
+                                    $is_current = $lang_code === $current_lang;
+                                    
+                                    // Получаем URL языка
+                                    $lang_url = isset($lang['url']) ? $lang['url'] : '';
+                                    if (empty($lang_url) && function_exists('pll_home_url')) {
+                                        $lang_url = pll_home_url($lang_code);
+                                    }
+                                    if (empty($lang_url)) {
+                                        $lang_url = home_url();
+                                    }
+                                    ?>
+                                    <li class="header__lang-item<?php echo $is_current ? ' header__lang-item--active' : ''; ?>">
+                                        <?php if ($is_current): ?>
+                                            <button type="button" class="header__lang-option header__lang-option--active" data-lang="<?php echo esc_attr($lang_code); ?>" disabled><?php echo esc_html($lang_name); ?></button>
+                                        <?php else: ?>
+                                            <button type="button" onclick="window.location.href='<?php echo esc_url($lang_url); ?>'" class="header__lang-option" data-lang="<?php echo esc_attr($lang_code); ?>"><?php echo esc_html($lang_name); ?></button>
+                                        <?php endif; ?>
+                                    </li>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <!-- Fallback если Polylang не активен или языки не получены -->
+                                <?php 
+                                // Пробуем получить языки через pll_languages_list
+                                if (function_exists('pll_languages_list')) {
+                                    $lang_slugs = pll_languages_list();
+                                    if (!empty($lang_slugs)) {
+                                        foreach ($lang_slugs as $slug) {
+                                            $lang_name = isset($lang_names[$slug]) ? $lang_names[$slug] : $slug;
+                                            $is_current = $slug === $current_lang;
+                                            $lang_url = function_exists('pll_home_url') ? pll_home_url($slug) : home_url();
+                                            ?>
+                                            <li class="header__lang-item<?php echo $is_current ? ' header__lang-item--active' : ''; ?>">
+                                                <?php if ($is_current): ?>
+                                                    <button type="button" class="header__lang-option header__lang-option--active" data-lang="<?php echo esc_attr($slug); ?>" disabled><?php echo esc_html($lang_name); ?></button>
+                                                <?php else: ?>
+                                                    <button type="button" onclick="window.location.href='<?php echo esc_url($lang_url); ?>'" class="header__lang-option" data-lang="<?php echo esc_attr($slug); ?>"><?php echo esc_html($lang_name); ?></button>
+                                                <?php endif; ?>
+                                            </li>
+                                            <?php
+                                        }
+                                    } else {
+                                        // Если и это не сработало, показываем статический список
+                                        ?>
+                                        <li class="header__lang-item">
+                                            <button type="button" class="header__lang-option" data-lang="uk">Укр</button>
+                                        </li>
+                                        <li class="header__lang-item">
+                                            <button type="button" class="header__lang-option" data-lang="en">Eng</button>
+                                        </li>
+                                        <li class="header__lang-item">
+                                            <button type="button" class="header__lang-option" data-lang="ru">Рус</button>
+                                        </li>
+                                        <?php
+                                    }
+                                } else {
+                                    // Fallback если Polylang не активен
+                                    ?>
+                                    <li class="header__lang-item">
+                                        <button type="button" class="header__lang-option" data-lang="uk">Укр</button>
+                                    </li>
+                                    <li class="header__lang-item">
+                                        <button type="button" class="header__lang-option" data-lang="en">Eng</button>
+                                    </li>
+                                    <li class="header__lang-item">
+                                        <button type="button" class="header__lang-option" data-lang="ru">Рус</button>
+                                    </li>
+                                    <?php
+                                }
+                                ?>
+                            <?php endif; ?>
                         </ul>
                     </div>
 

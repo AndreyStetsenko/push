@@ -16,8 +16,8 @@ $collab_steps = get_field('collab_steps', 'option');
             <div class="buttons">
                 <?php if ($collab_buttons && is_array($collab_buttons) && !empty($collab_buttons)): ?>
                     <?php foreach ($collab_buttons as $button): ?>
-                        <div class="buttons__item <?php echo esc_attr($button['css_class'] ?? ''); ?>">
-                            <span><?php echo esc_html($button['text'] ?? ''); ?></span>
+                        <div class="buttons__item <?php echo esc_attr(isset($button['css_class']) ? $button['css_class'] : ''); ?>">
+                            <span><?php echo esc_html(isset($button['text']) ? $button['text'] : ''); ?></span>
                         </div>
                     <?php endforeach; ?>
                 <?php endif; ?>
@@ -28,10 +28,10 @@ $collab_steps = get_field('collab_steps', 'option');
             <?php if ($collab_steps && is_array($collab_steps) && !empty($collab_steps)): ?>
                 <?php foreach ($collab_steps as $step): ?>
                     <div class="item">
-                        <div class="num"><?php echo esc_html($step['number'] ?? ''); ?></div>
+                        <div class="num"><?php echo esc_html(isset($step['number']) ? $step['number'] : ''); ?></div>
                         <div class="content">
-                            <span class="title"><?php echo esc_html($step['title'] ?? ''); ?></span>
-                            <p class="description"><?php echo esc_html($step['description'] ?? ''); ?></p>
+                            <span class="title"><?php echo esc_html(isset($step['title']) ? $step['title'] : ''); ?></span>
+                            <p class="description"><?php echo esc_html(isset($step['description']) ? $step['description'] : ''); ?></p>
                         </div>
                     </div>
                 <?php endforeach; ?>

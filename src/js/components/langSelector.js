@@ -11,18 +11,26 @@ class LangSelector {
     }
 
     init() {
+        if (!this.toggle || !this.list) {
+            return;
+        }
+
         // Обработчик клика на кнопку переключения
         this.toggle.addEventListener('click', (e) => {
             e.stopPropagation();
+            e.preventDefault();
             this.toggleDropdown();
         });
 
-        // Обработчики выбора языка
+        // Обработчики выбора языка (для ссылок)
         this.options.forEach(option => {
-            option.addEventListener('click', (e) => {
-                e.stopPropagation();
-                this.selectLanguage(option);
-            });
+            // Если это ссылка (не disabled кнопка), закрываем список при клике
+            if (option.tagName === 'A' && !option.hasAttribute('disabled')) {
+                option.addEventListener('click', () => {
+                    // Закрываем список перед переходом
+                    this.close();
+                });
+            }
         });
 
         // Закрытие при клике вне компонента
@@ -62,32 +70,19 @@ class LangSelector {
     isOpen() {
         return this.container.classList.contains('is-open');
     }
-
-    selectLanguage(option) {
-        const lang = option.getAttribute('data-lang');
-        const text = option.textContent.trim();
-        
-        // Обновляем текущий язык
-        this.current.textContent = text;
-        
-        // Закрываем список
-        this.close();
-        
-        // Здесь можно добавить логику смены языка
-        // Например, обновление URL или перезагрузка страницы с новым языком
-        console.log('Selected language:', lang);
-        
-        // Можно добавить сохранение в localStorage
-        // localStorage.setItem('language', lang);
-    }
 }
 
-// Инициализация при загрузке DOM
-document.addEventListener('DOMContentLoaded', () => {
+// Инициализация компонента
+export function initLangSelector() {
     const langContainer = document.querySelector('.header__lang');
     if (langContainer) {
         new LangSelector(langContainer);
     }
+}
+
+// Автоматическая инициализация при загрузке DOM (для обратной совместимости)
+document.addEventListener('DOMContentLoaded', () => {
+    initLangSelector();
 });
 
 export default LangSelector;

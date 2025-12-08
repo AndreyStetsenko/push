@@ -29,8 +29,8 @@ $actors_items = get_field('actors_items', 'option');
                     <?php if ($actors_items && is_array($actors_items) && !empty($actors_items)): ?>
                         <?php foreach ($actors_items as $actor): ?>
                             <?php 
-                            $actor_image = $actor['image'] ?? null;
-                            $actor_title = $actor['title'] ?? '';
+                            $actor_image = isset($actor['image']) ? $actor['image'] : null;
+                            $actor_title = isset($actor['title']) ? $actor['title'] : '';
                             ?>
                             <?php if ($actor_image && isset($actor_image['url'])): ?>
                                 <div class="swiper-slide">

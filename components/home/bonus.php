@@ -18,7 +18,7 @@ $bonus_content_title = get_field('bonus_content_title', 'option') ?: '';
             <div class="bonus__item">
                 <div class="bonus__item-close">
                     <?php if ($bonus_image_close && isset($bonus_image_close['url'])): ?>
-                        <img src="<?php echo esc_url($bonus_image_close['url']); ?>" alt="<?php echo esc_attr($bonus_image_close['alt'] ?? ''); ?>">
+                        <img src="<?php echo esc_url($bonus_image_close['url']); ?>" alt="<?php echo esc_attr(isset($bonus_image_close['alt']) ? $bonus_image_close['alt'] : ''); ?>">
                     <?php else: ?>
                         <img src="<?= img_url('bonus/bonus-close.png'); ?>" alt="">
                     <?php endif; ?>
@@ -26,7 +26,7 @@ $bonus_content_title = get_field('bonus_content_title', 'option') ?: '';
 
                 <div class="bonus__item-open">
                     <?php if ($bonus_image_open && isset($bonus_image_open['url'])): ?>
-                        <img src="<?php echo esc_url($bonus_image_open['url']); ?>" alt="<?php echo esc_attr($bonus_image_open['alt'] ?? ''); ?>">
+                        <img src="<?php echo esc_url($bonus_image_open['url']); ?>" alt="<?php echo esc_attr(isset($bonus_image_open['alt']) ? $bonus_image_open['alt'] : ''); ?>">
                     <?php else: ?>
                         <img src="<?= img_url('bonus/bonus-open.png'); ?>" alt="">
                     <?php endif; ?>

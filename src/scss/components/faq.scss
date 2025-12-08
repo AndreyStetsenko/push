@@ -30,6 +30,7 @@
             min-height: 1px; // Будет переопределено JS, создаем контекст для absolute элементов
 
             .folder {
+                width: 100%;
                 // padding-top: rem(100px);
                 position: absolute;
                 transition: transform 0.2s ease, z-index 0.2s ease;
@@ -322,6 +323,7 @@
                         font-weight: 500;
                         color: #fff;
                         text-transform: uppercase;
+                        hyphens: none;
                     }
                 }
 

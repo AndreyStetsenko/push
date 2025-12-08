@@ -20,9 +20,9 @@ $services_items = get_field('services_items', 'option');
             <?php if ($services_items && is_array($services_items) && !empty($services_items)): ?>
                 <?php foreach ($services_items as $service): ?>
                     <?php 
-                    $service_image = $service['image'] ?? null;
-                    $service_title = $service['title'] ?? '';
-                    $service_description = $service['description'] ?? '';
+                    $service_image = isset($service['image']) ? $service['image'] : null;
+                    $service_title = isset($service['title']) ? $service['title'] : '';
+                    $service_description = isset($service['description']) ? $service['description'] : '';
                     ?>
                     <?php if ($service_image && isset($service_image['url'])): ?>
                         <div class="slide">

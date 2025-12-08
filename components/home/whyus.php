@@ -49,9 +49,9 @@ $whyus_items = get_field('whyus_items', 'option');
                         <div class="col-2">
                             <div class="whyus__item">
                                 <div class="content">
-                                    <span class="num"><?php echo esc_html($first_row_items[0]['number'] ?? ''); ?></span>
-                                    <span class="title"><?php echo esc_html($first_row_items[0]['title'] ?? ''); ?></span>
-                                    <span class="description"><?php echo esc_html($first_row_items[0]['description'] ?? ''); ?></span>
+                                    <span class="num"><?php echo esc_html(isset($first_row_items[0]['number']) ? $first_row_items[0]['number'] : ''); ?></span>
+                                    <span class="title"><?php echo esc_html(isset($first_row_items[0]['title']) ? $first_row_items[0]['title'] : ''); ?></span>
+                                    <span class="description"><?php echo esc_html(isset($first_row_items[0]['description']) ? $first_row_items[0]['description'] : ''); ?></span>
                                 </div>
                             </div>
                         </div>
@@ -61,7 +61,7 @@ $whyus_items = get_field('whyus_items', 'option');
                             <?php 
                             $item = $first_row_items[1];
                             $css_classes = !empty($item['css_classes']) ? esc_attr($item['css_classes']) : '';
-                            $bg_image = $item['bg_image'] ?? null;
+                            $bg_image = isset($item['bg_image']) ? $item['bg_image'] : null;
                             $has_light = !empty($item['has_light']);
                             $bg_style = '';
                             if ($bg_image && isset($bg_image['url'])) {
@@ -75,9 +75,9 @@ $whyus_items = get_field('whyus_items', 'option');
                             ?>
                             <div class="whyus__item <?php echo $css_classes; ?>">
                                 <div class="content" <?php echo $bg_style; ?>>
-                                    <span class="num"><?php echo esc_html($item['number'] ?? ''); ?></span>
-                                    <span class="title"><?php echo esc_html($item['title'] ?? ''); ?></span>
-                                    <span class="description"><?php echo esc_html($item['description'] ?? ''); ?></span>
+                                    <span class="num"><?php echo esc_html(isset($item['number']) ? $item['number'] : ''); ?></span>
+                                    <span class="title"><?php echo esc_html(isset($item['title']) ? $item['title'] : ''); ?></span>
+                                    <span class="description"><?php echo esc_html(isset($item['description']) ? $item['description'] : ''); ?></span>
                                 </div>
                                 <?php if ($has_light): ?>
                                     <div class="light">
@@ -104,7 +104,7 @@ $whyus_items = get_field('whyus_items', 'option');
                             <?php 
                             $item = $second_row_items[0];
                             $css_classes = !empty($item['css_classes']) ? esc_attr($item['css_classes']) : '';
-                            $bg_image = $item['bg_image'] ?? null;
+                            $bg_image = isset($item['bg_image']) ? $item['bg_image'] : null;
                             $has_light = !empty($item['has_light']);
                             $bg_style = '';
                             if ($bg_image && isset($bg_image['url'])) {
@@ -118,9 +118,9 @@ $whyus_items = get_field('whyus_items', 'option');
                             ?>
                             <div class="whyus__item <?php echo $css_classes; ?>">
                                 <div class="content" <?php echo $bg_style; ?>>
-                                    <span class="num"><?php echo esc_html($item['number'] ?? ''); ?></span>
-                                    <span class="title"><?php echo esc_html($item['title'] ?? ''); ?></span>
-                                    <span class="description"><?php echo esc_html($item['description'] ?? ''); ?></span>
+                                    <span class="num"><?php echo esc_html(isset($item['number']) ? $item['number'] : ''); ?></span>
+                                    <span class="title"><?php echo esc_html(isset($item['title']) ? $item['title'] : ''); ?></span>
+                                    <span class="description"><?php echo esc_html(isset($item['description']) ? $item['description'] : ''); ?></span>
                                 </div>
                                 <?php if ($has_light): ?>
                                     <div class="light">
@@ -145,9 +145,9 @@ $whyus_items = get_field('whyus_items', 'option');
                         <div class="col-3">
                             <div class="whyus__item">
                                 <div class="content">
-                                    <span class="num"><?php echo esc_html($second_row_items[1]['number'] ?? ''); ?></span>
-                                    <span class="title"><?php echo esc_html($second_row_items[1]['title'] ?? ''); ?></span>
-                                    <span class="description"><?php echo esc_html($second_row_items[1]['description'] ?? ''); ?></span>
+                                    <span class="num"><?php echo esc_html(isset($second_row_items[1]['number']) ? $second_row_items[1]['number'] : ''); ?></span>
+                                    <span class="title"><?php echo esc_html(isset($second_row_items[1]['title']) ? $second_row_items[1]['title'] : ''); ?></span>
+                                    <span class="description"><?php echo esc_html(isset($second_row_items[1]['description']) ? $second_row_items[1]['description'] : ''); ?></span>
                                 </div>
                             </div>
                         </div>

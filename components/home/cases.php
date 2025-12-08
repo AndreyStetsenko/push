@@ -24,8 +24,8 @@ $cases_cards = get_field('cases_cards', 'option');
                     <div class="cases__buttons">
                         <?php if ($cases_filter_buttons && is_array($cases_filter_buttons) && !empty($cases_filter_buttons)): ?>
                             <?php foreach ($cases_filter_buttons as $button): ?>
-                                <button class="cases__filter-btn" data-slide-index="<?php echo esc_attr($button['slide_index'] ?? 0); ?>">
-                                    <?php echo esc_html($button['text'] ?? ''); ?>
+                                <button class="cases__filter-btn" data-slide-index="<?php echo esc_attr(isset($button['slide_index']) ? $button['slide_index'] : 0); ?>">
+                                    <?php echo esc_html(isset($button['text']) ? $button['text'] : ''); ?>
                                 </button>
                             <?php endforeach; ?>
                         <?php endif; ?>
@@ -39,13 +39,13 @@ $cases_cards = get_field('cases_cards', 'option');
                         <?php if ($cases_cards && is_array($cases_cards) && !empty($cases_cards)): ?>
                             <?php foreach ($cases_cards as $card): ?>
                                 <div class="cases__card cases__card--white">
-                                    <h3 class="cases__card-title"><?php echo esc_html($card['title'] ?? ''); ?></h3>
+                                    <h3 class="cases__card-title"><?php echo esc_html(isset($card['title']) ? $card['title'] : ''); ?></h3>
                                     <p class="cases__card-description">
-                                        <?php echo esc_html($card['description'] ?? ''); ?>
+                                        <?php echo esc_html(isset($card['description']) ? $card['description'] : ''); ?>
                                     </p>
                                     <div>
                                         <button class="cases__card-button">
-                                            <span><?php echo esc_html($card['button_text'] ?? 'Детальніше'); ?></span>
+                                            <span><?php echo esc_html(isset($card['button_text']) ? $card['button_text'] : 'Детальніше'); ?></span>
                                             <div class="cases__card-button-icon">
                                                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M10.5303 0.75V10.75M10.5303 0.75H0.530273M10.5303 0.75L0.530273 10.75" stroke="white" stroke-width="1.5"/>
@@ -57,8 +57,8 @@ $cases_cards = get_field('cases_cards', 'option');
                                         <div class="cases__card-kpi">
                                             <?php foreach ($card['kpi'] as $kpi): ?>
                                                 <div class="cases__card-kpi-item">
-                                                    <span class="cases__card-kpi-value"><?php echo esc_html($kpi['value'] ?? ''); ?></span>
-                                                    <span class="cases__card-kpi-label"><?php echo esc_html($kpi['label'] ?? ''); ?></span>
+                                                    <span class="cases__card-kpi-value"><?php echo esc_html(isset($kpi['kpi_value']) ? $kpi['kpi_value'] : ''); ?></span>
+                                                    <span class="cases__card-kpi-label"><?php echo esc_html(isset($kpi['label']) ? $kpi['label'] : ''); ?></span>
                                                 </div>
                                             <?php endforeach; ?>
                                         </div>

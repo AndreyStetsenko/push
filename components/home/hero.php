@@ -1,5 +1,5 @@
 <?php
-// Получаем данные из ACF полей
+// Получаем данные из Carbon Fields (через функцию-хелпер для совместимости)
 $hero_title_group = get_field('hero_title_group', 'option');
 $hero_title_line1 = $hero_title_group && isset($hero_title_group['line1']) ? $hero_title_group['line1'] : '';
 $hero_title_line2 = $hero_title_group && isset($hero_title_group['line2']) ? $hero_title_group['line2'] : '';
@@ -42,8 +42,14 @@ $hero_bg_items = get_field('hero_bg_items', 'option');
                         </div>
 
                         <div class="hero__wrapp-push">
-                            <?php if ($hero_push_image && isset($hero_push_image['url'])): ?>
-                                <img src="<?php echo esc_url($hero_push_image['url']); ?>" alt="<?php echo esc_attr($hero_push_image['alt'] ?: 'push'); ?>">
+                            <?php if ($hero_push_image): ?>
+                                <?php 
+                                $push_image = crb_get_image($hero_push_image);
+                                if ($push_image && isset($push_image['url'])): ?>
+                                    <img src="<?php echo esc_url($push_image['url']); ?>" alt="<?php echo esc_attr($push_image['alt'] ?: 'push'); ?>">
+                                <?php else: ?>
+                                    <img src="<?= img_url('hero/push.png'); ?>" alt="push">
+                                <?php endif; ?>
                             <?php else: ?>
                                 <img src="<?= img_url('hero/push.png'); ?>" alt="push">
                             <?php endif; ?>
@@ -65,14 +71,17 @@ $hero_bg_items = get_field('hero_bg_items', 'option');
         <?php if ($hero_bg_items && is_array($hero_bg_items)): ?>
             <?php foreach ($hero_bg_items as $item): ?>
                 <?php 
-                $item_image = $item['image'] ?? null;
-                $item_class = $item['css_class'] ?? '';
-                $item_alt = $item['alt'] ?? '';
-                $shadows_count = intval($item['shadows_count'] ?? 0);
+                $item_image = isset($item['image']) ? $item['image'] : null;
+                $item_class = isset($item['css_class']) ? $item['css_class'] : '';
+                $item_alt = isset($item['alt']) ? $item['alt'] : '';
+                $shadows_count = intval(isset($item['shadows_count']) ? $item['shadows_count'] : 0);
                 ?>
-                <?php if ($item_image && isset($item_image['url'])): ?>
-                    <div class="item <?php echo esc_attr($item_class); ?>">
-                        <img src="<?php echo esc_url($item_image['url']); ?>" alt="<?php echo esc_attr($item_alt ?: $item_image['alt'] ?? ''); ?>">
+                <?php if ($item_image): ?>
+                    <?php 
+                    $item_image_data = crb_get_image($item_image);
+                    if ($item_image_data && isset($item_image_data['url'])): ?>
+                        <div class="item <?php echo esc_attr($item_class); ?>">
+                            <img src="<?php echo esc_url($item_image_data['url']); ?>" alt="<?php echo esc_attr($item_alt ?: $item_image_data['alt']); ?>">
                         
                         <?php if ($shadows_count > 0): ?>
                             <div class="item-shadow">
@@ -81,7 +90,8 @@ $hero_bg_items = get_field('hero_bg_items', 'option');
                                 <?php endfor; ?>
                             </div>
                         <?php endif; ?>
-                    </div>
+                        </div>
+                    <?php endif; ?>
                 <?php endif; ?>
             <?php endforeach; ?>
         <?php else: ?>
