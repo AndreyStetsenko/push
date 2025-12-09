@@ -152,82 +152,80 @@ function get_contact_icon($name) {
                             <div class="container">
                                 <div class="folder__content--wrapp">
                                     <div class="contacts">
-                                        <div class="container">
-                                            <div class="contacts__wrapp">
-                                                <div class="contacts__left">
-                                                    <div class="contacts__info">
-                                                        <h3 class="contacts__title"><?php echo esc_html($contacts_title); ?></h3>
-                                                        <?php if (!empty($contacts_description)): ?>
-                                                            <p class="contacts__description"><?php echo esc_html($contacts_description); ?></p>
-                                                        <?php endif; ?>
+                                        <div class="contacts__wrapp">
+                                            <div class="contacts__left">
+                                                <div class="contacts__info">
+                                                    <h3 class="contacts__title"><?php echo esc_html($contacts_title); ?></h3>
+                                                    <?php if (!empty($contacts_description)): ?>
+                                                        <p class="contacts__description"><?php echo esc_html($contacts_description); ?></p>
+                                                    <?php endif; ?>
 
-                                                        <?php if (!empty($contacts_buttons)): ?>
-                                                            <div class="contacts__actions">
-                                                                <?php foreach ($contacts_buttons as $button): ?>
-                                                                    <?php
-                                                                    // Преобразуем объект в массив если нужно
-                                                                    if (is_object($button)) {
-                                                                        $button = (array) $button;
-                                                                    }
-                                                                    $button_text = isset($button['text']) ? $button['text'] : '';
-                                                                    $button_link = isset($button['link']) ? $button['link'] : '#';
-                                                                    ?>
-                                                                    <button class="contacts__button" onclick="window.location.href='<?php echo esc_url($button_link); ?>'">
-                                                                        <span><?php echo esc_html($button_text); ?></span>
-                                                                        <div class="contacts__button-icon-wrapp">
-                                                                            <?php echo $button_icon; ?>
-                                                                        </div>
-                                                                    </button>
-                                                                <?php endforeach; ?>
-                                                            </div>
-                                                        <?php endif; ?>
-                                                    </div>
-                                                </div>
-                                                <div class="contacts__right">
-                                                    <?php if (!empty($contacts_items)): ?>
-                                                        <div class="contacts__contacts">
-                                                            <?php foreach ($contacts_items as $contact): ?>
+                                                    <?php if (!empty($contacts_buttons)): ?>
+                                                        <div class="contacts__actions">
+                                                            <?php foreach ($contacts_buttons as $button): ?>
                                                                 <?php
                                                                 // Преобразуем объект в массив если нужно
-                                                                if (is_object($contact)) {
-                                                                    $contact = (array) $contact;
+                                                                if (is_object($button)) {
+                                                                    $button = (array) $button;
                                                                 }
-                                                                $contact_name = isset($contact['name']) ? $contact['name'] : '';
-                                                                $contact_value = isset($contact['contact_value']) ? $contact['contact_value'] : '';
-                                                                $contact_icon_image = isset($contact['icon']) ? $contact['icon'] : null;
-                                                                
-                                                                // Если есть загруженное изображение, используем его, иначе используем SVG иконку по умолчанию
-                                                                $has_custom_icon = false;
-                                                                $custom_icon_url = '';
-                                                                if (!empty($contact_icon_image)) {
-                                                                    $icon_data = crb_get_image($contact_icon_image);
-                                                                    if ($icon_data && isset($icon_data['url'])) {
-                                                                        $has_custom_icon = true;
-                                                                        $custom_icon_url = $icon_data['url'];
-                                                                    }
-                                                                }
-                                                                
-                                                                if (!$has_custom_icon) {
-                                                                    $contact_icon = get_contact_icon($contact_name);
-                                                                }
+                                                                $button_text = isset($button['text']) ? $button['text'] : '';
+                                                                $button_link = isset($button['link']) ? $button['link'] : '#';
                                                                 ?>
-                                                                <button class="contacts__button">
-                                                                    <div class="info">
-                                                                        <span class="name"><?php echo esc_html($contact_name); ?></span>
-                                                                        <span class="sub"><?php echo esc_html($contact_value); ?></span>
-                                                                    </div>
+                                                                <button class="contacts__button" onclick="window.location.href='<?php echo esc_url($button_link); ?>'">
+                                                                    <span><?php echo esc_html($button_text); ?></span>
                                                                     <div class="contacts__button-icon-wrapp">
-                                                                        <?php if ($has_custom_icon): ?>
-                                                                            <img src="<?php echo esc_url($custom_icon_url); ?>" alt="<?php echo esc_attr($contact_name); ?>" class="contacts__button-icon-img">
-                                                                        <?php else: ?>
-                                                                            <?php echo $contact_icon; ?>
-                                                                        <?php endif; ?>
+                                                                        <?php echo $button_icon; ?>
                                                                     </div>
                                                                 </button>
                                                             <?php endforeach; ?>
                                                         </div>
                                                     <?php endif; ?>
                                                 </div>
+                                            </div>
+                                            <div class="contacts__right">
+                                                <?php if (!empty($contacts_items)): ?>
+                                                    <div class="contacts__contacts">
+                                                        <?php foreach ($contacts_items as $contact): ?>
+                                                            <?php
+                                                            // Преобразуем объект в массив если нужно
+                                                            if (is_object($contact)) {
+                                                                $contact = (array) $contact;
+                                                            }
+                                                            $contact_name = isset($contact['name']) ? $contact['name'] : '';
+                                                            $contact_value = isset($contact['contact_value']) ? $contact['contact_value'] : '';
+                                                            $contact_icon_image = isset($contact['icon']) ? $contact['icon'] : null;
+                                                            
+                                                            // Если есть загруженное изображение, используем его, иначе используем SVG иконку по умолчанию
+                                                            $has_custom_icon = false;
+                                                            $custom_icon_url = '';
+                                                            if (!empty($contact_icon_image)) {
+                                                                $icon_data = crb_get_image($contact_icon_image);
+                                                                if ($icon_data && isset($icon_data['url'])) {
+                                                                    $has_custom_icon = true;
+                                                                    $custom_icon_url = $icon_data['url'];
+                                                                }
+                                                            }
+                                                            
+                                                            if (!$has_custom_icon) {
+                                                                $contact_icon = get_contact_icon($contact_name);
+                                                            }
+                                                            ?>
+                                                            <button class="contacts__button">
+                                                                <div class="info">
+                                                                    <span class="name"><?php echo esc_html($contact_name); ?></span>
+                                                                    <span class="sub"><?php echo esc_html($contact_value); ?></span>
+                                                                </div>
+                                                                <div class="contacts__button-icon-wrapp">
+                                                                    <?php if ($has_custom_icon): ?>
+                                                                        <img src="<?php echo esc_url($custom_icon_url); ?>" alt="<?php echo esc_attr($contact_name); ?>" class="contacts__button-icon-img">
+                                                                    <?php else: ?>
+                                                                        <?php echo $contact_icon; ?>
+                                                                    <?php endif; ?>
+                                                                </div>
+                                                            </button>
+                                                        <?php endforeach; ?>
+                                                    </div>
+                                                <?php endif; ?>
                                             </div>
                                         </div>
                                     </div>
