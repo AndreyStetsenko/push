@@ -362,55 +362,6 @@ function crb_attach_theme_options() {
                                 ->set_attribute( 'placeholder', 'продажів за місяць' )
                                 ->set_required( true ),
                         ) ),
-                    // Контент модального окна
-                    Field::make( 'complex', 'modal_content', __( 'Контент модального окна' ) )
-                        ->set_help_text( 'Контент для модального окна кейса' )
-                        ->set_layout( 'tabbed-vertical' )
-                        ->add_fields( array(
-                            Field::make( 'complex', 'header', __( 'Заголовок модального окна' ) )
-                                ->set_help_text( 'Настройки заголовка модального окна' )
-                                ->set_layout( 'tabbed-vertical' )
-                                ->add_fields( array(
-                                    Field::make( 'text', 'title_orange', __( 'Оранжевая часть заголовка' ) )
-                                        ->set_help_text( 'Первая часть заголовка (оранжевая)' )
-                                        ->set_attribute( 'placeholder', 'СТРАТЕГІЯ РОСТУ' ),
-                                    Field::make( 'text', 'title_black', __( 'Черная часть заголовка' ) )
-                                        ->set_help_text( 'Вторая часть заголовка (черная)' )
-                                        ->set_attribute( 'placeholder', 'ДЛЯ GLOWUP STUDIO' ),
-                                    Field::make( 'text', 'subtitle', __( 'Подзаголовок' ) )
-                                        ->set_help_text( 'Подзаголовок (например: "SMM / Контент-стратегія / Візуальна айдентика")' )
-                                        ->set_attribute( 'placeholder', 'SMM / Контент-стратегія / Візуальна айдентика' ),
-                                    Field::make( 'text', 'logo_label', __( 'Подпись логотипа' ) )
-                                        ->set_help_text( 'Подпись под логотипом (например: "ЛОГО КОМПАНІЇ")' )
-                                        ->set_attribute( 'placeholder', 'ЛОГО КОМПАНІЇ' ),
-                                ) ),
-                            Field::make( 'complex', 'sections', __( 'Секции контента' ) )
-                                ->set_help_text( 'Секции контента модального окна (Завдання, Рішення, Результати, Висновки)' )
-                                ->set_layout( 'tabbed-vertical' )
-                                ->add_fields( array(
-                                    Field::make( 'text', 'title', __( 'Заголовок секции' ) )
-                                        ->set_help_text( 'Заголовок секции (например: "ЗАВДАННЯ")' )
-                                        ->set_attribute( 'placeholder', 'ЗАВДАННЯ' )
-                                        ->set_required( true ),
-                                    Field::make( 'textarea', 'content', __( 'Контент секции' ) )
-                                        ->set_help_text( 'Текст секции. Для списков используйте HTML теги: <ul><li>Элемент 1</li><li>Элемент 2</li></ul>' )
-                                        ->set_rows( 6 )
-                                        ->set_required( true ),
-                                ) ),
-                            Field::make( 'image', 'logo', __( 'Логотип компании' ) )
-                                ->set_help_text( 'Логотип компании для модального окна' ),
-                            Field::make( 'complex', 'images', __( 'Изображения' ) )
-                                ->set_help_text( 'Изображения для правой части модального окна' )
-                                ->set_layout( 'tabbed-vertical' )
-                                ->add_fields( array(
-                                    Field::make( 'image', 'image', __( 'Изображение' ) )
-                                        ->set_help_text( 'Изображение' )
-                                        ->set_required( true ),
-                                ) ),
-                            Field::make( 'file', 'video', __( 'Видео' ) )
-                                ->set_help_text( 'Видео файл для модального окна' )
-                                ->set_type( array( 'video' ) ),
-                        ) ),
                 ) ),
         ) );
 
@@ -591,6 +542,13 @@ function crb_attach_theme_options() {
                             'none' => 'Без изображения',
                         ) )
                         ->set_default_value( 'single' )
+                        ->set_conditional_logic( array(
+                            array(
+                                'field' => 'is_contacts',
+                                'value' => false,
+                                'compare' => '=',
+                            )
+                        ) )
                         ->set_required( true ),
                     Field::make( 'image', 'image', __( 'Изображение' ) )
                         ->set_help_text( 'Изображение для папки (используется если тип "Одно изображение")' )
@@ -627,6 +585,13 @@ function crb_attach_theme_options() {
                     Field::make( 'complex', 'questions', __( 'Вопросы' ) )
                         ->set_help_text( 'Добавьте вопросы для этой папки' )
                         ->set_layout( 'tabbed-vertical' )
+                        ->set_conditional_logic( array(
+                            array(
+                                'field' => 'is_contacts',
+                                'value' => false,
+                                'compare' => '=',
+                            )
+                        ) )
                         ->add_fields( array(
                             Field::make( 'text', 'number', __( 'Номер вопроса' ) )
                                 ->set_help_text( 'Номер вопроса (например: "01", "02")' )
@@ -642,27 +607,38 @@ function crb_attach_theme_options() {
                                 ->set_attribute( 'placeholder', '#' ),
                         ) ),
                     Field::make( 'checkbox', 'is_contacts', __( 'Это секция контактов' ) )
-                        ->set_help_text( 'Отметьте, если это последняя папка с контактами' )
+                        ->set_help_text( 'Отметьте, если это папка с контактами (вместо вопросов будут показаны контакты)' )
                         ->set_option_value( 'yes' ),
-                ) ),
-        // Контакты (для последней папки)
-            Field::make( 'complex', 'faq_contacts' . carbon_lang_prefix(), __( 'Контакты' ) )
-                ->set_help_text( 'Настройки секции контактов в последней папке FAQ' )
-                ->set_layout( 'tabbed-vertical' )
-                ->add_fields( array(
-                    Field::make( 'text', 'title', __( 'Заголовок' ) )
+                    // Поля контактов (показываются только когда is_contacts активен)
+                    Field::make( 'text', 'contacts_title', __( 'Заголовок контактов' ) )
                         ->set_help_text( 'Заголовок секции контактов' )
                         ->set_default_value( 'контакти' )
                         ->set_attribute( 'placeholder', 'контакти' )
-                        ->set_required( true ),
-                    Field::make( 'textarea', 'description', __( 'Описание' ) )
+                        ->set_conditional_logic( array(
+                            array(
+                                'field' => 'is_contacts',
+                                'value' => true,
+                            )
+                        ) ),
+                    Field::make( 'textarea', 'contacts_description', __( 'Описание контактов' ) )
                         ->set_help_text( 'Описание секции контактов' )
                         ->set_default_value( 'Хочеш обговорити проект або просто дізнатися, як ми можемо допомогти твоєму бізнесу рости? Зв\'яжись з нами будь-яким зручним способом — ми швидко відповімо!' )
                         ->set_rows( 4 )
-                        ->set_required( true ),
-                    Field::make( 'complex', 'buttons', __( 'Кнопки действий' ) )
+                        ->set_conditional_logic( array(
+                            array(
+                                'field' => 'is_contacts',
+                                'value' => true,
+                            )
+                        ) ),
+                    Field::make( 'complex', 'contacts_buttons', __( 'Кнопки действий' ) )
                         ->set_help_text( 'Кнопки действий (Заповнити бриф, Зв\'язатись з нами)' )
                         ->set_layout( 'tabbed-vertical' )
+                        ->set_conditional_logic( array(
+                            array(
+                                'field' => 'is_contacts',
+                                'value' => true,
+                            )
+                        ) )
                         ->add_fields( array(
                             Field::make( 'text', 'text', __( 'Текст кнопки' ) )
                                 ->set_help_text( 'Текст на кнопке' )
@@ -673,9 +649,15 @@ function crb_attach_theme_options() {
                                 ->set_default_value( '#' )
                                 ->set_attribute( 'placeholder', '#' ),
                         ) ),
-                    Field::make( 'complex', 'contact_items', __( 'Контактные данные' ) )
+                    Field::make( 'complex', 'contacts_items', __( 'Контактные данные' ) )
                         ->set_help_text( 'Контактные данные (Telegram, Email, Телефон)' )
                         ->set_layout( 'tabbed-vertical' )
+                        ->set_conditional_logic( array(
+                            array(
+                                'field' => 'is_contacts',
+                                'value' => true,
+                            )
+                        ) )
                         ->add_fields( array(
                             Field::make( 'text', 'name', __( 'Название' ) )
                                 ->set_help_text( 'Название контакта (например: "telegram", "email", "телефон")' )
@@ -685,6 +667,8 @@ function crb_attach_theme_options() {
                                 ->set_help_text( 'Значение контакта (например: "@pushsmmagency", "pushsmmagency@gmail.com")' )
                                 ->set_attribute( 'placeholder', '@pushsmmagency' )
                                 ->set_required( true ),
+                            Field::make( 'image', 'icon', __( 'Иконка' ) )
+                                ->set_help_text( 'Загрузите кастомную иконку для контакта. Если не указано, будет использована иконка по умолчанию на основе названия.' ),
                         ) ),
                 ) ),
         ) );

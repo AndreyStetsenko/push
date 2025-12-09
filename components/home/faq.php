@@ -1,15 +1,16 @@
 <?php
-// Получаем данные из Carbon Fields
+// Получаем данные из Carbon Fields (через обертку get_field)
 $faq_title = get_field('faq_title', 'option');
 if (empty($faq_title)) {
     $faq_title = 'FAQ';
 }
 
-// Получаем данные напрямую из Carbon Fields (для repeater полей нужен прямой вызов)
-// Проверяем существование функции перед вызовом
-$lang_prefix = function_exists('carbon_lang_prefix') ? carbon_lang_prefix() : '';
-$faq_folders = function_exists('carbon_get_theme_option') ? carbon_get_theme_option('faq_folders' . $lang_prefix) : array();
-$faq_contacts = function_exists('carbon_get_theme_option') ? carbon_get_theme_option('faq_contacts' . $lang_prefix) : array();
+// Получаем папки FAQ через Carbon Fields
+// Функция get_field() автоматически добавляет префикс языка, поэтому не добавляем его вручную
+$faq_folders = get_field('faq_folders', 'option');
+if (!is_array($faq_folders)) {
+    $faq_folders = array();
+}
 
 // Carbon Fields для complex/repeater полей возвращает массив массивов
 // Фильтруем пустые элементы (где нет названия и это не секция контактов)
@@ -26,8 +27,17 @@ if (is_array($faq_folders) && !empty($faq_folders)) {
         // Проверяем наличие названия (не пустая строка, не пробелы)
         $title = isset($folder['title']) ? trim($folder['title']) : '';
         $has_title = !empty($title);
-        // Проверяем флаг контактов
-        $is_contacts = isset($folder['is_contacts']) && ($folder['is_contacts'] === 'yes' || $folder['is_contacts'] === true);
+        // Проверяем флаг контактов (Carbon Fields может вернуть 'yes', true, 1 или массив)
+        $is_contacts = false;
+        if (isset($folder['is_contacts'])) {
+            $contacts_value = $folder['is_contacts'];
+            if (is_array($contacts_value)) {
+                $is_contacts = !empty($contacts_value) && (in_array('yes', $contacts_value) || in_array(true, $contacts_value, true) || in_array(1, $contacts_value, true));
+            } else {
+                // Carbon Fields checkbox с set_option_value('yes') возвращает 'yes' при активации
+                $is_contacts = ($contacts_value === 'yes' || $contacts_value === true || $contacts_value === 1 || $contacts_value === '1');
+            }
+        }
         // Добавляем только если есть название (для обычных папок) или это секция контактов
         if ($has_title || $is_contacts) {
             $filtered_folders[] = $folder;
@@ -113,8 +123,17 @@ function get_contact_icon($name) {
                 $folder_title = isset($folder['title']) ? $folder['title'] : '';
                 $folder_color = isset($folder['color']) ? $folder['color'] : 'black';
                 $image_type = isset($folder['image_type']) ? $folder['image_type'] : 'single';
-                $is_contacts = isset($folder['is_contacts']) && $folder['is_contacts'] === 'yes';
-                $questions = isset($folder['questions']) ? $folder['questions'] : array();
+                // Проверяем флаг контактов (ACF может вернуть массив, строку 'yes' или true)
+                $is_contacts = false;
+                if (isset($folder['is_contacts'])) {
+                    $contacts_value = $folder['is_contacts'];
+                    if (is_array($contacts_value)) {
+                        $is_contacts = !empty($contacts_value) && (in_array('yes', $contacts_value) || in_array(true, $contacts_value, true));
+                    } else {
+                        $is_contacts = ($contacts_value === 'yes' || $contacts_value === true || $contacts_value === 1);
+                    }
+                }
+                $questions = isset($folder['questions']) && is_array($folder['questions']) ? $folder['questions'] : array();
                 ?>
                 
                 <div class="folder folder--<?php echo esc_attr($folder_color); ?> folder--<?php echo esc_attr($folder_index); ?>">
@@ -122,21 +141,20 @@ function get_contact_icon($name) {
                         <span class="title"><?php echo esc_html($folder_title); ?></span>
                     </div>
                     <div class="folder__content">
-                        <?php if ($is_contacts && !empty($faq_contacts)): ?>
+                        <?php if ($is_contacts): ?>
                             <?php
-                            // Секция контактов
-                            $contacts_data = is_array($faq_contacts) && isset($faq_contacts[0]) ? $faq_contacts[0] : $faq_contacts;
-                            $contacts_title = isset($contacts_data['title']) ? $contacts_data['title'] : 'контакти';
-                            $contacts_description = isset($contacts_data['description']) ? $contacts_data['description'] : '';
-                            $contacts_buttons = isset($contacts_data['buttons']) ? $contacts_data['buttons'] : array();
-                            $contacts_items = isset($contacts_data['contact_items']) ? $contacts_data['contact_items'] : array();
+                            // Секция контактов - данные теперь внутри самой папки
+                            $contacts_title = isset($folder['contacts_title']) ? $folder['contacts_title'] : 'контакти';
+                            $contacts_description = isset($folder['contacts_description']) ? $folder['contacts_description'] : '';
+                            $contacts_buttons = isset($folder['contacts_buttons']) && is_array($folder['contacts_buttons']) ? $folder['contacts_buttons'] : array();
+                            $contacts_items = isset($folder['contacts_items']) && is_array($folder['contacts_items']) ? $folder['contacts_items'] : array();
                             ?>
                             <div class="container">
                                 <div class="folder__content--wrapp">
                                     <div class="contacts">
                                         <div class="container">
-                                            <div class="row">
-                                                <div class="col-1-2">
+                                            <div class="contacts__wrapp">
+                                                <div class="contacts__left">
                                                     <div class="contacts__info">
                                                         <h3 class="contacts__title"><?php echo esc_html($contacts_title); ?></h3>
                                                         <?php if (!empty($contacts_description)): ?>
@@ -147,6 +165,10 @@ function get_contact_icon($name) {
                                                             <div class="contacts__actions">
                                                                 <?php foreach ($contacts_buttons as $button): ?>
                                                                     <?php
+                                                                    // Преобразуем объект в массив если нужно
+                                                                    if (is_object($button)) {
+                                                                        $button = (array) $button;
+                                                                    }
                                                                     $button_text = isset($button['text']) ? $button['text'] : '';
                                                                     $button_link = isset($button['link']) ? $button['link'] : '#';
                                                                     ?>
@@ -161,15 +183,33 @@ function get_contact_icon($name) {
                                                         <?php endif; ?>
                                                     </div>
                                                 </div>
-                                                <div class="col-3"></div>
-                                                <div class="col-4-5">
+                                                <div class="contacts__right">
                                                     <?php if (!empty($contacts_items)): ?>
                                                         <div class="contacts__contacts">
                                                             <?php foreach ($contacts_items as $contact): ?>
                                                                 <?php
+                                                                // Преобразуем объект в массив если нужно
+                                                                if (is_object($contact)) {
+                                                                    $contact = (array) $contact;
+                                                                }
                                                                 $contact_name = isset($contact['name']) ? $contact['name'] : '';
                                                                 $contact_value = isset($contact['contact_value']) ? $contact['contact_value'] : '';
-                                                                $contact_icon = get_contact_icon($contact_name);
+                                                                $contact_icon_image = isset($contact['icon']) ? $contact['icon'] : null;
+                                                                
+                                                                // Если есть загруженное изображение, используем его, иначе используем SVG иконку по умолчанию
+                                                                $has_custom_icon = false;
+                                                                $custom_icon_url = '';
+                                                                if (!empty($contact_icon_image)) {
+                                                                    $icon_data = crb_get_image($contact_icon_image);
+                                                                    if ($icon_data && isset($icon_data['url'])) {
+                                                                        $has_custom_icon = true;
+                                                                        $custom_icon_url = $icon_data['url'];
+                                                                    }
+                                                                }
+                                                                
+                                                                if (!$has_custom_icon) {
+                                                                    $contact_icon = get_contact_icon($contact_name);
+                                                                }
                                                                 ?>
                                                                 <button class="contacts__button">
                                                                     <div class="info">
@@ -177,7 +217,11 @@ function get_contact_icon($name) {
                                                                         <span class="sub"><?php echo esc_html($contact_value); ?></span>
                                                                     </div>
                                                                     <div class="contacts__button-icon-wrapp">
-                                                                        <?php echo $contact_icon; ?>
+                                                                        <?php if ($has_custom_icon): ?>
+                                                                            <img src="<?php echo esc_url($custom_icon_url); ?>" alt="<?php echo esc_attr($contact_name); ?>" class="contacts__button-icon-img">
+                                                                        <?php else: ?>
+                                                                            <?php echo $contact_icon; ?>
+                                                                        <?php endif; ?>
                                                                     </div>
                                                                 </button>
                                                             <?php endforeach; ?>
@@ -222,6 +266,10 @@ function get_contact_icon($name) {
                                     <?php if (!empty($questions) && is_array($questions)): ?>
                                         <?php foreach ($questions as $question): ?>
                                             <?php
+                                            // Преобразуем объект в массив если нужно
+                                            if (is_object($question)) {
+                                                $question = (array) $question;
+                                            }
                                             $question_number = isset($question['number']) ? $question['number'] : '';
                                             $question_text = isset($question['text']) ? $question['text'] : '';
                                             $question_link = isset($question['link']) ? $question['link'] : '#';
