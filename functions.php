@@ -367,6 +367,11 @@ if( file_exists(get_template_directory() . '/acf-fields.php') ) {
     require_once get_template_directory() . '/acf-fields.php';
 }
 
+// Подключение экспорта/импорта Carbon Fields
+if( file_exists(get_template_directory() . '/carbon-fields-export-import.php') ) {
+    require_once get_template_directory() . '/carbon-fields-export-import.php';
+}
+
 // Вспомогательные функции для работы с Carbon Fields (совместимость с ACF)
 if ( ! function_exists( 'carbon_lang_prefix' ) ) {
     /**
