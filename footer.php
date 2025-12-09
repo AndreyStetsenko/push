@@ -64,16 +64,26 @@
                 </div>
                 <div class="col-2-3-4-5">
                     <div class="formfooter__form">
-                        <input type="text" placeholder="Ваше Ім’я">
-                        <input type="text" placeholder="Номер телефону">
-                        <button class="formfooter__button">
-                            <span>Зв’язатись з нами</span>
-                            <div class="icon-wrap">
-                                <svg class="icon" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M10.5303 0.75V10.75M10.5303 0.75H0.530273M10.5303 0.75L0.530273 10.75" stroke="white" stroke-width="1.5"></path>
-                                </svg>
+                        <?php 
+                        $formfooter_form_id = push_get_cf7_form_id('formfooter');
+                        // Если ID не найден, можно установить напрямую здесь:
+                        // $formfooter_form_id = 124; // Замените на реальный ID формы
+                        ?>
+                        <form class="formfooter-form" data-form-id="<?php echo esc_attr($formfooter_form_id); ?>" method="post" novalidate>
+                            <div class="wrapp">
+                                <input type="text" name="your-name" placeholder="Ваше Ім'я" required>
+                                <input type="tel" name="your-phone" placeholder="Номер телефону" required>
+                                <button type="submit" class="formfooter__button">
+                                    <span>Зв'язатись з нами</span>
+                                    <div class="icon-wrap">
+                                        <svg class="icon" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M10.5303 0.75V10.75M10.5303 0.75H0.530273M10.5303 0.75L0.530273 10.75" stroke="white" stroke-width="1.5"></path>
+                                        </svg>
+                                    </div>
+                                </button>
                             </div>
-                        </button>
+                            <div class="wpcf7-response-output" aria-hidden="true"></div>
+                        </form>
                     </div>
                 </div>
             </div>

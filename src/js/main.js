@@ -8,6 +8,7 @@ import { initMobileMenu } from './components/mobileMenu.js';
 import { initWhyusLight } from './components/whyusLight.js';
 import { initInfoTitle } from './components/infoTitle.js';
 import { initHeroTitle } from './components/heroTitle.js';
+import { initForms } from './components/forms.js';
 
 // Инициализация всех компонентов
 document.addEventListener('DOMContentLoaded', () => {
@@ -21,4 +22,5 @@ document.addEventListener('DOMContentLoaded', () => {
     initWhyusLight();
     initInfoTitle();
     initHeroTitle();
+    initForms();
 });

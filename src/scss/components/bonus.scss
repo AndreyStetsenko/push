@@ -74,6 +74,8 @@
                     text-transform: uppercase;
                     font-family: $font-family-base;
                     white-space: nowrap;
+                    display: inline-block;
+                    max-width: 100%;
                 }
             }
 
@@ -224,6 +226,7 @@
                 &-content {
                     &-title {
                         font-size: rem(40px);
+                        white-space: nowrap;
                     }
                 }
 

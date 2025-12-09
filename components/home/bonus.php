@@ -36,7 +36,7 @@ $bonus_image_open = $bonus_image_open_id ? crb_get_image($bonus_image_open_id) :
                     <?php endif; ?>
 
                     <div class="bonus__item-content">
-                        <span class="bonus__item-content-title"><?php echo esc_html($bonus_content_title); ?></span>
+                        <span class="bonus__item-content-title"><?php echo wp_kses_post($bonus_content_title); ?></span>
                     </div>
                 </div>
 

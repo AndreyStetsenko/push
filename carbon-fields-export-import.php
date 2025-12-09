@@ -111,12 +111,18 @@ function crb_handle_export() {
     
     // Получаем данные из postmeta для постов, страниц и других типов записей
     // Carbon Fields использует ключи с префиксом _ и разделителем | для complex полей
+    // Исключаем стандартные метаданные WordPress (menu items, edit lock и т.д.)
     $postmeta = $wpdb->get_results(
         "SELECT post_id, meta_key, meta_value FROM {$wpdb->postmeta} 
          WHERE (meta_key LIKE '_%|%' OR meta_key REGEXP '^_[a-zA-Z0-9_]+$')
          AND meta_key NOT LIKE '_wp_%'
          AND meta_key NOT LIKE '_edit_%'
          AND meta_key NOT LIKE '_thumbnail_id'
+         AND meta_key NOT LIKE '_menu_item_%'
+         AND meta_key NOT LIKE '_wp_page_template'
+         AND meta_key NOT LIKE '_wp_attachment%'
+         AND meta_key NOT LIKE '_elementor_%'
+         AND meta_key NOT LIKE '_yoast_%'
          ORDER BY post_id, meta_key",
         ARRAY_A
     );
@@ -203,12 +209,52 @@ function crb_handle_import() {
     // Импортируем опции темы
     if ( isset( $data['theme_options'] ) && is_array( $data['theme_options'] ) ) {
         foreach ( $data['theme_options'] as $option_name => $option_value ) {
-            $serialized = maybe_serialize( $option_value );
-            $result = update_option( $option_name, $option_value );
+            // Проверяем существование опции
+            $existing_value = get_option( $option_name, false );
+            
+            // Если опция существует и значение такое же, пропускаем (не ошибка)
+            if ( $existing_value !== false && $existing_value === $option_value ) {
+                $imported++;
+                continue;
+            }
+            
+            // Используем прямой SQL для надежности (Carbon Fields опции имеют autoload='no')
+            global $wpdb;
+            if ( $existing_value !== false ) {
+                // Опция существует - обновляем
+                $result = $wpdb->update(
+                    $wpdb->options,
+                    array( 'option_value' => maybe_serialize( $option_value ) ),
+                    array( 'option_name' => $option_name ),
+                    array( '%s' ),
+                    array( '%s' )
+                );
+            } else {
+                // Опция не существует - добавляем
+                $result = $wpdb->insert(
+                    $wpdb->options,
+                    array(
+                        'option_name' => $option_name,
+                        'option_value' => maybe_serialize( $option_value ),
+                        'autoload' => 'no'
+                    ),
+                    array( '%s', '%s', '%s' )
+                );
+            }
+            
+            // Проверяем результат
             if ( $result !== false ) {
+                // Очищаем кеш опций
+                wp_cache_delete( $option_name, 'options' );
                 $imported++;
             } else {
-                $errors[] = 'Ошибка импорта опции: ' . $option_name;
+                // Проверяем, может быть опция уже существует с правильным значением
+                $actual_value = get_option( $option_name );
+                if ( $actual_value === $option_value ) {
+                    $imported++;
+                } else {
+                    $errors[] = 'Ошибка импорта опции: ' . esc_html( $option_name );
+                }
             }
         }
     }
@@ -223,11 +269,36 @@ function crb_handle_import() {
             }
             
             foreach ( $meta_data as $meta_key => $meta_value ) {
+                // Пропускаем стандартные метаданные WordPress, которые не относятся к Carbon Fields
+                if ( strpos( $meta_key, '_menu_item_' ) === 0 || 
+                     strpos( $meta_key, '_wp_' ) === 0 || 
+                     strpos( $meta_key, '_edit_' ) === 0 ) {
+                    continue;
+                }
+                
+                // Проверяем существующее значение
+                $existing_value = get_post_meta( $post_id, $meta_key, true );
+                
+                // Если значение такое же, пропускаем
+                if ( $existing_value === $meta_value ) {
+                    $imported++;
+                    continue;
+                }
+                
+                // Обновляем или добавляем метаданные
                 $result = update_post_meta( $post_id, $meta_key, $meta_value );
+                
+                // Проверяем результат
                 if ( $result !== false ) {
                     $imported++;
                 } else {
-                    $errors[] = 'Ошибка импорта postmeta: ' . $meta_key . ' для поста ' . $post_id;
+                    // Проверяем фактическое значение
+                    $actual_value = get_post_meta( $post_id, $meta_key, true );
+                    if ( $actual_value === $meta_value ) {
+                        $imported++;
+                    } else {
+                        $errors[] = 'Ошибка импорта postmeta: ' . esc_html( $meta_key ) . ' для поста ' . $post_id;
+                    }
                 }
             }
         }

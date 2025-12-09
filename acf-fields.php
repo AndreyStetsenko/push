@@ -362,6 +362,55 @@ function crb_attach_theme_options() {
                                 ->set_attribute( 'placeholder', 'продажів за місяць' )
                                 ->set_required( true ),
                         ) ),
+                    // Контент модального окна
+                    Field::make( 'complex', 'modal_content', __( 'Контент модального окна' ) )
+                        ->set_help_text( 'Контент для модального окна кейса' )
+                        ->set_layout( 'tabbed-vertical' )
+                        ->add_fields( array(
+                            Field::make( 'complex', 'header', __( 'Заголовок модального окна' ) )
+                                ->set_help_text( 'Настройки заголовка модального окна' )
+                                ->set_layout( 'tabbed-vertical' )
+                                ->add_fields( array(
+                                    Field::make( 'text', 'title_orange', __( 'Оранжевая часть заголовка' ) )
+                                        ->set_help_text( 'Первая часть заголовка (оранжевая)' )
+                                        ->set_attribute( 'placeholder', 'СТРАТЕГІЯ РОСТУ' ),
+                                    Field::make( 'text', 'title_black', __( 'Черная часть заголовка' ) )
+                                        ->set_help_text( 'Вторая часть заголовка (черная)' )
+                                        ->set_attribute( 'placeholder', 'ДЛЯ GLOWUP STUDIO' ),
+                                    Field::make( 'text', 'subtitle', __( 'Подзаголовок' ) )
+                                        ->set_help_text( 'Подзаголовок (например: "SMM / Контент-стратегія / Візуальна айдентика")' )
+                                        ->set_attribute( 'placeholder', 'SMM / Контент-стратегія / Візуальна айдентика' ),
+                                    Field::make( 'text', 'logo_label', __( 'Подпись логотипа' ) )
+                                        ->set_help_text( 'Подпись под логотипом (например: "ЛОГО КОМПАНІЇ")' )
+                                        ->set_attribute( 'placeholder', 'ЛОГО КОМПАНІЇ' ),
+                                ) ),
+                            Field::make( 'complex', 'sections', __( 'Секции контента' ) )
+                                ->set_help_text( 'Секции контента модального окна (Завдання, Рішення, Результати, Висновки)' )
+                                ->set_layout( 'tabbed-vertical' )
+                                ->add_fields( array(
+                                    Field::make( 'text', 'title', __( 'Заголовок секции' ) )
+                                        ->set_help_text( 'Заголовок секции (например: "ЗАВДАННЯ")' )
+                                        ->set_attribute( 'placeholder', 'ЗАВДАННЯ' )
+                                        ->set_required( true ),
+                                    Field::make( 'textarea', 'content', __( 'Контент секции' ) )
+                                        ->set_help_text( 'Текст секции. Для списков используйте HTML теги: <ul><li>Элемент 1</li><li>Элемент 2</li></ul>' )
+                                        ->set_rows( 6 )
+                                        ->set_required( true ),
+                                ) ),
+                            Field::make( 'image', 'logo', __( 'Логотип компании' ) )
+                                ->set_help_text( 'Логотип компании для модального окна' ),
+                            Field::make( 'complex', 'images', __( 'Изображения' ) )
+                                ->set_help_text( 'Изображения для правой части модального окна' )
+                                ->set_layout( 'tabbed-vertical' )
+                                ->add_fields( array(
+                                    Field::make( 'image', 'image', __( 'Изображение' ) )
+                                        ->set_help_text( 'Изображение' )
+                                        ->set_required( true ),
+                                ) ),
+                            Field::make( 'file', 'video', __( 'Видео' ) )
+                                ->set_help_text( 'Видео файл для модального окна' )
+                                ->set_type( array( 'video' ) ),
+                        ) ),
                 ) ),
         ) );
 

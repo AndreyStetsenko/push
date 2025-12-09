@@ -47,12 +47,17 @@ if ($pushstart_cursor_image && isset($pushstart_cursor_image['url'])) {
 
                 <p class="description"><?php echo esc_html($pushstart_description); ?></p>
 
-                <form action="<?php echo esc_attr($pushstart_form_action); ?>">
+                <?php 
+                $pushstart_form_id = push_get_cf7_form_id('pushstart');
+                // Если ID не найден, можно установить напрямую здесь:
+                // $pushstart_form_id = 123; // Замените на реальный ID формы
+                ?>
+                <form class="pushstart-form" data-form-id="<?php echo esc_attr($pushstart_form_id); ?>" method="post" novalidate>
                     <div class="form">
-                        <input type="text" placeholder="<?php echo esc_attr($pushstart_name_placeholder); ?>">
-                        <input type="text" placeholder="<?php echo esc_attr($pushstart_phone_placeholder); ?>">
+                        <input type="text" name="your-name" placeholder="<?php echo esc_attr($pushstart_name_placeholder); ?>" required>
+                        <input type="tel" name="your-phone" placeholder="<?php echo esc_attr($pushstart_phone_placeholder); ?>" required>
                         <div class="buttons">
-                            <button class="send">
+                            <button type="submit" class="send">
                                 <?php echo esc_html($pushstart_button_text); ?>
 
                                 <div class="icon-wrap">
@@ -68,6 +73,7 @@ if ($pushstart_cursor_image && isset($pushstart_cursor_image['url'])) {
                             </a>
                         </div>
                     </div>
+                    <div class="wpcf7-response-output" aria-hidden="true"></div>
                 </form>
             </div>
         </div>

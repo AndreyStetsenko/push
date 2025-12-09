@@ -520,3 +520,326 @@ class Footer_Privacy_Walker extends Walker_Nav_Menu {
         // Закрытие уже в start_el
     }
 }
+
+// Интеграция с Contact Form 7
+// Функция для получения ID формы CF7
+function push_get_cf7_form_id($form_type = 'pushstart') {
+    // Сначала проверяем опцию
+    $option_key = $form_type . '_cf7_form_id';
+    $form_id = get_option($option_key, '');
+    
+    // Если ID установлен и числовой - возвращаем его
+    if (!empty($form_id) && is_numeric($form_id)) {
+        return intval($form_id);
+    }
+    
+    // Если это хеш (не числовой), пытаемся найти форму по хешу
+    if (!empty($form_id) && !is_numeric($form_id)) {
+        $posts = get_posts(array(
+            'post_type' => 'wpcf7_contact_form',
+            'posts_per_page' => -1,
+            'post_status' => 'publish'
+        ));
+        
+        foreach ($posts as $post) {
+            $form = wpcf7_contact_form($post->ID);
+            if ($form) {
+                $shortcode = $form->shortcode();
+                if (strpos($shortcode, $form_id) !== false) {
+                    return $post->ID;
+                }
+            }
+        }
+    }
+    
+    // Если ID не найден, пытаемся найти форму по названию
+    $form_name_map = array(
+        'pushstart' => array('pushstart', 'push-start', 'push start'),
+        'formfooter' => array('formfooter', 'form-footer', 'footer', 'form footer')
+    );
+    
+    if (isset($form_name_map[$form_type])) {
+        $posts = get_posts(array(
+            'post_type' => 'wpcf7_contact_form',
+            'posts_per_page' => -1,
+            'post_status' => 'publish'
+        ));
+        
+        foreach ($posts as $post) {
+            $title_lower = strtolower($post->post_title);
+            foreach ($form_name_map[$form_type] as $search_name) {
+                if (strpos($title_lower, strtolower($search_name)) !== false) {
+                    return $post->ID;
+                }
+            }
+        }
+    }
+    
+    // Если ничего не найдено, возвращаем пустую строку
+    return '';
+}
+
+// AJAX обработчик для отправки форм
+function push_handle_cf7_form_submit() {
+    // Проверка nonce
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'push_form_submit')) {
+        wp_send_json_error(array('message' => 'Ошибка безопасности'));
+        return;
+    }
+    
+    $form_id = isset($_POST['form_id']) ? intval($_POST['form_id']) : 0;
+    
+    if (empty($form_id) || !function_exists('wpcf7_contact_form')) {
+        wp_send_json_error(array('message' => 'Форма не найдена'));
+        return;
+    }
+    
+    $contact_form = wpcf7_contact_form($form_id);
+    if (!$contact_form) {
+        wp_send_json_error(array('message' => 'Форма не найдена'));
+        return;
+    }
+    
+    // Подготовка данных для CF7
+    $posted_data = array();
+    if (isset($_POST['your-name'])) {
+        $posted_data['your-name'] = sanitize_text_field($_POST['your-name']);
+    }
+    if (isset($_POST['your-phone'])) {
+        $posted_data['your-phone'] = sanitize_text_field($_POST['your-phone']);
+    }
+    
+    // Очищаем $_POST и устанавливаем необходимые поля для CF7
+    $_POST = array();
+    $_POST['_wpcf7'] = $form_id;
+    $_POST['_wpcf7_version'] = defined('WPCF7_VERSION') ? WPCF7_VERSION : '';
+    $_POST['_wpcf7_locale'] = get_locale();
+    $_POST['_wpcf7_unit_tag'] = 'wpcf7-f' . $form_id . '-o1';
+    
+    // Добавляем данные формы в $_POST
+    foreach ($posted_data as $key => $value) {
+        $_POST[$key] = $value;
+    }
+    
+    // Создаем submission - это важно для работы CFDB7
+    // CFDB7 перехватывает данные через хук wpcf7_before_send_mail
+    $submission = WPCF7_Submission::get_instance($contact_form);
+    
+    if ($submission) {
+        // Получаем статус и результат
+        $status = $submission->get_status();
+        $invalid_fields = $submission->get_invalid_fields();
+        $response = $submission->get_response();
+        
+        if ($status === 'mail_sent') {
+            $message = $contact_form->message('mail_sent_ok');
+            if (empty($message)) {
+                $message = !empty($response) ? $response : 'Дякуємо! Ваше повідомлення відправлено.';
+            }
+            wp_send_json_success(array(
+                'message' => $message,
+                'status' => 'success'
+            ));
+        } else {
+            $message = $contact_form->message('validation_error');
+            if (empty($message)) {
+                $message = !empty($response) ? $response : 'Помилка валідації. Перевірте правильність заповнення полів.';
+            }
+            
+            wp_send_json_error(array(
+                'message' => $message,
+                'status' => 'validation_failed',
+                'invalid_fields' => $invalid_fields
+            ));
+        }
+    } else {
+        wp_send_json_error(array('message' => 'Ошибка создания submission'));
+    }
+}
+add_action('wp_ajax_push_cf7_submit', 'push_handle_cf7_form_submit');
+add_action('wp_ajax_nopriv_push_cf7_submit', 'push_handle_cf7_form_submit');
+
+// AJAX обработчик для получения контента модального окна кейса
+function push_get_case_modal_content() {
+    // Проверка nonce
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'push_case_modal')) {
+        wp_send_json_error(array('message' => 'Ошибка безопасности'));
+        return;
+    }
+    
+    $card_index = isset($_POST['card_index']) ? intval($_POST['card_index']) : -1;
+    
+    if ($card_index < 0) {
+        wp_send_json_error(array('message' => 'Не указан индекс карточки'));
+        return;
+    }
+    
+    // Получаем карточки кейсов
+    $cases_cards = get_field('cases_cards', 'option');
+    
+    if (!$cases_cards || !is_array($cases_cards) || !isset($cases_cards[$card_index])) {
+        wp_send_json_error(array('message' => 'Карточка не найдена'));
+        return;
+    }
+    
+    $card = $cases_cards[$card_index];
+    $modal_content = isset($card['modal_content']) && is_array($card['modal_content']) && !empty($card['modal_content']) 
+        ? $card['modal_content'][0] 
+        : null;
+    
+    if (!$modal_content) {
+        wp_send_json_error(array('message' => 'Контент модального окна не найден'));
+        return;
+    }
+    
+    // Формируем HTML контента
+    $html = '';
+    
+    // Заголовок
+    if (isset($modal_content['header']) && is_array($modal_content['header']) && !empty($modal_content['header'])) {
+        $header = $modal_content['header'][0];
+        $html .= '<div class="cases-modal__header">';
+        
+        if (!empty($header['title_orange']) || !empty($header['title_black'])) {
+            $html .= '<h2 class="cases-modal__title">';
+            if (!empty($header['title_orange'])) {
+                $html .= '<span class="cases-modal__title-orange">' . esc_html($header['title_orange']) . '</span>';
+            }
+            if (!empty($header['title_black'])) {
+                $html .= '<span class="cases-modal__title-black">' . esc_html($header['title_black']) . '</span>';
+            }
+            $html .= '</h2>';
+        }
+        
+        if (!empty($header['subtitle'])) {
+            $html .= '<p class="cases-modal__subtitle">' . esc_html($header['subtitle']) . '</p>';
+        }
+        
+        if (!empty($header['logo_label'])) {
+            $html .= '<p class="cases-modal__sub">' . esc_html($header['logo_label']) . '</p>';
+        }
+        
+        $html .= '</div>';
+    }
+    
+    // Тело модального окна
+    $html .= '<div class="cases-modal__body">';
+    $html .= '<div class="cases-modal__content-left">';
+    
+    // Секции контента
+    if (isset($modal_content['sections']) && is_array($modal_content['sections'])) {
+        foreach ($modal_content['sections'] as $section) {
+            if (empty($section['title']) && empty($section['content'])) {
+                continue;
+            }
+            
+            $html .= '<div class="cases-modal__section">';
+            
+            if (!empty($section['title'])) {
+                $html .= '<h3 class="cases-modal__section-title">' . esc_html($section['title']) . '</h3>';
+            }
+            
+            if (!empty($section['content'])) {
+                // Проверяем, есть ли списки в контенте
+                $content = wp_kses_post($section['content']);
+                // Если контент содержит <ul> или <li>, используем его как есть и добавляем класс для списка
+                if (strpos($content, '<ul') !== false || strpos($content, '<li') !== false) {
+                    // Добавляем класс к списку, если его нет
+                    $content = preg_replace('/<ul([^>]*)>/i', '<ul class="cases-modal__section-list"$1>', $content);
+                    $html .= $content;
+                } else {
+                    $html .= '<p class="cases-modal__section-text">' . $content . '</p>';
+                }
+            }
+            
+            $html .= '</div>';
+        }
+    }
+    
+    $html .= '</div>'; // .cases-modal__content-left
+    
+    // Правая часть
+    $html .= '<div class="cases-modal__content-right">';
+    
+    // Логотип
+    if (!empty($modal_content['logo'])) {
+        $logo_url = crb_get_image_url($modal_content['logo']);
+        if ($logo_url) {
+            $html .= '<div class="cases-modal__logo">';
+            $html .= '<img src="' . esc_url($logo_url) . '" alt="Logo" />';
+            $html .= '</div>';
+        }
+    } else {
+        $html .= '<div class="cases-modal__logo">';
+        $html .= '<div class="cases-modal__image-placeholder">';
+        $html .= '<svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">';
+        $html .= '<path d="M4 16L8 12L12 16L20 8" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+        $html .= '<path d="M20 8H16V12" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+        $html .= '</svg>';
+        $html .= '</div>';
+        $html .= '</div>';
+    }
+    
+    // Изображения
+    if (!empty($modal_content['images']) && is_array($modal_content['images'])) {
+        $html .= '<div class="cases-modal__images">';
+        foreach ($modal_content['images'] as $image_item) {
+            if (!empty($image_item['image'])) {
+                $image_url = crb_get_image_url($image_item['image']);
+                if ($image_url) {
+                    $html .= '<div class="cases-modal__image-placeholder cases-modal__image-placeholder--small">';
+                    $html .= '<img src="' . esc_url($image_url) . '" alt="Case image" />';
+                    $html .= '</div>';
+                }
+            }
+        }
+        $html .= '</div>';
+    } else {
+        // Placeholder изображения
+        $html .= '<div class="cases-modal__images">';
+        $html .= '<div class="cases-modal__image-placeholder cases-modal__image-placeholder--small">';
+        $html .= '<svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">';
+        $html .= '<path d="M4 16L8 12L12 16L20 8" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+        $html .= '<path d="M20 8H16V12" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+        $html .= '</svg>';
+        $html .= '</div>';
+        $html .= '<div class="cases-modal__image-placeholder cases-modal__image-placeholder--small">';
+        $html .= '<svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">';
+        $html .= '<path d="M4 16L8 12L12 16L20 8" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+        $html .= '<path d="M20 8H16V12" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+        $html .= '</svg>';
+        $html .= '</div>';
+        $html .= '</div>';
+    }
+    
+    // Видео
+    if (!empty($modal_content['video'])) {
+        $video_url = wp_get_attachment_url($modal_content['video']);
+        if ($video_url) {
+            $html .= '<div class="cases-modal__video">';
+            $html .= '<video controls>';
+            $html .= '<source src="' . esc_url($video_url) . '" type="video/mp4">';
+            $html .= '</video>';
+            $html .= '</div>';
+        }
+    }
+    
+    $html .= '</div>'; // .cases-modal__content-right
+    $html .= '</div>'; // .cases-modal__body
+    
+    wp_send_json_success(array(
+        'html' => $html
+    ));
+}
+add_action('wp_ajax_push_get_case_modal', 'push_get_case_modal_content');
+add_action('wp_ajax_nopriv_push_get_case_modal', 'push_get_case_modal_content');
+
+// Локализация скрипта для AJAX
+function push_localize_scripts() {
+    wp_localize_script('push-theme-script', 'pushAjax', array(
+        'ajaxurl' => admin_url('admin-ajax.php'),
+        'nonce' => wp_create_nonce('push_form_submit'),
+        'caseModalNonce' => wp_create_nonce('push_case_modal')
+    ));
+}
+add_action('wp_enqueue_scripts', 'push_localize_scripts', 20);
