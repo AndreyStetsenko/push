@@ -122,6 +122,13 @@
                 gap: rem(14px);
                 margin-top: rem(24px);
 
+                form {
+                    .wrapp {
+                        flex-direction: column;
+                        gap: rem(14px);
+                    }
+                }
+
                 input {
                     width: 100%;
                     padding: rem(15px) rem(24px) rem(16px);

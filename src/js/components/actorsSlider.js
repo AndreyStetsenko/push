@@ -92,7 +92,6 @@ function initServicesSlider() {
         return;
     }
     
-    // let active = Math.min(5, Math.floor(items.length / 2));
     let active = 0;
     
     // Функция для получения значения смещения в зависимости от размера экрана
@@ -118,7 +117,7 @@ function initServicesSlider() {
         
         // show after
         let stt = 0;
-        for(var i = active + 1; i < items.length; i ++){
+        for(var i = active + 1; i < items.length; i++){
             stt++;
             items[i].style.transform = `translateX(${offset*stt}px) scale(${1 - 0.2*stt}) perspective(16px) rotateY(-1deg)`;
             items[i].style.opacity = stt > 2 ? 0 : 0.6;
@@ -126,7 +125,7 @@ function initServicesSlider() {
             items[i].classList.add('next');
         }
         stt = 0;
-        for(var i = (active - 1); i >= 0; i --){
+        for(var i = (active - 1); i >= 0; i--){
             stt++;
             items[i].style.transform = `translateX(${-offset*stt}px) scale(${1 - 0.2*stt}) perspective(16px) rotateY(1deg)`;
             items[i].style.opacity = stt > 2 ? 0 : 0.6;
@@ -149,6 +148,7 @@ function initServicesSlider() {
         sliderContainer.addEventListener('mousedown', (e) => {
             isDragging = true;
             startX = e.clientX;
+            currentX = e.clientX;
             sliderContainer.style.cursor = 'grabbing';
             e.preventDefault();
         });
@@ -188,13 +188,20 @@ function initServicesSlider() {
         sliderContainer.addEventListener('touchstart', (e) => {
             isTouching = true;
             startX = e.touches[0].clientX;
-            e.preventDefault();
-        }, { passive: false });
+            currentX = e.touches[0].clientX;
+            // Не вызываем preventDefault для touchstart
+        });
 
         sliderContainer.addEventListener('touchmove', (e) => {
             if (!isTouching) return;
             currentX = e.touches[0].clientX;
-            e.preventDefault();
+            
+            // Проверяем, что это горизонтальный свайп
+            let diffX = Math.abs(startX - currentX);
+            if (diffX > 10) {
+                // Предотвращаем скролл только при горизонтальном движении
+                e.preventDefault();
+            }
         }, { passive: false });
 
         sliderContainer.addEventListener('touchend', (e) => {
@@ -213,9 +220,7 @@ function initServicesSlider() {
                 }
                 loadShow();
             }
-            
-            e.preventDefault();
-        }, { passive: false });
+        });
 
         sliderContainer.addEventListener('touchcancel', () => {
             isTouching = false;

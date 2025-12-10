@@ -12,24 +12,9 @@ $whyus_emoji_image = $whyus_emoji ? crb_get_image($whyus_emoji) : null;
 <div class="whyus" id="whyus">
     <div class="container">
         <div class="row">
-            <div class="col-1">
-                <div class="whyus__emoji-wrapp" style="display: none;">
-                    <?php if ($whyus_emoji_image && isset($whyus_emoji_image['url'])): ?>
-                        <img src="<?php echo esc_url($whyus_emoji_image['url']); ?>" alt="<?php echo esc_attr($whyus_emoji_image['alt'] ?: 'emoji'); ?>" class="whyus__emoji">
-                    <?php else: ?>
-                        <img src="<?= img_url('whyus/blckbtn.png'); ?>" alt="emoji" class="whyus__emoji">
-                    <?php endif; ?>
-                </div>
-            </div>
+            <div class="col-1"></div>
             <div class="col">
                 <div class="whyus__head">
-                    <div class="whyus__emoji-wrapp">
-                        <?php if ($whyus_emoji_image && isset($whyus_emoji_image['url'])): ?>
-                            <img src="<?php echo esc_url($whyus_emoji_image['url']); ?>" alt="<?php echo esc_attr($whyus_emoji_image['alt'] ?: 'emoji'); ?>" class="whyus__emoji mob">
-                        <?php else: ?>
-                            <img src="<?= img_url('whyus/blckbtn.png'); ?>" alt="emoji" class="whyus__emoji mob">
-                        <?php endif; ?>
-                    </div>
                     <h2 class="whyus__title">
                         <span class="whyus__title-first"><?php echo esc_html($whyus_title_first); ?></span>
                         <span><?php echo esc_html($whyus_title_second); ?></span>

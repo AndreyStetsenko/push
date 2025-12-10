@@ -12,7 +12,9 @@ export function initCasesSlider() {
     let currentIndex = 0;
     const gap = 20;
     let isDragging = false;
+    let isTouching = false;
     let isIndicatorDragging = false;
+    let isIndicatorTouching = false;
     let startX = 0;
     let currentX = 0;
     let initialTranslateX = 0;
@@ -26,7 +28,6 @@ export function initCasesSlider() {
         for (let i = 0; i < currentIndex; i++) {
             translateX -= getCardWidth(i);
         }
-        // gap уже учтен в CSS через flex gap
         translateX -= currentIndex * gap;
         return translateX;
     };
@@ -42,7 +43,7 @@ export function initCasesSlider() {
         const baseTranslateX = getTranslateX();
         const translateX = baseTranslateX + offsetX;
         sliderContainer.style.transform = `translateX(${translateX}px)`;
-        sliderContainer.style.transition = isDragging ? 'none' : 'transform 0.3s ease';
+        sliderContainer.style.transition = (isDragging || isTouching) ? 'none' : 'transform 0.3s ease';
 
         // Обновляем активное состояние карточек
         cards.forEach((card, index) => {
@@ -64,9 +65,9 @@ export function initCasesSlider() {
         });
 
         // Обновляем индикатор-ползунок
-        if (indicatorProgress && indicator && !isIndicatorDragging) {
+        if (indicatorProgress && indicator && !isIndicatorDragging && !isIndicatorTouching) {
             const indicatorWidth = indicator.offsetWidth;
-            const progressWidth = indicatorWidth * 0.2; // 20% от ширины индикатора
+            const progressWidth = indicatorWidth * 0.2;
             const maxPosition = indicatorWidth - progressWidth;
             const position = cards.length > 1 ? (currentIndex / (cards.length - 1)) * maxPosition : 0;
             indicatorProgress.style.left = `${position}px`;
@@ -81,15 +82,15 @@ export function initCasesSlider() {
         });
     });
 
-    // Обработчики для перетаскивания мышью
+    // ============ ОБРАБОТЧИКИ ДЛЯ МЫШИ ============
     const handleMouseDown = (e) => {
-        // Не обрабатываем, если клик был на индикаторе
         if (indicator && indicator.contains(e.target)) {
             return;
         }
         
         isDragging = true;
         startX = e.clientX;
+        currentX = e.clientX;
         initialTranslateX = getTranslateX();
         sliderContainer.style.cursor = 'grabbing';
         e.preventDefault();
@@ -111,20 +112,17 @@ export function initCasesSlider() {
         
         const offsetX = currentX - startX;
         const cardWidth = getCardWidth(currentIndex);
-        const threshold = cardWidth * 0.3; // 30% от ширины карточки
+        const threshold = cardWidth * 0.3;
         
         if (Math.abs(offsetX) > threshold) {
             if (offsetX > 0 && currentIndex > 0) {
-                // Свайп вправо - предыдущий слайд
                 goToSlide(currentIndex - 1);
             } else if (offsetX < 0 && currentIndex < cards.length - 1) {
-                // Свайп влево - следующий слайд
                 goToSlide(currentIndex + 1);
             } else {
                 updateSlider();
             }
         } else {
-            // Возврат к текущему слайду
             updateSlider();
         }
         
@@ -132,7 +130,58 @@ export function initCasesSlider() {
         currentX = 0;
     };
 
-    // Обработчики для индикатора-ползунка
+    // ============ ОБРАБОТЧИКИ ДЛЯ TOUCH ============
+    const handleTouchStart = (e) => {
+        if (indicator && indicator.contains(e.target)) {
+            return;
+        }
+        
+        isTouching = true;
+        startX = e.touches[0].clientX;
+        currentX = e.touches[0].clientX;
+        initialTranslateX = getTranslateX();
+    };
+
+    const handleTouchMove = (e) => {
+        if (!isTouching) return;
+        
+        currentX = e.touches[0].clientX;
+        const offsetX = currentX - startX;
+        
+        // Предотвращаем скролл только при горизонтальном движении
+        if (Math.abs(offsetX) > 10) {
+            e.preventDefault();
+        }
+        
+        updateSlider(offsetX);
+    };
+
+    const handleTouchEnd = () => {
+        if (!isTouching) return;
+        
+        isTouching = false;
+        
+        const offsetX = currentX - startX;
+        const cardWidth = getCardWidth(currentIndex);
+        const threshold = cardWidth * 0.3;
+        
+        if (Math.abs(offsetX) > threshold) {
+            if (offsetX > 0 && currentIndex > 0) {
+                goToSlide(currentIndex - 1);
+            } else if (offsetX < 0 && currentIndex < cards.length - 1) {
+                goToSlide(currentIndex + 1);
+            } else {
+                updateSlider();
+            }
+        } else {
+            updateSlider();
+        }
+        
+        startX = 0;
+        currentX = 0;
+    };
+
+    // ============ ОБРАБОТЧИКИ ДЛЯ ИНДИКАТОРА (МЫШЬ) ============
     let indicatorClickStartX = 0;
     let indicatorClickStartY = 0;
     let indicatorWasDragged = false;
@@ -140,13 +189,11 @@ export function initCasesSlider() {
     const handleIndicatorClick = (e) => {
         if (!indicator || !indicatorProgress) return;
         
-        // Если был перетаскивание, не обрабатываем клик
         if (indicatorWasDragged) {
             indicatorWasDragged = false;
             return;
         }
         
-        // Если клик был на самом ползунке, не обрабатываем
         if (e.target === indicatorProgress) {
             return;
         }
@@ -157,7 +204,6 @@ export function initCasesSlider() {
         const progressWidth = indicatorWidth * 0.2;
         const maxPosition = indicatorWidth - progressWidth;
         
-        // Вычисляем индекс слайда на основе позиции клика
         const position = Math.max(0, Math.min(clickX - progressWidth / 2, maxPosition));
         const newIndex = Math.round((position / maxPosition) * (cards.length - 1));
         
@@ -179,7 +225,6 @@ export function initCasesSlider() {
     const handleIndicatorMouseMove = (e) => {
         if (!isIndicatorDragging || !indicator || !indicatorProgress) return;
         
-        // Проверяем, было ли движение (перетаскивание)
         const deltaX = Math.abs(e.clientX - indicatorClickStartX);
         const deltaY = Math.abs(e.clientY - indicatorClickStartY);
         if (deltaX > 3 || deltaY > 3) {
@@ -192,12 +237,10 @@ export function initCasesSlider() {
         const progressWidth = indicatorWidth * 0.2;
         const maxPosition = indicatorWidth - progressWidth;
         
-        // Ограничиваем позицию ползунка
         const position = Math.max(0, Math.min(moveX - progressWidth / 2, maxPosition));
         indicatorProgress.style.left = `${position}px`;
         indicatorProgress.style.transition = 'none';
         
-        // Вычисляем индекс слайда
         const newIndex = Math.round((position / maxPosition) * (cards.length - 1));
         if (newIndex !== currentIndex && newIndex >= 0 && newIndex < cards.length) {
             currentIndex = newIndex;
@@ -215,22 +258,89 @@ export function initCasesSlider() {
         updateSlider();
     };
 
-    // Добавляем обработчики событий для слайдера
+    // ============ ОБРАБОТЧИКИ ДЛЯ ИНДИКАТОРА (TOUCH) ============
+    let indicatorTouchStartX = 0;
+    let indicatorTouchStartY = 0;
+    let indicatorTouchWasDragged = false;
+
+    const handleIndicatorTouchStart = (e) => {
+        if (!indicator || !indicatorProgress) return;
+        
+        isIndicatorTouching = true;
+        indicatorTouchWasDragged = false;
+        indicatorTouchStartX = e.touches[0].clientX;
+        indicatorTouchStartY = e.touches[0].clientY;
+        e.stopPropagation();
+    };
+
+    const handleIndicatorTouchMove = (e) => {
+        if (!isIndicatorTouching || !indicator || !indicatorProgress) return;
+        
+        const deltaX = Math.abs(e.touches[0].clientX - indicatorTouchStartX);
+        const deltaY = Math.abs(e.touches[0].clientY - indicatorTouchStartY);
+        if (deltaX > 3 || deltaY > 3) {
+            indicatorTouchWasDragged = true;
+            e.preventDefault();
+        }
+        
+        const indicatorRect = indicator.getBoundingClientRect();
+        const moveX = e.touches[0].clientX - indicatorRect.left;
+        const indicatorWidth = indicator.offsetWidth;
+        const progressWidth = indicatorWidth * 0.2;
+        const maxPosition = indicatorWidth - progressWidth;
+        
+        const position = Math.max(0, Math.min(moveX - progressWidth / 2, maxPosition));
+        indicatorProgress.style.left = `${position}px`;
+        indicatorProgress.style.transition = 'none';
+        
+        const newIndex = Math.round((position / maxPosition) * (cards.length - 1));
+        if (newIndex !== currentIndex && newIndex >= 0 && newIndex < cards.length) {
+            currentIndex = newIndex;
+            updateSlider();
+        }
+    };
+
+    const handleIndicatorTouchEnd = () => {
+        if (!isIndicatorTouching) return;
+        
+        isIndicatorTouching = false;
+        if (indicatorProgress) {
+            indicatorProgress.style.transition = 'left 0.3s ease, width 0.3s ease';
+        }
+        updateSlider();
+    };
+
+    // ============ ДОБАВЛЕНИЕ ОБРАБОТЧИКОВ ============
     sliderContainer.style.cursor = 'grab';
     sliderContainer.style.userSelect = 'none';
     
+    // Обработчики мыши для слайдера
     sliderContainer.addEventListener('mousedown', handleMouseDown);
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
 
-    // Добавляем обработчики событий для индикатора
+    // Обработчики touch для слайдера
+    sliderContainer.addEventListener('touchstart', handleTouchStart);
+    sliderContainer.addEventListener('touchmove', handleTouchMove, { passive: false });
+    sliderContainer.addEventListener('touchend', handleTouchEnd);
+    sliderContainer.addEventListener('touchcancel', handleTouchEnd);
+
+    // Обработчики для индикатора
     if (indicator) {
         indicator.addEventListener('click', handleIndicatorClick);
+        
         if (indicatorProgress) {
+            // Мышь
             indicatorProgress.addEventListener('mousedown', handleIndicatorMouseDown);
+            document.addEventListener('mousemove', handleIndicatorMouseMove);
+            document.addEventListener('mouseup', handleIndicatorMouseUp);
+            
+            // Touch
+            indicatorProgress.addEventListener('touchstart', handleIndicatorTouchStart);
+            indicatorProgress.addEventListener('touchmove', handleIndicatorTouchMove, { passive: false });
+            indicatorProgress.addEventListener('touchend', handleIndicatorTouchEnd);
+            indicatorProgress.addEventListener('touchcancel', handleIndicatorTouchEnd);
         }
-        document.addEventListener('mousemove', handleIndicatorMouseMove);
-        document.addEventListener('mouseup', handleIndicatorMouseUp);
     }
 
     // Инициализация
@@ -245,4 +355,3 @@ export function initCasesSlider() {
         }, 250);
     });
 }
-

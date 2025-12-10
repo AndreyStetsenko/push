@@ -14,19 +14,6 @@ $actors_items = get_field('actors_items', 'option');
                 <div class="title"><?php echo esc_html($actors_title_part1); ?> <span><?php echo esc_html($actors_title_part2); ?></span></div>
                 <div class="sub"><?php echo wp_kses_post($actors_subtitle); ?></div>
             </div>
-            <div class="actors__emoji">
-                <?php if ($actors_emoji): ?>
-                    <?php 
-                    $emoji_image = crb_get_image($actors_emoji);
-                    if ($emoji_image && isset($emoji_image['url'])): ?>
-                        <img src="<?php echo esc_url($emoji_image['url']); ?>" alt="<?php echo esc_attr($emoji_image['alt'] ?: 'emoji'); ?>">
-                    <?php else: ?>
-                        <img src="<?= img_url('actors/emoji.png'); ?>" alt="emoji">
-                    <?php endif; ?>
-                <?php else: ?>
-                    <img src="<?= img_url('actors/emoji.png'); ?>" alt="emoji">
-                <?php endif; ?>
-            </div>
         </div>
 
         <div class="actors__slider">
