@@ -45,7 +45,7 @@ if ($pushstart_cursor_image && isset($pushstart_cursor_image['url'])) {
                     <span><?php echo esc_html($pushstart_title_line2); ?></span>
                 </div>
 
-                <p class="description"><?php echo esc_html($pushstart_description); ?></p>
+                <p class="description"><?php echo wp_kses_post($pushstart_description); ?></p>
 
                 <?php 
                 $pushstart_form_id = push_get_cf7_form_id('pushstart');
