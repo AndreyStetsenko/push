@@ -3,6 +3,7 @@
 $hero_title_group = get_field('hero_title_group', 'option');
 $hero_title_line1 = $hero_title_group && isset($hero_title_group['line1']) ? $hero_title_group['line1'] : '';
 $hero_title_line2 = $hero_title_group && isset($hero_title_group['line2']) ? $hero_title_group['line2'] : '';
+$hero_title_size = $hero_title_group && isset($hero_title_group['size']) ? $hero_title_group['size'] : '';
 
 $hero_description = get_field('hero_description', 'option') ?: '';
 
@@ -20,7 +21,7 @@ $hero_bg_items = get_field('hero_bg_items', 'option');
             <div class="col-1"></div>
             <div class="col">
                 <div class="hero__content">
-                    <div class="hero__title">
+                    <div class="hero__title" <?php if (($hero_title_size)): ?>style="font-size: <?php echo esc_attr($hero_title_size); ?>rem;"<?php endif; ?>>
                         <div class="span"><?php echo esc_html($hero_title_line1); ?></div>
                         <div class="span"><?php echo esc_html($hero_title_line2); ?></div>
                     </div>

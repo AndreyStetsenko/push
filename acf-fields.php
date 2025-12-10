@@ -74,6 +74,14 @@ function crb_attach_theme_options() {
                         ->set_help_text( 'Вторая строка заголовка (например: "SMM для тебе")' )
                         ->set_default_value( 'SMM для тебе' )
                         ->set_attribute( 'placeholder', 'SMM для тебе' ),
+                    Field::make( 'text', 'size', __( 'Размер текста' ) )
+                        ->set_help_text( 'Размер текста (например: "7")' )
+                        ->set_default_value( '7.5rem' )
+                        ->set_attribute( 'placeholder', '7.5rem' )
+                        ->set_attribute( 'type', 'number' )
+                        ->set_attribute( 'data-min', 10 )
+                        ->set_attribute( 'data-max', 100 )
+                        ->set_attribute( 'data-step', 1 ),
                 ) ),
         // Описание
             Field::make( 'textarea', 'hero_description' . carbon_lang_prefix(), __( 'Описание' ) )
