@@ -23,6 +23,7 @@
                 font-family: $font-family-base;
                 color: #000;
                 text-transform: uppercase;
+                text-align: center;
 
                 @include media-breakpoint-down(md) {
                     font-size: rem(35px);
@@ -30,6 +31,7 @@
 
                 span {
                     color: #FA6000;
+                    hyphens: none
                 }
             }
 
