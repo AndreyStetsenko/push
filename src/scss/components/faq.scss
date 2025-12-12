@@ -31,9 +31,9 @@
 
             .folder {
                 width: 100%;
-                // padding-top: rem(100px);
                 position: absolute;
-                transition: transform 0.2s ease, z-index 0.2s ease;
+                transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), z-index 0.3s ease, top 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                will-change: transform, top;
 
                 &:hover:not(.is-open) {
                     transform: translateY(-10px);
@@ -44,13 +44,15 @@
                 }
                 
                 &.is-open {
-                    z-index: 100 !important;
+                    // z-index остается таким же, как у других папок, чтобы не накладываться поверх
                     transform: translateY(0);
 
                     .folder__content--image {
-                        top: auto;
-                        bottom: rem(-40px);
-                        transition: 0.3s ease;
+                        top: 60%;
+                        // bottom: rem(-40px);
+                        transition: top 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+                                    bottom 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                                    transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
                         position: absolute;
                     }
                     
@@ -96,13 +98,15 @@
                     }
                 }
 
+                // Базовые стили для наложения папок друг на друга
+                // Каждая следующая папка немного смещена вниз для эффекта наложения
+                $folder-overlap: 80px; // Перекрытие папок
+                
                 &--1 {
                     top: 0;
                     z-index: 1;
 
                     .folder__tab {
-                        // margin-left: auto;
-                        // margin-right: 5%;
                         right: 9%;
                     }
 
@@ -116,12 +120,10 @@
                 }
 
                 &--2 {
-                    top: 50px;
+                    top: $folder-overlap;
                     z-index: 2;
 
                     .folder__tab {
-                        // margin-left: 25%;
-                        // margin-right: 5%;
                         left: 25%;
                     }
 
@@ -165,13 +167,11 @@
                 }
 
                 &--3 {
-                    top: 200px;
+                    top: calc(#{$folder-overlap} * 2);
                     z-index: 3;
 
                     .folder__tab {
-                        // margin-left: 5%;
                         left: 5%;
-                        // margin-right: 10%;
                     }
 
                     .folder__content--image {
@@ -184,13 +184,11 @@
                 }
 
                 &--4 {
-                    top: 350px;
+                    top: calc(#{$folder-overlap} * 3);
                     z-index: 4;
 
                     .folder__tab {
-                        // margin-left: auto;
                         right: 10%;
-                        // margin-right: 10%;
                     }
 
                     .folder__content--image {
@@ -198,18 +196,15 @@
                         height: rem(320px);
                         top: rem(-40px);
                         right: 5%;
-                        // transform: rotate(-30deg);
                     }
                 }
 
                 &--5 {
-                    top: 500px;
+                    top: calc(#{$folder-overlap} * 4);
                     z-index: 5;
 
                     .folder__tab {
-                        // margin-left: 25%;
                         left: 25%;
-                        // margin-right: 5%;
                     }
 
                     .folder__content--image {
@@ -217,18 +212,15 @@
                         height: rem(320px);
                         top: rem(-140px);
                         left: 38%;
-                        // transform: rotate(-30deg);
                     }
                 }
 
                 &--6 {
-                    top: 650px;
+                    top: calc(#{$folder-overlap} * 5);
                     z-index: 6;
 
                     .folder__tab {
-                        // margin-left: 5%;
                         left: 5%;
-                        // margin-right: 5%;
                     }
 
                     .folder__content--image {
@@ -241,13 +233,11 @@
                 }
 
                 &--7 {
-                    top: 800px;
+                    top: calc(#{$folder-overlap} * 6);
                     z-index: 7;
 
                     .folder__tab {
-                        // margin-left: auto;
                         right: 10%;
-                        // margin-right: 10%;
                     }
 
                     .folder__content--image {
@@ -255,19 +245,16 @@
                         height: rem(300px);
                         top: rem(-100px);
                         right: 0%;
-                        // transform: rotate(-20deg);
                     }
                 }
 
                 &--8 {
-                    top: 960px;
+                    top: calc(#{$folder-overlap} * 7);
                     z-index: 8;
 
                     .folder__tab {
                         width: rem(340px);
-                        // margin-left: 7%;
                         left: 7%;
-                        // margin-right: 5%;
                     }
 
                     .folder__content--wrapp {
@@ -340,7 +327,9 @@
                         width: rem(250px);
                         height: rem(250px);
                         object-fit: cover;
-                        transition: 0.3s ease;
+                        transition: top 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+                                    bottom 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                                    transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
                         
                         img {
                             width: 100%;
@@ -452,6 +441,7 @@
                             }
 
                             &__button {
+                                cursor: pointer;
                                 padding: rem(10px);
                                 padding-left: rem(50px);
                                 background: #fff;
@@ -509,6 +499,7 @@
                                     align-items: center;
                                     justify-content: space-between;
                                     gap: rem(50px);
+                                    cursor: pointer;
     
                                     .info {
                                         display: flex;
@@ -600,16 +591,16 @@
                         }
                     }
 
-                    $step: 62px;
-                    $extra: 20px;
-
-                    @for $i from 1 through 8 {
-                    &--#{$i} {
-                        @if $i == 1 {
+                    // Мобильное наложение папок
+                    $mobile-folder-overlap: 55px;
+                    
+                    &--1 {
                         top: 0;
-                        } @else {
-                        top: calc(#{$step} * (#{$i - 1}) + #{$extra} * (#{$i - 2}));
-                        }
+                    }
+                    
+                    @for $i from 2 through 8 {
+                        &--#{$i} {
+                            top: calc(#{$mobile-folder-overlap} * (#{$i - 1}));
                         }
                     }
 
@@ -826,6 +817,7 @@
                                         gap: rem(16px);
                                         border-radius: rem(10px);
                                         justify-content: space-between;
+                                        cursor: pointer;
 
                                         .info {
                                             .name {
