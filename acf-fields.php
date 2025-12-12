@@ -33,6 +33,7 @@ function crb_attach_theme_options() {
         array( 'title' => 'Collab Section - Секция этапов сотрудничества', 'slug' => 'collab_section.php' ),
         array( 'title' => 'FAQ Section - Секция FAQ', 'slug' => 'faq_section_-_faq.php' ),
         array( 'title' => 'Bonus Section - Секция бонуса', 'slug' => 'bonus_section.php' ),
+        array( 'title' => 'Footer Form Section - Секция формы в футере', 'slug' => 'footer_form_section.php' ),
     );
     
     // Формируем HTML с ссылками
@@ -678,6 +679,29 @@ function crb_attach_theme_options() {
                             Field::make( 'image', 'icon', __( 'Иконка' ) )
                                 ->set_help_text( 'Загрузите кастомную иконку для контакта. Если не указано, будет использована иконка по умолчанию на основе названия.' ),
                         ) ),
+                ) ),
+        ) );
+
+    // Footer Form Section - Секция формы в футере
+    Container::make( 'theme_options', __( 'Footer Form Section - Секция формы в футере' ) )
+        ->set_page_parent($options)
+        ->set_page_menu_position( 9 )
+        ->add_fields( array(
+        // Заголовок
+            Field::make( 'complex', 'footer_form_title_group' . carbon_lang_prefix(), __( 'Заголовок' ) )
+                ->set_help_text( 'Настройки заголовка формы в футере' )
+                ->set_layout( 'tabbed-vertical' )
+                ->add_fields( array(
+                    Field::make( 'text', 'first', __( 'Первая часть' ) )
+                        ->set_help_text( 'Первая часть заголовка (например: "Push-старт")' )
+                        ->set_default_value( 'Push-старт' )
+                        ->set_attribute( 'placeholder', 'Push-старт' )
+                        ->set_required( true ),
+                    Field::make( 'text', 'second', __( 'Вторая часть' ) )
+                        ->set_help_text( 'Вторая часть заголовка (например: "для твого бренду")' )
+                        ->set_default_value( 'для твого бренду' )
+                        ->set_attribute( 'placeholder', 'для твого бренду' )
+                        ->set_required( true ),
                 ) ),
         ) );
 }
