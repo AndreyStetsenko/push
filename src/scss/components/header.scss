@@ -378,9 +378,17 @@
         margin-bottom: rem(32px);
     }
 
+    &__items {
+        display: flex;
+        flex-direction: column;
+        gap: rem(24px);
+        align-items: center;
+    }
+
     &__item {
+        width: fit-content;
         display: block;
-        padding: rem(16px) rem(20px);
+        padding: rem(11px) rem(20px) rem(13px);
         font-family: $font-family-base;
         font-size: rem(16px);
         line-height: 140%;
@@ -415,11 +423,13 @@
     }
 
     &__contacts {
-        margin-top: auto;
+        width: fit-content;
+        margin: auto auto 0;
         display: flex;
         align-items: center;
         justify-content: space-between;
         padding: rem(16px) rem(20px);
+        padding-left: 0;
         background: #1A1A1A;
         border-radius: rem(6px);
         text-decoration: none;
@@ -430,6 +440,8 @@
         }
 
         span {
+            padding-left: rem(35px);
+            padding-right: rem(38px);
             font-family: $font-family-base;
             font-size: rem(16px);
             line-height: 160%;
