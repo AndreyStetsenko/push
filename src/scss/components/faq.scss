@@ -355,14 +355,30 @@
                             justify-content: space-between;
                             gap: rem(36px);
                             text-decoration: none;
+
+                            &__content {
+                                display: flex;
+                                flex-direction: column;
+                                gap: rem(8px);
+                            }
                             
                             span {
                                 max-width: rem(540px);
                                 color: #fff;
-                                font-family: $font-family-base;
+                                font-family: $font-family-inter;
                                 font-size: rem(30px);
                                 font-weight: 500;
                                 line-height: 106%;
+                                letter-spacing: -2%;
+                            }
+
+                            p {
+                                max-width: rem(540px);
+                                color: #fff;
+                                font-family: $font-family-inter;
+                                font-size: rem(22px);
+                                font-weight: 400;
+                                line-height: 96%;
                                 letter-spacing: -2%;
                             }
 

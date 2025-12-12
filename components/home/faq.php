@@ -262,22 +262,25 @@ function get_contact_icon($name) {
                             <div class="container">
                                 <div class="folder__content--wrapp">
                                     <?php if (!empty($questions) && is_array($questions)): ?>
-                                        <?php foreach ($questions as $question): ?>
+                                        <?php foreach ($questions as $key => $question): ?>
                                             <?php
                                             // Преобразуем объект в массив если нужно
                                             if (is_object($question)) {
                                                 $question = (array) $question;
                                             }
-                                            $question_number = isset($question['number']) ? $question['number'] : '';
+                                            $question_number = $key + 1;
                                             $question_text = isset($question['text']) ? $question['text'] : '';
-                                            $question_link = isset($question['link']) ? $question['link'] : '#';
+                                            $question_answer = isset($question['answer']) ? $question['answer'] : '';
                                             ?>
-                                            <a href="<?php echo esc_url($question_link); ?>" class="item">
-                                                <span><?php echo esc_html($question_number . '/' . $question_text); ?></span>
+                                            <div class="item">
+                                                <div class="item__content">
+                                                    <span><?php echo esc_html($question_number . '/' . $question_text); ?></span>
+                                                    <p><?php echo esc_html($question_answer); ?></p>
+                                                </div>
                                                 <div class="item__icon">
                                                     <?php echo $question_icon; ?>
                                                 </div>
-                                            </a>
+                                            </div>
                                         <?php endforeach; ?>
                                     <?php endif; ?>
                                 </div>

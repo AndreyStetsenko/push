@@ -9,6 +9,11 @@ export function initBonusBox() {
 
     let isOpened = false;
 
+    // Функция для определения мобильного устройства
+    function isMobile() {
+        return window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    }
+
     // Функция для динамического изменения размера текста
     function adjustTextSize() {
         if (!bonusTitle) return;
@@ -16,18 +21,22 @@ export function initBonusBox() {
         const container = bonusTitle.parentElement; // .bonus__item-content
         if (!container) return;
 
+        const mobile = isMobile();
+        
         // Получаем максимальную ширину контейнера
         const containerWidth = container.offsetWidth;
-        const padding = 20; // Отступы для безопасности
+        const padding = mobile ? 30 : 20; // Больше отступы на мобильных для безопасности
         const maxWidth = containerWidth - padding;
 
-        // Минимальный и максимальный размер шрифта
-        const minFontSize = 60; // px
-        const maxFontSize = 120; // px
+        // Минимальный и максимальный размер шрифта в зависимости от устройства
+        const minFontSize = mobile ? 24 : 60; // px
+        const maxFontSize = mobile ? 50 : 120; // px
+
+        // На мобильных разрешаем перенос текста, на десктопе - нет
+        bonusTitle.style.whiteSpace = mobile ? 'normal' : 'nowrap';
 
         // Временно устанавливаем максимальный размер для измерения
         bonusTitle.style.fontSize = maxFontSize + 'px';
-        bonusTitle.style.whiteSpace = 'nowrap';
 
         // Бинарный поиск оптимального размера
         let low = minFontSize;
@@ -39,11 +48,25 @@ export function initBonusBox() {
             bonusTitle.style.fontSize = mid + 'px';
 
             // Проверяем, помещается ли текст
-            if (bonusTitle.scrollWidth <= maxWidth) {
-                optimalSize = mid;
-                low = mid + 1;
+            // На мобильных проверяем высоту, чтобы текст не выходил за границы
+            if (mobile) {
+                const textHeight = bonusTitle.offsetHeight;
+                const containerHeight = container.offsetHeight || window.innerHeight * 0.3;
+                const textWidth = bonusTitle.scrollWidth;
+                
+                if (textWidth <= maxWidth && textHeight <= containerHeight) {
+                    optimalSize = mid;
+                    low = mid + 1;
+                } else {
+                    high = mid - 1;
+                }
             } else {
-                high = mid - 1;
+                if (bonusTitle.scrollWidth <= maxWidth) {
+                    optimalSize = mid;
+                    low = mid + 1;
+                } else {
+                    high = mid - 1;
+                }
             }
         }
 
@@ -58,20 +81,26 @@ export function initBonusBox() {
             // Используем ResizeObserver для отслеживания изменений размера контейнера
             if (typeof ResizeObserver !== 'undefined') {
                 const resizeObserver = new ResizeObserver(() => {
-                    adjustTextSize();
+                    // Небольшая задержка для стабилизации размеров
+                    setTimeout(adjustTextSize, 50);
                 });
                 resizeObserver.observe(container);
             }
 
-            // Fallback для старых браузеров
+            // Обработка изменения размера окна с debounce
             let resizeTimeout;
             window.addEventListener('resize', () => {
                 clearTimeout(resizeTimeout);
-                resizeTimeout = setTimeout(adjustTextSize, 100);
+                resizeTimeout = setTimeout(adjustTextSize, 150);
+            });
+
+            // Обработка изменения ориентации на мобильных
+            window.addEventListener('orientationchange', () => {
+                setTimeout(adjustTextSize, 300);
             });
         }
-        // Первоначальная настройка
-        setTimeout(adjustTextSize, 100);
+        // Первоначальная настройка с задержкой для загрузки шрифтов
+        setTimeout(adjustTextSize, 200);
     }
 
     // Обработчик клика
@@ -87,7 +116,9 @@ export function initBonusBox() {
         bonusItem.appendChild(smoke);
 
         // Пересчитываем размер текста после открытия (если контейнер изменился)
-        setTimeout(adjustTextSize, 100);
+        // Увеличиваем задержку для мобильных, чтобы анимация успела завершиться
+        const delay = isMobile() ? 300 : 150;
+        setTimeout(adjustTextSize, delay);
     });
 }
 

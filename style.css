@@ -129,7 +129,6 @@ p, h1, h2, h3, h4, h5, h6, span, a, li {
     max-width: 100%;
     word-wrap: break-word;
     overflow-wrap: break-word;
-    hyphens: auto;
 }
 
 /* Фикс для абсолютно позиционированных элементов */

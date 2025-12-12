@@ -602,18 +602,15 @@ function crb_attach_theme_options() {
                             )
                         ) )
                         ->add_fields( array(
-                            Field::make( 'text', 'number', __( 'Номер вопроса' ) )
-                                ->set_help_text( 'Номер вопроса (например: "01", "02")' )
-                                ->set_attribute( 'placeholder', '01' )
-                                ->set_required( true ),
                             Field::make( 'text', 'text', __( 'Текст вопроса' ) )
                                 ->set_help_text( 'Текст вопроса' )
                                 ->set_attribute( 'placeholder', 'Що входить у послугу SMM-консалтингу?' )
                                 ->set_required( true ),
-                            Field::make( 'text', 'link', __( 'Ссылка' ) )
-                                ->set_help_text( 'Ссылка на вопрос (оставьте пустым для #)' )
-                                ->set_default_value( '#' )
-                                ->set_attribute( 'placeholder', '#' ),
+                            Field::make( 'textarea', 'answer', __( 'Ответ на вопрос' ) )
+                                ->set_help_text( 'Ответ на вопрос' )
+                                ->set_attribute( 'placeholder', 'Що входить у послугу SMM-консалтингу?' )
+                                ->set_rows( 2 )
+                                ->set_required( false ),
                         ) ),
                     Field::make( 'checkbox', 'is_contacts', __( 'Это секция контактов' ) )
                         ->set_help_text( 'Отметьте, если это папка с контактами (вместо вопросов будут показаны контакты)' )
