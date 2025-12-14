@@ -14,11 +14,36 @@
             <div class="header__wrapp">
                 <div class="header__logo">
                     <?php
-                    $logo_id = carbon_get_theme_option( 'header_logo' . carbon_lang_prefix() );
+                    // Пробуем получить логотип с префиксом языка
+                    $logo_id = get_field( 'header_logo', 'option' );
+                    // Если не найдено, пробуем без префикса (fallback)
+                    if ( ! $logo_id ) {
+                        $logo_id = carbon_get_theme_option( 'header_logo' );
+                    }
                     if ( $logo_id ) {
-                        $logo = crb_get_image( $logo_id, 'full' );
-                        if ( $logo && isset( $logo['url'] ) ) {
-                            echo '<img src="' . esc_url( $logo['url'] ) . '" alt="' . esc_attr( $logo['alt'] ? $logo['alt'] : 'Push' ) . '">';
+                        $logo_url = '';
+                        $logo_alt = 'Push';
+                        
+                        // Пробуем использовать функцию crb_get_image, если доступна
+                        if ( function_exists( 'crb_get_image' ) ) {
+                            $logo = crb_get_image( $logo_id, 'full' );
+                            if ( $logo && isset( $logo['url'] ) ) {
+                                $logo_url = $logo['url'];
+                                $logo_alt = ! empty( $logo['alt'] ) ? $logo['alt'] : 'Push';
+                            }
+                        }
+                        
+                        // Если crb_get_image не сработала, используем прямой способ
+                        if ( empty( $logo_url ) && is_numeric( $logo_id ) ) {
+                            $logo_url = wp_get_attachment_image_url( $logo_id, 'full' );
+                            if ( $logo_url ) {
+                                $logo_alt = get_post_meta( $logo_id, '_wp_attachment_image_alt', true );
+                                $logo_alt = ! empty( $logo_alt ) ? $logo_alt : 'Push';
+                            }
+                        }
+                        
+                        if ( $logo_url ) {
+                            echo '<img src="' . esc_url( $logo_url ) . '" alt="' . esc_attr( $logo_alt ) . '">';
                         } else {
                             echo '<span>Push</span>';
                         }
