@@ -32,7 +32,10 @@ $actors_items = get_field('actors_items', 'option');
                                 <div class="swiper-slide">
                                     <div class="item">
                                         <div class="image">
-                                            <img src="<?php echo esc_url($actor_image['url']); ?>" alt="<?php echo esc_attr($actor_image['alt'] ?: $actor_title); ?>">
+                                            <?php echo push_optimized_image($actor_image, 'full', array(
+                                                'loading' => 'lazy',
+                                                'fetchpriority' => 'auto'
+                                            )); ?>
                                         </div>
                                         <div class="body">
                                             <h3 class="title"><?php echo esc_html($actor_title); ?></h3>

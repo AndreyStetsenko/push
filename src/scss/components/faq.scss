@@ -111,16 +111,16 @@
                     }
 
                     .folder__content--image {
-                        width: rem(350px);
-                        height: rem(350px);
-                        top: rem(-180px);
-                        right: 30%;
+                        width: rem(280px);
+                        height: rem(250px);
+                        top: rem(-100px);
+                        right: 28%;
                         transform: rotate(-10deg);
                     }
                 }
 
                 &--2 {
-                    top: $folder-overlap;
+                    top: calc(#{$folder-overlap} - 40px);
                     z-index: 2;
 
                     .folder__tab {
@@ -130,7 +130,7 @@
                     .folder__content--image {
                         width: rem(350px);
                         height: rem(350px);
-                        top: rem(-20px);
+                        top: rem(-80px);
                         left: 30%;
                         transform: rotate(-10deg);
 
@@ -167,7 +167,7 @@
                 }
 
                 &--3 {
-                    top: calc(#{$folder-overlap} * 2);
+                    top: calc(#{$folder-overlap} * 2 + 20px);
                     z-index: 3;
 
                     .folder__tab {
@@ -177,14 +177,14 @@
                     .folder__content--image {
                         width: rem(280px);
                         height: rem(280px);
-                        top: rem(-40px);
-                        left: 10%;
+                        top: rem(-80px);
+                        left: 15%;
                         transform: rotate(-30deg);
                     }
                 }
 
                 &--4 {
-                    top: calc(#{$folder-overlap} * 3);
+                    top: calc(#{$folder-overlap} * 3 + 80px);
                     z-index: 4;
 
                     .folder__tab {
@@ -200,7 +200,7 @@
                 }
 
                 &--5 {
-                    top: calc(#{$folder-overlap} * 4);
+                    top: calc(#{$folder-overlap} * 4 + 140px);
                     z-index: 5;
 
                     .folder__tab {
@@ -216,7 +216,7 @@
                 }
 
                 &--6 {
-                    top: calc(#{$folder-overlap} * 5);
+                    top: calc(#{$folder-overlap} * 5 + 200px);
                     z-index: 6;
 
                     .folder__tab {
@@ -233,7 +233,7 @@
                 }
 
                 &--7 {
-                    top: calc(#{$folder-overlap} * 6);
+                    top: calc(#{$folder-overlap} * 6 + 270px);
                     z-index: 7;
 
                     .folder__tab {
@@ -241,7 +241,7 @@
                     }
 
                     .folder__content--image {
-                        width: rem(350px);
+                        width: rem(300px);
                         height: rem(300px);
                         top: rem(-100px);
                         right: 0%;
@@ -249,7 +249,7 @@
                 }
 
                 &--8 {
-                    top: calc(#{$folder-overlap} * 7);
+                    top: calc(#{$folder-overlap} * 7 + 340px);
                     z-index: 8;
 
                     .folder__tab {
@@ -613,12 +613,12 @@
                         }
                     }
 
-                    // Мобильное наложение папок
-                    $mobile-folder-overlap: 55px;
-                    
                     &--1 {
                         top: 0;
                     }
+
+                    // Мобильное наложение папок
+                    $mobile-folder-overlap: 70px;
                     
                     @for $i from 2 through 8 {
                         &--#{$i} {
@@ -630,7 +630,7 @@
                         .folder__content--image {
                             width: rem(115px);
                             height: auto;
-                            top: -115px;
+                            top: -85px;
                             right: 20%;
                         }
                     }

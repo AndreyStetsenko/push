@@ -31,7 +31,10 @@ $services_items = get_field('services_items', 'option');
                         <div class="slide">
                             <div class="item">
                                 <div class="item-head">
-                                    <img src="<?php echo esc_url($service_image['url']); ?>" alt="<?php echo esc_attr($service_image['alt'] ?: $service_title); ?>">
+                                    <?php echo push_optimized_image($service_image, 'full', array(
+                                        'loading' => 'lazy',
+                                        'fetchpriority' => 'auto'
+                                    )); ?>
                                 </div>
                                 <div class="item-body">
                                     <span class="title"><?php echo esc_html($service_title); ?></span>

@@ -47,12 +47,16 @@ $hero_bg_items = get_field('hero_bg_items', 'option');
                                 <?php 
                                 $push_image = crb_get_image($hero_push_image);
                                 if ($push_image && isset($push_image['url'])): ?>
-                                    <img src="<?php echo esc_url($push_image['url']); ?>" alt="<?php echo esc_attr($push_image['alt'] ?: 'push'); ?>">
+                                    <?php echo push_optimized_image($push_image, 'full', array(
+                                        'loading' => 'eager',
+                                        'fetchpriority' => 'high',
+                                        'class' => ''
+                                    )); ?>
                                 <?php else: ?>
-                                    <img src="<?= img_url('hero/push.png'); ?>" alt="push">
+                                    <img src="<?= img_url('hero/push.png'); ?>" alt="push" loading="eager" fetchpriority="high" decoding="async">
                                 <?php endif; ?>
                             <?php else: ?>
-                                <img src="<?= img_url('hero/push.png'); ?>" alt="push">
+                                <img src="<?= img_url('hero/push.png'); ?>" alt="push" loading="eager" fetchpriority="high" decoding="async">
                             <?php endif; ?>
 
                             <div class="hero__wrapp-push-shadow">
@@ -82,7 +86,10 @@ $hero_bg_items = get_field('hero_bg_items', 'option');
                     $item_image_data = crb_get_image($item_image);
                     if ($item_image_data && isset($item_image_data['url'])): ?>
                         <div class="item <?php echo esc_attr($item_class); ?>">
-                            <img src="<?php echo esc_url($item_image_data['url']); ?>" alt="<?php echo esc_attr($item_alt ?: $item_image_data['alt']); ?>">
+                            <?php echo push_optimized_image($item_image_data, 'full', array(
+                                'loading' => 'lazy',
+                                'fetchpriority' => 'auto'
+                            )); ?>
                         
                         <?php if ($shadows_count > 0): ?>
                             <div class="item-shadow">
@@ -98,32 +105,32 @@ $hero_bg_items = get_field('hero_bg_items', 'option');
         <?php else: ?>
             <!-- Fallback к статическому контенту, если поля не заполнены -->
             <div class="item item-inst">
-                <img src="<?= img_url('hero/btn-inst.png'); ?>" alt="inst">
+                <img src="<?= img_url('hero/btn-inst.png'); ?>" alt="inst" loading="lazy" decoding="async">
             </div>
             <div class="item item-fb">
-                <img src="<?= img_url('hero/btn-fb.png'); ?>" alt="fb">
+                <img src="<?= img_url('hero/btn-fb.png'); ?>" alt="fb" loading="lazy" decoding="async">
             </div>
             <div class="item item-tiktok">
-                <img src="<?= img_url('hero/btn-tiktok.png'); ?>" alt="tiktok">
+                <img src="<?= img_url('hero/btn-tiktok.png'); ?>" alt="tiktok" loading="lazy" decoding="async">
                 <div class="item-shadow">
                     <div class="item-shadow__item"></div>
                 </div>
             </div>
             <div class="item item-reddit">
-                <img src="<?= img_url('hero/btn-reddit.png'); ?>" alt="reddit">
+                <img src="<?= img_url('hero/btn-reddit.png'); ?>" alt="reddit" loading="lazy" decoding="async">
                 <div class="item-shadow">
                     <div class="item-shadow__item"></div>
                     <div class="item-shadow__item"></div>
                 </div>
             </div>
             <div class="item item-twitter">
-                <img src="<?= img_url('hero/btn-twitter.png'); ?>" alt="twitter">
+                <img src="<?= img_url('hero/btn-twitter.png'); ?>" alt="twitter" loading="lazy" decoding="async">
             </div>
             <div class="item item-link">
-                <img src="<?= img_url('hero/btn-link.png'); ?>" alt="link">
+                <img src="<?= img_url('hero/btn-link.png'); ?>" alt="link" loading="lazy" decoding="async">
             </div>
             <div class="item item-youtube">
-                <img src="<?= img_url('hero/btn-youtube.png'); ?>" alt="youtube">
+                <img src="<?= img_url('hero/btn-youtube.png'); ?>" alt="youtube" loading="lazy" decoding="async">
                 <div class="item-shadow">
                     <div class="item-shadow__item"></div>
                     <div class="item-shadow__item"></div>

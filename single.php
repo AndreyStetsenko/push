@@ -23,7 +23,18 @@ get_header(); ?>
 
             <?php if (has_post_thumbnail()) : ?>
                 <div class="post-thumbnail">
-                    <?php the_post_thumbnail('large'); ?>
+                    <?php 
+                    $thumbnail_id = get_post_thumbnail_id();
+                    $thumbnail_image = crb_get_image($thumbnail_id, 'large');
+                    if ($thumbnail_image && isset($thumbnail_image['url'])) {
+                        echo push_optimized_image($thumbnail_image, 'large', array(
+                            'loading' => 'lazy',
+                            'fetchpriority' => 'auto'
+                        ));
+                    } else {
+                        the_post_thumbnail('large', array('loading' => 'lazy'));
+                    }
+                    ?>
                 </div>
             <?php endif; ?>
 

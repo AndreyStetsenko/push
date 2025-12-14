@@ -266,13 +266,13 @@ function push_nav_menu_item_title($title, $item, $args, $depth) {
             $image_url = $menu_image;
         }
         
-        return '<img src="' . esc_url($image_url) . '" alt="' . esc_attr($image_alt) . '">';
+        return '<img src="' . esc_url($image_url) . '" alt="' . esc_attr($image_alt) . '" loading="lazy" decoding="async">';
     }
     
     // Обратная совместимость со старым способом через класс img
     if (isset($args->theme_location) && $args->theme_location == 'primary') {
         if (in_array('img', $item->classes)) {
-            return '<img src="' . img_url('icons/surprise.png') . '" alt="surprise">';
+            return '<img src="' . img_url('icons/surprise.png') . '" alt="surprise" loading="lazy" decoding="async">';
         }
     }
     
@@ -332,11 +332,11 @@ class Footer_Menu_Walker extends Walker_Nav_Menu {
                 $image_url = $menu_image;
             }
             
-            $link_content = '<img src="' . esc_url($image_url) . '" alt="' . esc_attr($image_alt) . '">';
+            $link_content = '<img src="' . esc_url($image_url) . '" alt="' . esc_attr($image_alt) . '" loading="lazy" decoding="async">';
             $class_names = ' class="img"';
         } elseif (in_array('img', $item->classes)) {
             // Обратная совместимость со старым способом через класс img
-            $link_content = '<img src="' . img_url('icons/surprise.png') . '" alt="surprise">';
+            $link_content = '<img src="' . img_url('icons/surprise.png') . '" alt="surprise" loading="lazy" decoding="async">';
             $class_names = ' class="img"';
         }
         
@@ -480,15 +480,119 @@ function crb_get_image( $image_id, $size = 'full' ) {
         $alt = get_post_meta( $image_id, '_wp_attachment_image_alt', true );
         $title = get_the_title( $image_id );
         
+        // Получаем метаданные для srcset
+        $image_meta = wp_get_attachment_metadata( $image_id );
+        $srcset = '';
+        $sizes = '';
+        
+        if ( $image_meta && isset( $image_meta['width'] ) && isset( $image_meta['height'] ) ) {
+            $size_array = array( $image_meta['width'], $image_meta['height'] );
+            $srcset = wp_calculate_image_srcset( $size_array, $url, $image_meta, $image_id );
+            $sizes = wp_calculate_image_sizes( $size_array, $url, $image_meta, $image_id );
+        }
+        
         return array(
             'url' => $url,
             'alt' => $alt,
             'title' => $title,
             'id' => $image_id,
+            'width' => isset( $image_meta['width'] ) ? $image_meta['width'] : '',
+            'height' => isset( $image_meta['height'] ) ? $image_meta['height'] : '',
+            'srcset' => $srcset,
+            'sizes' => $sizes,
         );
     }
     
     return false;
+}
+
+/**
+ * Вывести оптимизированный тег изображения
+ * @param int|array $image_id ID изображения или массив данных изображения
+ * @param string $size Размер изображения
+ * @param array $args Дополнительные аргументы (loading, fetchpriority, class, etc.)
+ * @return string HTML тег img
+ */
+function push_optimized_image( $image_id, $size = 'full', $args = array() ) {
+    $defaults = array(
+        'loading' => 'lazy',
+        'fetchpriority' => 'auto',
+        'class' => '',
+        'sizes' => null,
+        'srcset' => null,
+        'decoding' => 'async',
+    );
+    
+    $args = wp_parse_args( $args, $defaults );
+    
+    // Получаем данные изображения
+    $image = is_array( $image_id ) ? $image_id : crb_get_image( $image_id, $size );
+    
+    if ( ! $image || ! isset( $image['url'] ) ) {
+        return '';
+    }
+    
+    $url = $image['url'];
+    $alt = isset( $image['alt'] ) ? $image['alt'] : '';
+    $width = isset( $image['width'] ) ? $image['width'] : '';
+    $height = isset( $image['height'] ) ? $image['height'] : '';
+    $srcset = $args['srcset'] ?: ( isset( $image['srcset'] ) ? $image['srcset'] : '' );
+    $sizes = $args['sizes'] ?: ( isset( $image['sizes'] ) ? $image['sizes'] : '' );
+    
+    // Формируем атрибуты
+    $attributes = array();
+    $attributes[] = 'src="' . esc_url( $url ) . '"';
+    
+    if ( $alt ) {
+        $attributes[] = 'alt="' . esc_attr( $alt ) . '"';
+    }
+    
+    if ( $width ) {
+        $attributes[] = 'width="' . esc_attr( $width ) . '"';
+    }
+    
+    if ( $height ) {
+        $attributes[] = 'height="' . esc_attr( $height ) . '"';
+    }
+    
+    if ( $srcset ) {
+        $attributes[] = 'srcset="' . esc_attr( $srcset ) . '"';
+    }
+    
+    if ( $sizes ) {
+        $attributes[] = 'sizes="' . esc_attr( $sizes ) . '"';
+    }
+    
+    if ( $args['loading'] && $args['loading'] !== 'auto' ) {
+        $attributes[] = 'loading="' . esc_attr( $args['loading'] ) . '"';
+    }
+    
+    if ( $args['fetchpriority'] && $args['fetchpriority'] !== 'auto' ) {
+        $attributes[] = 'fetchpriority="' . esc_attr( $args['fetchpriority'] ) . '"';
+    }
+    
+    if ( $args['decoding'] ) {
+        $attributes[] = 'decoding="' . esc_attr( $args['decoding'] ) . '"';
+    }
+    
+    if ( $args['class'] ) {
+        $attributes[] = 'class="' . esc_attr( $args['class'] ) . '"';
+    }
+    
+    return '<img ' . implode( ' ', $attributes ) . '>';
+}
+
+/**
+ * Добавить preload для критических изображений
+ * @param string $url URL изображения
+ * @param string $as Тип ресурса (image)
+ */
+function push_preload_image( $url, $as = 'image' ) {
+    if ( ! $url ) {
+        return;
+    }
+    
+    echo '<link rel="preload" as="' . esc_attr( $as ) . '" href="' . esc_url( $url ) . '">' . "\n";
 }
 
 // Кастомный Walker для нижних ссылок в футере
@@ -763,10 +867,13 @@ function push_get_case_modal_content() {
     
     // Логотип
     if (!empty($modal_content['logo'])) {
-        $logo_url = crb_get_image_url($modal_content['logo']);
-        if ($logo_url) {
+        $logo_image = crb_get_image($modal_content['logo']);
+        if ($logo_image && isset($logo_image['url'])) {
             $html .= '<div class="cases-modal__logo">';
-            $html .= '<img src="' . esc_url($logo_url) . '" alt="Logo" />';
+            $html .= push_optimized_image($logo_image, 'full', array(
+                'loading' => 'lazy',
+                'fetchpriority' => 'auto'
+            ));
             $html .= '</div>';
         }
     } else {
@@ -785,10 +892,13 @@ function push_get_case_modal_content() {
         $html .= '<div class="cases-modal__images">';
         foreach ($modal_content['images'] as $image_item) {
             if (!empty($image_item['image'])) {
-                $image_url = crb_get_image_url($image_item['image']);
-                if ($image_url) {
+                $modal_image = crb_get_image($image_item['image']);
+                if ($modal_image && isset($modal_image['url'])) {
                     $html .= '<div class="cases-modal__image-placeholder cases-modal__image-placeholder--small">';
-                    $html .= '<img src="' . esc_url($image_url) . '" alt="Case image" />';
+                    $html .= push_optimized_image($modal_image, 'full', array(
+                        'loading' => 'lazy',
+                        'fetchpriority' => 'auto'
+                    ));
                     $html .= '</div>';
                 }
             }
@@ -843,3 +953,104 @@ function push_localize_scripts() {
     ));
 }
 add_action('wp_enqueue_scripts', 'push_localize_scripts', 20);
+
+// Автоматическая оптимизация изображений в контенте
+function push_optimize_content_images($content) {
+    if (empty($content)) {
+        return $content;
+    }
+    
+    // Используем DOMDocument для парсинга HTML
+    if (!class_exists('DOMDocument')) {
+        return $content;
+    }
+    
+    $dom = new DOMDocument();
+    @$dom->loadHTML('<?xml encoding="utf-8" ?>' . $content, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+    
+    $images = $dom->getElementsByTagName('img');
+    
+    foreach ($images as $img) {
+        // Добавляем loading="lazy" если его нет
+        if (!$img->hasAttribute('loading')) {
+            $img->setAttribute('loading', 'lazy');
+        }
+        
+        // Добавляем decoding="async" если его нет
+        if (!$img->hasAttribute('decoding')) {
+            $img->setAttribute('decoding', 'async');
+        }
+        
+        // Добавляем width и height если их нет, но есть src
+        if ($img->hasAttribute('src') && !$img->hasAttribute('width') && !$img->hasAttribute('height')) {
+            $src = $img->getAttribute('src');
+            // Пытаемся получить размеры из URL (для WordPress изображений)
+            if (preg_match('/-(\d+)x(\d+)\./', $src, $matches)) {
+                $img->setAttribute('width', $matches[1]);
+                $img->setAttribute('height', $matches[2]);
+            }
+        }
+        
+        // Добавляем srcset если его нет, но есть src с WordPress URL
+        if ($img->hasAttribute('src') && !$img->hasAttribute('srcset')) {
+            $src = $img->getAttribute('src');
+            // Проверяем, является ли это WordPress изображением
+            if (preg_match('/wp-content\/uploads\/(\d{4}\/\d{2}\/.*)/', $src, $matches)) {
+                // Пытаемся найти attachment ID из URL
+                $attachment_id = attachment_url_to_postid($src);
+                if ($attachment_id) {
+                    $image_meta = wp_get_attachment_metadata($attachment_id);
+                    if ($image_meta) {
+                        $size_array = array($image_meta['width'], $image_meta['height']);
+                        $srcset = wp_calculate_image_srcset($size_array, $src, $image_meta, $attachment_id);
+                        $sizes = wp_calculate_image_sizes($size_array, $src, $image_meta, $attachment_id);
+                        
+                        if ($srcset) {
+                            $img->setAttribute('srcset', $srcset);
+                        }
+                        if ($sizes) {
+                            $img->setAttribute('sizes', $sizes);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    // Сохраняем обратно в HTML
+    $content = $dom->saveHTML();
+    
+    return $content;
+}
+add_filter('the_content', 'push_optimize_content_images', 20);
+
+// Включаем lazy loading для всех изображений WordPress по умолчанию
+add_filter('wp_get_attachment_image_attributes', 'push_add_image_attributes', 10, 3);
+function push_add_image_attributes($attr, $attachment, $size) {
+    // Добавляем loading="lazy" если его нет
+    if (!isset($attr['loading'])) {
+        $attr['loading'] = 'lazy';
+    }
+    
+    // Добавляем decoding="async" для асинхронного декодирования
+    if (!isset($attr['decoding'])) {
+        $attr['decoding'] = 'async';
+    }
+    
+    return $attr;
+}
+
+// Добавляем preload для критических изображений в head
+function push_preload_critical_images() {
+    // Получаем изображение hero push, если мы на главной странице
+    if (push_is_front_page()) {
+        $hero_push_image = get_field('hero_push_image', 'option');
+        if ($hero_push_image) {
+            $push_image = crb_get_image($hero_push_image);
+            if ($push_image && isset($push_image['url'])) {
+                push_preload_image($push_image['url']);
+            }
+        }
+    }
+}
+add_action('wp_head', 'push_preload_critical_images', 1);
