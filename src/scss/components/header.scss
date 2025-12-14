@@ -27,6 +27,10 @@
             color: #fff;
             text-transform: uppercase;
         }
+
+        img {
+            max-height: rem(65px);
+        }
     }
 
     &__navigation {

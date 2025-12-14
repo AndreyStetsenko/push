@@ -599,6 +599,13 @@
                 min-height: 1px; // Будет переопределено JS
 
                 .folder {
+                    &.is-open {
+                        .folder__content--image {
+                            top: auto;
+                            bottom: 0;
+                        }
+                    }
+                    
                     &--1, &--3, &--5, &--7 {
                         .folder__tab {
                             left: auto;
@@ -630,17 +637,15 @@
                         .folder__content--image {
                             width: rem(115px);
                             height: auto;
-                            top: -85px;
-                            right: 20%;
+                            top: -55px;
+                            right: 50%;
                         }
                     }
 
                     &--2 {
                         .folder__content--image {
-                            width: auto;
-                            height: auto;
-                            top: -50px;
-                            left: 0;
+                            top: -60px;
+                            left: 35%;
 
                             .socials img {
                                 width: rem(80px);
@@ -663,8 +668,8 @@
                         .folder__content--image {
                             width: rem(130px);
                             height: auto;
-                            top: -57px;
-                            left: 30%;
+                            top: -52px;
+                            left: 72%;
                         }
                     }
 
@@ -672,8 +677,8 @@
                         .folder__content--image {
                             width: 140px;
                             height: auto;
-                            top: rem(-40px);
-                            right: 20%;
+                            top: -25px;
+                            right: 55%;
                         }
                     }
 
@@ -681,8 +686,8 @@
                         .folder__content--image {
                             width: 115px;
                             height: auto;
-                            top: rem(-80px);
-                            left: 35%;
+                            top: -60px;
+                            left: 71%;
                         }
                     }
 
@@ -690,17 +695,16 @@
                         .folder__content--image {
                             width: 100px;
                             height: auto;
-                            top: rem(-40px);
-                            left: -20%;
+                            top: -20px;
+                            left: 17%;
                         }
                     }
 
                     &--7 {
                         .folder__content--image {
                             width: 100px;
-                            height: auto;
-                            top: rem(-45px);
-                            right: -35%;
+                            top: -105px;
+                            right: 5%;
                         }
                     }
 
@@ -737,7 +741,7 @@
                         border-radius: 0 0 rem(25px) rem(25px);
 
                         &--image {
-                            position: relative;
+                            position: absolute;
                             width: 100%;
                             max-width: rem(200px);
                             height: rem(200px);

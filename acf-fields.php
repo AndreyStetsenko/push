@@ -24,6 +24,7 @@ function crb_attach_theme_options() {
 
     // Список всех подстраниц опций
     $subpages = array(
+        array( 'title' => 'Header - Шапка сайта', 'slug' => 'header.php' ),
         array( 'title' => 'Hero Section - Главная секция', 'slug' => 'hero_section.php' ),
         array( 'title' => 'Services Section - Секция услуг', 'slug' => 'services_section.php' ),
         array( 'title' => 'Why Us Section - Секция "Почему мы"', 'slug' => 'why_us_section.php' ),
@@ -56,7 +57,16 @@ function crb_attach_theme_options() {
             Field::make( 'html', 'crb_options_navigation', __( 'Навигация по разделам' ) )
                 ->set_html( $nav_html ),
         ) );
-    
+
+    // Header - Шапка сайта
+    Container::make( 'theme_options', __( 'Header - Шапка сайта' ) )
+        ->set_page_parent($options)
+        ->set_page_menu_position( -1 )
+        ->add_fields( array(
+            Field::make( 'image', 'header_logo' . carbon_lang_prefix(), __( 'Логотип' ) )
+                ->set_help_text( 'Загрузите логотип для шапки сайта. Если не указано, будет использован текст "Push".' ),
+        ) );
+
     // Hero Section - Главная секция
     Container::make( 'theme_options', __( 'Hero Section - Главная секция' ) )
         ->set_page_parent($options)

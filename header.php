@@ -13,7 +13,19 @@
         <div class="container">
             <div class="header__wrapp">
                 <div class="header__logo">
-                    <span>Push</span>
+                    <?php
+                    $logo_id = carbon_get_theme_option( 'header_logo' . carbon_lang_prefix() );
+                    if ( $logo_id ) {
+                        $logo = crb_get_image( $logo_id, 'full' );
+                        if ( $logo && isset( $logo['url'] ) ) {
+                            echo '<img src="' . esc_url( $logo['url'] ) . '" alt="' . esc_attr( $logo['alt'] ? $logo['alt'] : 'Push' ) . '">';
+                        } else {
+                            echo '<span>Push</span>';
+                        }
+                    } else {
+                        echo '<span>Push</span>';
+                    }
+                    ?>
                 </div>
                 <div class="header__navigation">
                     <div class="header__menu">
