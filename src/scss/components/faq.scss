@@ -29,18 +29,22 @@
             position: relative;
             min-height: 1px; // Будет переопределено JS, создаем контекст для absolute элементов
 
-            .folder {
-                width: 100%;
-                position: absolute;
-                transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), z-index 0.3s ease, top 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-                will-change: transform, top;
+                .folder {
+                    width: 100%;
+                    position: absolute;
+                    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), z-index 0.3s ease, top 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                    will-change: transform, top;
+                    touch-action: pan-y; // Разрешаем только вертикальный скролл
 
-                &:hover:not(.is-open) {
-                    transform: translateY(-10px);
-                }
-                
-                &:has(.folder__tab:hover):not(.is-open) {
-                    transform: translateY(-10px);
+                // Hover эффекты только для устройств с мышью
+                @media (hover: hover) and (pointer: fine) {
+                    &:hover:not(.is-open) {
+                        transform: translateY(-10px);
+                    }
+                    
+                    &:has(.folder__tab:hover):not(.is-open) {
+                        transform: translateY(-10px);
+                    }
                 }
                 
                 &.is-open {
@@ -283,6 +287,7 @@
                     //     conic-gradient(#000 0 0) padding-box;
                     width: fit-content;
                     // box-shadow: 0px -9px 97px 0px #00000040;
+                    touch-action: manipulation; // Предотвращаем задержку двойного тапа на мобильных
 
                     @include media-breakpoint-down(md) {
                         padding-left: 0;
@@ -605,7 +610,7 @@
                             bottom: 0;
                         }
                     }
-                    
+
                     &--1, &--3, &--5, &--7 {
                         .folder__tab {
                             left: auto;

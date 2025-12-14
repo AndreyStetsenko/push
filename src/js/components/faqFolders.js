@@ -139,9 +139,49 @@ export function initFaqFolders() {
         
         if (!tab || !content) return;
         
+        // Переменные для отслеживания touch событий
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchMoved = false;
+        let isScrolling = false;
+        
+        // Обработчик начала касания
+        const handleTouchStart = (e) => {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+            touchMoved = false;
+            isScrolling = false;
+        };
+        
+        // Обработчик движения пальца
+        const handleTouchMove = (e) => {
+            if (!touchStartX || !touchStartY) return;
+            
+            const touchEndX = e.touches[0].clientX;
+            const touchEndY = e.touches[0].clientY;
+            const deltaX = Math.abs(touchEndX - touchStartX);
+            const deltaY = Math.abs(touchEndY - touchStartY);
+            
+            // Если движение больше 10px, считаем это скроллом/движением
+            if (deltaX > 10 || deltaY > 10) {
+                touchMoved = true;
+                // Если вертикальное движение больше горизонтального, это скролл
+                if (deltaY > deltaX) {
+                    isScrolling = true;
+                }
+            }
+        };
+        
         // Обработчик клика на tab или folder
         const handleClick = (e) => {
             e.stopPropagation();
+            
+            // На touch-устройствах проверяем, был ли это скролл
+            if (touchMoved || isScrolling) {
+                touchMoved = false;
+                isScrolling = false;
+                return;
+            }
             
             const isOpen = folder.classList.contains('is-open');
             
@@ -175,8 +215,19 @@ export function initFaqFolders() {
             setTimeout(() => {
                 updateFoldersContainerHeight();
             }, 500);
+            
+            // Сбрасываем флаги после обработки
+            touchMoved = false;
+            isScrolling = false;
         };
         
+        // Добавляем обработчики для touch событий
+        tab.addEventListener('touchstart', handleTouchStart, { passive: true });
+        tab.addEventListener('touchmove', handleTouchMove, { passive: true });
+        folder.addEventListener('touchstart', handleTouchStart, { passive: true });
+        folder.addEventListener('touchmove', handleTouchMove, { passive: true });
+        
+        // Обработчики клика
         tab.addEventListener('click', handleClick);
         folder.addEventListener('click', handleClick);
     });
