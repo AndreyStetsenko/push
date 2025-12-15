@@ -149,7 +149,7 @@ function get_contact_icon($name) {
                             $contacts_buttons = isset($folder['contacts_buttons']) && is_array($folder['contacts_buttons']) ? $folder['contacts_buttons'] : array();
                             $contacts_items = isset($folder['contacts_items']) && is_array($folder['contacts_items']) ? $folder['contacts_items'] : array();
                             ?>
-                            <div class="container">
+                            <div class="container" id="faq-contacts">
                                 <div class="folder__content--wrapp">
                                     <div class="contacts">
                                         <div class="contacts__wrapp">
