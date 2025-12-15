@@ -5,6 +5,12 @@ $hero_title_line1 = $hero_title_group && isset($hero_title_group['line1']) ? $he
 $hero_title_line2 = $hero_title_group && isset($hero_title_group['line2']) ? $hero_title_group['line2'] : '';
 $hero_title_size = $hero_title_group && isset($hero_title_group['size']) ? $hero_title_group['size'] : '';
 
+// Новые поля для размера текста и line height
+$hero_title_size_desktop = $hero_title_group && isset($hero_title_group['size_desktop']) ? $hero_title_group['size_desktop'] : '';
+$hero_title_line_height_desktop = $hero_title_group && isset($hero_title_group['line_height_desktop']) ? $hero_title_group['line_height_desktop'] : '';
+$hero_title_size_mobile = $hero_title_group && isset($hero_title_group['size_mobile']) ? $hero_title_group['size_mobile'] : '';
+$hero_title_line_height_mobile = $hero_title_group && isset($hero_title_group['line_height_mobile']) ? $hero_title_group['line_height_mobile'] : '';
+
 $hero_description = get_field('hero_description', 'option') ?: '';
 
 $hero_button_group = get_field('hero_button_group', 'option');
@@ -14,14 +20,48 @@ $hero_button_target = $hero_button_group && isset($hero_button_group['target']) 
 
 $hero_push_image = get_field('hero_push_image', 'option');
 $hero_bg_items = get_field('hero_bg_items', 'option');
+
+// Формируем стили для заголовка, если заданы значения
+$hero_title_styles = '';
+if ($hero_title_size_desktop || $hero_title_line_height_desktop || $hero_title_size_mobile || $hero_title_line_height_mobile) {
+    $hero_title_styles = '<style>';
+    $hero_title_styles .= '#hero .hero__title .span {';
+    
+    // Стили для десктопа (по умолчанию)
+    if ($hero_title_size_desktop) {
+        $hero_title_styles .= 'font-size: ' . esc_attr($hero_title_size_desktop) . 'rem;';
+    }
+    if ($hero_title_line_height_desktop) {
+        $hero_title_styles .= 'line-height: ' . esc_attr($hero_title_line_height_desktop) . ';';
+    }
+    
+    $hero_title_styles .= '}';
+    
+    // Стили для мобильных устройств
+    if ($hero_title_size_mobile || $hero_title_line_height_mobile) {
+        $hero_title_styles .= '@media (max-width: 767.98px) {';
+        $hero_title_styles .= '#hero .hero__title .span {';
+        if ($hero_title_size_mobile) {
+            $hero_title_styles .= 'font-size: ' . esc_attr($hero_title_size_mobile) . 'rem;';
+        }
+        if ($hero_title_line_height_mobile) {
+            $hero_title_styles .= 'line-height: ' . esc_attr($hero_title_line_height_mobile) . ';';
+        }
+        $hero_title_styles .= '}';
+        $hero_title_styles .= '}';
+    }
+    
+    $hero_title_styles .= '</style>';
+}
 ?>
+<?php echo $hero_title_styles; ?>
 <div class="hero" id="hero">
     <div class="container" style="z-index: 2">
         <div class="row">
             <div class="col-1"></div>
             <div class="col">
                 <div class="hero__content">
-                    <div class="hero__title" <?php if (($hero_title_size)): ?>style="font-size: <?php echo esc_attr($hero_title_size); ?>rem;"<?php endif; ?>>
+                    <div class="hero__title">
                         <div class="span"><?php echo esc_html($hero_title_line1); ?></div>
                         <div class="span"><?php echo esc_html($hero_title_line2); ?></div>
                     </div>

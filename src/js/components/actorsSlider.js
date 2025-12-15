@@ -112,6 +112,7 @@ function initServicesSlider() {
         items[active].style.filter = 'none';
         items[active].style.opacity = 1;
         items[active].classList.add('active');
+        items[active].style.cursor = 'default';
         
         const offset = getOffsetValue();
         
@@ -123,6 +124,7 @@ function initServicesSlider() {
             items[i].style.opacity = stt > 2 ? 0 : 0.6;
             items[i].classList.remove('active');
             items[i].classList.add('next');
+            items[i].style.cursor = 'pointer';
         }
         stt = 0;
         for(var i = (active - 1); i >= 0; i--){
@@ -131,6 +133,7 @@ function initServicesSlider() {
             items[i].style.opacity = stt > 2 ? 0 : 0.6;
             items[i].classList.remove('active');
             items[i].classList.add('prev');
+            items[i].style.cursor = 'pointer';
         }
     }
     loadShow();
@@ -142,13 +145,37 @@ function initServicesSlider() {
         let isTouching = false;
         let startX = 0;
         let currentX = 0;
-        let threshold = 50; // минимальное расстояние для свайпа
+        let hasMoved = false; // Флаг для отслеживания движения
+        let wasSwiped = false; // Флаг для отслеживания свайпа
+        let startActive = 0; // Активный слайд в начале перетаскивания
+
+        // Функция для получения threshold в зависимости от размера экрана
+        function getThreshold() {
+            return window.innerWidth <= 768 ? 150 : 220; // Порог для переключения одного слайда
+        }
+
+        // Функция для вычисления нового активного слайда на основе пройденного расстояния
+        function calculateNewActive(diffX) {
+            let threshold = getThreshold();
+            // Вычисляем количество слайдов на основе пройденного расстояния
+            let slidesToMove = Math.floor(Math.abs(diffX) / threshold);
+            
+            if (diffX > 0) {
+                // Свайп влево - следующий слайд
+                return (startActive + slidesToMove) % items.length;
+            } else {
+                // Свайп вправо - предыдущий слайд
+                return (startActive - slidesToMove + items.length) % items.length;
+            }
+        }
 
         // Обработчики для мыши
         sliderContainer.addEventListener('mousedown', (e) => {
             isDragging = true;
+            hasMoved = false;
             startX = e.clientX;
             currentX = e.clientX;
+            startActive = active; // Сохраняем начальный активный слайд
             sliderContainer.style.cursor = 'grabbing';
             e.preventDefault();
         });
@@ -156,6 +183,19 @@ function initServicesSlider() {
         sliderContainer.addEventListener('mousemove', (e) => {
             if (!isDragging) return;
             currentX = e.clientX;
+            
+            let diffX = startX - currentX;
+            
+            if (Math.abs(diffX) > 5) {
+                hasMoved = true;
+                
+                // Вычисляем новый активный слайд во время перетаскивания
+                let newActive = calculateNewActive(diffX);
+                if (newActive !== active) {
+                    active = newActive;
+                    loadShow();
+                }
+            }
         });
 
         sliderContainer.addEventListener('mouseup', (e) => {
@@ -164,31 +204,58 @@ function initServicesSlider() {
             sliderContainer.style.cursor = 'grab';
             
             let diffX = startX - currentX;
+            let threshold = getThreshold();
             
-            if (Math.abs(diffX) > threshold) {
-                if (diffX > 0) {
-                    // Свайп влево - следующий слайд (зациклено)
-                    active = active + 1 < items.length ? active + 1 : 0;
-                } else {
-                    // Свайп вправо - предыдущий слайд (зациклено)
-                    active = active - 1 >= 0 ? active - 1 : items.length - 1;
-                }
+            if (Math.abs(diffX) > threshold / 2) {
+                wasSwiped = true;
+                // Финальное вычисление активного слайда
+                let newActive = calculateNewActive(diffX);
+                active = newActive;
                 loadShow();
+                // Сбрасываем флаг через небольшую задержку, чтобы предотвратить случайный клик
+                setTimeout(() => {
+                    wasSwiped = false;
+                }, 300);
+            } else {
+                // Если движение было слишком маленьким, возвращаемся к начальному слайду
+                active = startActive;
+                loadShow();
+                wasSwiped = false;
             }
+            
+            hasMoved = false;
         });
 
-        sliderContainer.addEventListener('mouseleave', () => {
+        sliderContainer.addEventListener('mouseleave', (e) => {
             if (isDragging) {
+                // При выходе за пределы контейнера применяем финальное переключение
+                let diffX = startX - currentX;
+                let threshold = getThreshold();
+                if (Math.abs(diffX) > threshold / 2) {
+                    wasSwiped = true;
+                    let newActive = calculateNewActive(diffX);
+                    active = newActive;
+                    loadShow();
+                    setTimeout(() => {
+                        wasSwiped = false;
+                    }, 300);
+                } else {
+                    active = startActive;
+                    loadShow();
+                }
                 isDragging = false;
                 sliderContainer.style.cursor = 'grab';
+                hasMoved = false;
             }
         });
 
         // Обработчики для touch-событий (мобильные устройства)
         sliderContainer.addEventListener('touchstart', (e) => {
             isTouching = true;
+            hasMoved = false;
             startX = e.touches[0].clientX;
             currentX = e.touches[0].clientX;
+            startActive = active; // Сохраняем начальный активный слайд
             // Не вызываем preventDefault для touchstart
         });
 
@@ -196,9 +263,21 @@ function initServicesSlider() {
             if (!isTouching) return;
             currentX = e.touches[0].clientX;
             
+            let diffX = startX - currentX;
+            
+            if (Math.abs(diffX) > 5) {
+                hasMoved = true;
+                
+                // Вычисляем новый активный слайд во время перетаскивания
+                let newActive = calculateNewActive(diffX);
+                if (newActive !== active) {
+                    active = newActive;
+                    loadShow();
+                }
+            }
+            
             // Проверяем, что это горизонтальный свайп
-            let diffX = Math.abs(startX - currentX);
-            if (diffX > 10) {
+            if (Math.abs(diffX) > 10) {
                 // Предотвращаем скролл только при горизонтальном движении
                 e.preventDefault();
             }
@@ -209,21 +288,47 @@ function initServicesSlider() {
             isTouching = false;
             
             let diffX = startX - currentX;
+            let threshold = getThreshold();
             
-            if (Math.abs(diffX) > threshold) {
-                if (diffX > 0) {
-                    // Свайп влево - следующий слайд (зациклено)
-                    active = active + 1 < items.length ? active + 1 : 0;
-                } else {
-                    // Свайп вправо - предыдущий слайд (зациклено)
-                    active = active - 1 >= 0 ? active - 1 : items.length - 1;
-                }
+            if (Math.abs(diffX) > threshold / 2) {
+                wasSwiped = true;
+                // Финальное вычисление активного слайда
+                let newActive = calculateNewActive(diffX);
+                active = newActive;
                 loadShow();
+                // Сбрасываем флаг через небольшую задержку, чтобы предотвратить случайный клик
+                setTimeout(() => {
+                    wasSwiped = false;
+                }, 300);
+            } else {
+                // Если движение было слишком маленьким, возвращаемся к начальному слайду
+                active = startActive;
+                loadShow();
+                wasSwiped = false;
             }
+            
+            hasMoved = false;
         });
 
         sliderContainer.addEventListener('touchcancel', () => {
+            if (isTouching) {
+                // При отмене возвращаемся к начальному слайду
+                active = startActive;
+                loadShow();
+            }
             isTouching = false;
+            hasMoved = false;
+        });
+
+        // Добавляем обработчики клика на слайды
+        items.forEach((item, index) => {
+            item.addEventListener('click', (e) => {
+                // Проверяем, что это не активный слайд, не было движения и не было свайпа
+                if (!hasMoved && !wasSwiped && !isDragging && !isTouching && index !== active) {
+                    active = index;
+                    loadShow();
+                }
+            });
         });
 
         // Обновление при изменении размера окна

@@ -1,5 +1,5 @@
 #bonus {
-    padding-top: 250px;
+    padding-top: 100px;
     padding-bottom: 100px;
     min-height: 100vh;
 
@@ -80,7 +80,7 @@
             }
 
             &-close {
-                max-width: 40%;
+                max-width: 30%;
                 position: relative;
                 z-index: 2;
                 animation: floatBox 3s ease-in-out infinite;

@@ -85,14 +85,32 @@ function crb_attach_theme_options() {
                         ->set_help_text( 'Вторая строка заголовка (например: "SMM для тебе")' )
                         ->set_default_value( 'SMM для тебе' )
                         ->set_attribute( 'placeholder', 'SMM для тебе' ),
-                    Field::make( 'text', 'size', __( 'Размер текста' ) )
-                        ->set_help_text( 'Размер текста (например: "7")' )
-                        ->set_default_value( '7.5rem' )
-                        ->set_attribute( 'placeholder', '7.5rem' )
+                    Field::make( 'separator', 'hero_title_desktop_sep', __( 'Настройки для ПК' ) ),
+                    Field::make( 'text', 'size_desktop', __( 'Размер текста (ПК)' ) )
+                        ->set_help_text( 'Размер текста для десктопных устройств в rem (например: "7.5")' )
+                        ->set_default_value( '7.5' )
+                        ->set_attribute( 'placeholder', '7.5' )
                         ->set_attribute( 'type', 'number' )
-                        ->set_attribute( 'data-min', 10 )
-                        ->set_attribute( 'data-max', 100 )
-                        ->set_attribute( 'data-step', 1 ),
+                        ->set_attribute( 'step', '0.1' ),
+                    Field::make( 'text', 'line_height_desktop', __( 'Line Height (ПК)' ) )
+                        ->set_help_text( 'Высота строки для десктопных устройств (например: "1.06" или "106%")' )
+                        ->set_default_value( '1.06' )
+                        ->set_attribute( 'placeholder', '1.06' )
+                        ->set_attribute( 'type', 'number' )
+                        ->set_attribute( 'step', '0.01' ),
+                    Field::make( 'separator', 'hero_title_mobile_sep', __( 'Настройки для мобильных' ) ),
+                    Field::make( 'text', 'size_mobile', __( 'Размер текста (Мобильные)' ) )
+                        ->set_help_text( 'Размер текста для мобильных устройств в rem (например: "2.1875")' )
+                        ->set_default_value( '2.1875' )
+                        ->set_attribute( 'placeholder', '2.1875' )
+                        ->set_attribute( 'type', 'number' )
+                        ->set_attribute( 'step', '0.1' ),
+                    Field::make( 'text', 'line_height_mobile', __( 'Line Height (Мобильные)' ) )
+                        ->set_help_text( 'Высота строки для мобильных устройств (например: "1.06" или "106%")' )
+                        ->set_default_value( '1.06' )
+                        ->set_attribute( 'placeholder', '1.06' )
+                        ->set_attribute( 'type', 'number' )
+                        ->set_attribute( 'step', '0.01' ),
                 ) ),
         // Описание
             Field::make( 'textarea', 'hero_description' . carbon_lang_prefix(), __( 'Описание' ) )
