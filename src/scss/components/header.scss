@@ -279,6 +279,10 @@
         padding-top: rem(16px);
 
         &__logo {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            
             span {
                 font-size: rem(32px);
             }
