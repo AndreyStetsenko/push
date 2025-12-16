@@ -17,34 +17,37 @@ $services_items = get_field('services_items', 'option');
                 <div class="l3"></div>
                 <div class="l4"></div>
             </div>
-            <?php if ($services_items && is_array($services_items) && !empty($services_items)): ?>
-                <?php foreach ($services_items as $service): ?>
-                    <?php 
-                    $service_image_id = isset($service['image']) ? $service['image'] : null;
-                    $service_title = isset($service['title']) ? $service['title'] : '';
-                    $service_description = isset($service['description']) ? $service['description'] : '';
-                    
-                    // Преобразуем ID изображения в массив с url и alt
-                    $service_image = $service_image_id ? crb_get_image($service_image_id) : null;
-                    ?>
-                    <?php if ($service_image && isset($service_image['url'])): ?>
-                        <div class="slide">
-                            <div class="item">
-                                <div class="item-head">
-                                    <?php echo push_optimized_image($service_image, 'full', array(
-                                        'loading' => 'lazy',
-                                        'fetchpriority' => 'auto'
-                                    )); ?>
-                                </div>
-                                <div class="item-body">
-                                    <span class="title"><?php echo esc_html($service_title); ?></span>
-                                    <span class="description"><?php echo esc_html($service_description); ?></span>
+            <div class="swiper-wrapper">
+                <?php if ($services_items && is_array($services_items) && !empty($services_items)): ?>
+                    <?php foreach ($services_items as $service): ?>
+                        <?php 
+                        $service_image_id = isset($service['image']) ? $service['image'] : null;
+                        $service_title = isset($service['title']) ? $service['title'] : '';
+                        $service_description = isset($service['description']) ? $service['description'] : '';
+                        
+                        // Преобразуем ID изображения в массив с url и alt
+                        $service_image = $service_image_id ? crb_get_image($service_image_id) : null;
+                        ?>
+                        <?php if ($service_image && isset($service_image['url'])): ?>
+                            <div class="swiper-slide slide">
+                                <div class="item">
+                                    <div class="item-bg"></div>
+                                    <div class="item-head">
+                                        <?php echo push_optimized_image($service_image, 'full', array(
+                                            'loading' => 'lazy',
+                                            'fetchpriority' => 'auto'
+                                        )); ?>
+                                    </div>
+                                    <div class="item-body">
+                                        <span class="title"><?php echo esc_html($service_title); ?></span>
+                                        <span class="description"><?php echo esc_html($service_description); ?></span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    <?php endif; ?>
-                <?php endforeach; ?>
-            <?php endif; ?>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
         </div>
     </div>
 </div>

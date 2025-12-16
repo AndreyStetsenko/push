@@ -35,7 +35,7 @@
         }
 
         &__slider {
-            padding: rem(100px) 0;
+            // padding: rem(100px) 0;
             width: 100%;
             height: 80vh;
             margin-top: rem(80px);
@@ -103,7 +103,7 @@
             }
 
             .slide {
-                position: absolute;
+                // position: absolute;
                 width: rem(450px);
                 height: rem(683px);
                 margin-top: rem(50px);
@@ -121,9 +121,39 @@
                             text-align: right;
                             float: right;
                     }
+
+                    .item {
+                        background-image: none;
+                        box-shadow: none;
+                        transform: scale(.75) translateX(20px) perspective(16px) rotateY(0.5deg);
+                    }
+                }
+
+                &.next {
+                    .item {
+                        background-image: none;
+                        box-shadow: none;
+                        transform: scale(.75) translateX(20px) perspective(16px) rotateY(-0.5deg);
+                    }
                 }
 
                 &.active {
+                    width: 450px;
+                    height: 683px;
+
+                    @include media-breakpoint-down(md) {
+                        width: rem(236px);
+                        height: rem(358px);
+                    }
+
+                    .item-bg {
+                        top: -1px;
+                        left: -1px;
+                        width: calc(100% + 2px);
+                        height: calc(100% + 2px);
+                        opacity: 1;
+                    }
+
                     .item {
                         padding: rem(40px) rem(32px);
                         gap: rem(48px);
@@ -155,11 +185,25 @@
                 }
             }
 
+            .item-bg {
+                position: absolute;
+                top: 0px;
+                left: 0px;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(180deg, rgb(255, 255, 255, 0.5) 0%, rgb(255, 255, 255, 0.35) 56%, rgb(255, 255, 255, 0.2) 100%);
+                opacity: 0;
+                border-radius: rem(25px);
+                z-index: -1;
+                transition: all 0.5s ease;
+                animation-delay: 1s;
+            }
+
             .item {
                 box-shadow: 0px 17px 70.2px 0px #00000026;
                 box-shadow: 33px 0px 77px 0px #FA60004D;
                 background-image: url('../images/services/back_service.png');
-                background-size: cover;
+                background-size: inherit;
                 background-position: center;
                 background-repeat: no-repeat;
                 border-radius: rem(25px);
