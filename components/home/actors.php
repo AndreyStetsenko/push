@@ -22,20 +22,47 @@ $actors_items = get_field('actors_items', 'option');
                     <?php if ($actors_items && is_array($actors_items) && !empty($actors_items)): ?>
                         <?php foreach ($actors_items as $actor): ?>
                             <?php 
-                            $actor_image_id = isset($actor['image']) ? $actor['image'] : null;
+                            $media_type = isset($actor['media_type']) ? $actor['media_type'] : 'image';
                             $actor_title = isset($actor['title']) ? $actor['title'] : '';
                             
-                            // Преобразуем ID изображения в массив с url и alt
-                            $actor_image = $actor_image_id ? crb_get_image($actor_image_id) : null;
+                            $media_url = null;
+                            $media_alt = '';
+                            $actor_image = null;
+                            
+                            if ($media_type === 'gif') {
+                                // Получаем GIF/WebP файл
+                                $gif_webp_id = isset($actor['gif_webp']) ? $actor['gif_webp'] : null;
+                                if ($gif_webp_id) {
+                                    $gif_webp_file = crb_get_image($gif_webp_id);
+                                    if ($gif_webp_file && isset($gif_webp_file['url'])) {
+                                        $media_url = $gif_webp_file['url'];
+                                        $media_alt = isset($gif_webp_file['alt']) ? $gif_webp_file['alt'] : $actor_title;
+                                    }
+                                }
+                            } else {
+                                // Получаем обычное изображение
+                                $actor_image_id = isset($actor['image']) ? $actor['image'] : null;
+                                if ($actor_image_id) {
+                                    $actor_image = crb_get_image($actor_image_id);
+                                    if ($actor_image && isset($actor_image['url'])) {
+                                        $media_url = $actor_image['url'];
+                                        $media_alt = isset($actor_image['alt']) ? $actor_image['alt'] : $actor_title;
+                                    }
+                                }
+                            }
                             ?>
-                            <?php if ($actor_image && isset($actor_image['url'])): ?>
+                            <?php if ($media_url): ?>
                                 <div class="swiper-slide">
                                     <div class="item">
-                                        <div class="image">
-                                            <?php echo push_optimized_image($actor_image, 'full', array(
-                                                'loading' => 'lazy',
-                                                'fetchpriority' => 'auto'
-                                            )); ?>
+                                        <div class="image <?php echo $media_type === 'gif' ? 'gif' : ''; ?>">
+                                            <?php if ($media_type === 'gif'): ?>
+                                                <img src="<?php echo esc_url($media_url); ?>" alt="<?php echo esc_attr($media_alt); ?>" loading="lazy" fetchpriority="auto" decoding="async">
+                                            <?php else: ?>
+                                                <?php echo push_optimized_image($actor_image, 'full', array(
+                                                    'loading' => 'lazy',
+                                                    'fetchpriority' => 'auto'
+                                                )); ?>
+                                            <?php endif; ?>
                                         </div>
                                         <div class="body">
                                             <h3 class="title"><?php echo esc_html($actor_title); ?></h3>

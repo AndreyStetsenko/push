@@ -9,7 +9,6 @@
 
     @include media-breakpoint-down(lg) {
         max-width: 100vw;
-        
     }
 
     .services {
@@ -197,6 +196,9 @@
                 z-index: -1;
                 transition: all 0.5s ease;
                 animation-delay: 1s;
+                @include media-breakpoint-down(lg) {
+                    border-radius: rem(14px);
+                }
             }
 
             .item {
@@ -248,6 +250,15 @@
                         color: #FA6000;
                         text-transform: uppercase;
                         hyphens: none;
+                        
+                        // Использование CSS переменных из Carbon Fields для размера текста
+                        @media (min-width: 769px) {
+                            font-size: var(--title-size-desktop, #{rem(40px)});
+                        }
+                        
+                        @media (max-width: 768px) {
+                            font-size: var(--title-size-mobile, #{rem(20px)});
+                        }
                     }
 
                     .description {
@@ -258,6 +269,15 @@
                         letter-spacing: -2%;
                         font-weight: 400;
                         color: #fff;
+                        
+                        // Использование CSS переменных из Carbon Fields для размера текста
+                        @media (min-width: 769px) {
+                            font-size: var(--description-size-desktop, #{rem(16px)});
+                        }
+                        
+                        @media (max-width: 768px) {
+                            font-size: var(--description-size-mobile, #{rem(12px)});
+                        }
                     }
                 }
             }
@@ -293,7 +313,7 @@
                 .slide {
                     width: rem(236px);
                     height: rem(358px);
-                    left: calc(50% - rem(118px));
+                    // left: calc(50% - rem(118px));
                     margin-top: rem(20px);
                     touch-action: none;
 
@@ -318,13 +338,13 @@
                         padding: rem(24px) rem(20px);
 
                         .title {
-                            font-size: rem(20px);
+                            font-size: var(--title-size-mobile, #{rem(20px)});
                             line-height: 96%;
                         }
 
                         .description {
                             margin-top: rem(5px) !important;
-                            font-size: rem(12px);
+                            font-size: var(--description-size-mobile, #{rem(12px)});
                             line-height: 140%;
                         }
                     }

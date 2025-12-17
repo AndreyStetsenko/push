@@ -23,9 +23,11 @@ export function initServicesSlider() {
         breakpoints: {
             320: {
                 slidesPerView: 2,
+                centeredSlides: true
             },
             480: {
                 slidesPerView: 2,
+                centeredSlides: true
             },
             768: {
                 slidesPerView: 3,
@@ -71,12 +73,23 @@ export function initServicesSlider() {
         }
 
         // Прозрачность для следующих слайдов
-        for (let i = activeIndex + 2; i < slides.length; i++) {
-            slides[i].style.opacity = 0.5;
+        if (window.innerWidth <= 768) {
+            for (let i = activeIndex + 1; i < slides.length; i++) {
+                slides[i].style.opacity = 0.5;
+            }
+    
+            for (let i = activeIndex - 1; i >= 0; i--) {
+                slides[i].style.opacity = 0.5;
+            }
+        } else {
+            for (let i = activeIndex + 2; i < slides.length; i++) {
+                slides[i].style.opacity = 0.5;
+            }
+    
+            for (let i = activeIndex - 2; i >= 0; i--) {
+                slides[i].style.opacity = 0.5;
+            }
         }
-
-        for (let i = activeIndex - 2; i >= 0; i--) {
-            slides[i].style.opacity = 0.5;
-        }
+        
     }
 }

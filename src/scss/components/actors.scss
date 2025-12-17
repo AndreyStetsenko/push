@@ -112,6 +112,20 @@
                             img {
                                 transform: translateY(-28px) scale(1.2);
                             }
+
+                            &.gif {
+                                img {
+                                    transform: translateY(0) scale(1);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                .item {
+                    .image {
+                        img {
+                            border-radius: rem(12px);
                         }
                     }
                 }

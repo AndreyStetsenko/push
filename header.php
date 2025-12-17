@@ -201,8 +201,40 @@
                         <span></span>
                     </button>
 
-                    <a href="#" class="header__contacts">
-                        <span>Контакти</span>
+                    <?php
+                    // Получаем данные кнопки контактов из Carbon Fields
+                    $contacts_button = get_field('header_contacts_button', 'option');
+                    if (!$contacts_button) {
+                        $contacts_button = carbon_get_theme_option('header_contacts_button');
+                    }
+                    
+                    $contacts_text = 'Контакти';
+                    $contacts_link = '#';
+                    $contacts_target = '_self';
+                    
+                    // Обрабатываем данные из complex поля
+                    if ($contacts_button && is_array($contacts_button)) {
+                        // Если это массив массивов (repeater), берем первый элемент
+                        if (isset($contacts_button[0]) && is_array($contacts_button[0])) {
+                            $button_data = $contacts_button[0];
+                        } else {
+                            // Если это прямой массив с ключами
+                            $button_data = $contacts_button;
+                        }
+                        
+                        if (isset($button_data['text']) && !empty($button_data['text'])) {
+                            $contacts_text = $button_data['text'];
+                        }
+                        if (isset($button_data['link']) && !empty($button_data['link'])) {
+                            $contacts_link = $button_data['link'];
+                        }
+                        if (isset($button_data['target']) && !empty($button_data['target'])) {
+                            $contacts_target = $button_data['target'];
+                        }
+                    }
+                    ?>
+                    <a href="<?php echo esc_url($contacts_link); ?>" class="header__contacts" target="<?php echo esc_attr($contacts_target); ?>">
+                        <span><?php echo esc_html($contacts_text); ?></span>
                         <div class="header__contacts-icon-wrapp">
                             <svg class="header__contacts-icon" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M10.5303 0.75V10.75M10.5303 0.75H0.530273M10.5303 0.75L0.530273 10.75" stroke="white" stroke-width="1.5"/>
@@ -239,8 +271,12 @@
                 ?>
             </nav>
 
-            <a href="#" class="mobile-menu__contacts">
-                <span>Контакти</span>
+            <?php
+            // Используем те же данные для мобильного меню
+            // Переменные уже определены выше
+            ?>
+            <a href="<?php echo esc_url($contacts_link); ?>" class="mobile-menu__contacts" target="<?php echo esc_attr($contacts_target); ?>">
+                <span><?php echo esc_html($contacts_text); ?></span>
                 <div class="mobile-menu__contacts-icon">
                     <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M10.5303 0.75V10.75M10.5303 0.75H0.530273M10.5303 0.75L0.530273 10.75" stroke="white" stroke-width="1.5"/>

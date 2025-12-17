@@ -65,6 +65,31 @@ function crb_attach_theme_options() {
         ->add_fields( array(
             Field::make( 'image', 'header_logo' . carbon_lang_prefix(), __( 'Логотип' ) )
                 ->set_help_text( 'Загрузите логотип для шапки сайта. Если не указано, будет использован текст "Push".' ),
+            // Кнопка контактов
+            Field::make( 'complex', 'header_contacts_button' . carbon_lang_prefix(), __( 'Кнопка контактов' ) )
+                ->set_help_text( 'Настройки кнопки "Контакти" в шапке сайта' )
+                ->set_layout( 'tabbed-vertical' )
+                ->set_max( 1 )
+                ->add_fields( array(
+                    Field::make( 'text', 'text', __( 'Текст кнопки' ) )
+                        ->set_help_text( 'Текст на кнопке контактов' )
+                        ->set_default_value( 'Контакти' )
+                        ->set_attribute( 'placeholder', 'Контакти' )
+                        ->set_required( true ),
+                    Field::make( 'text', 'link', __( 'Ссылка' ) )
+                        ->set_help_text( 'URL ссылки кнопки (например: #contacts, /contacts или полный URL)' )
+                        ->set_default_value( '#' )
+                        ->set_attribute( 'placeholder', '#' )
+                        ->set_required( true ),
+                    Field::make( 'select', 'target', __( 'Целевая ссылка' ) )
+                        ->set_help_text( 'Куда откроется ссылка (сайт, новое окно)' )
+                        ->set_options( array(
+                            '_self' => 'На текущей странице',
+                            '_blank' => 'В новом окне',
+                        ) )
+                        ->set_default_value( '_self' )
+                        ->set_required( true ),
+                ) ),
         ) );
 
     // Hero Section - Главная секция
@@ -207,6 +232,24 @@ function crb_attach_theme_options() {
                         ->set_attribute( 'placeholder', 'Повний аудит профілю з обговоренням і наданням SMM стратегії' )
                         ->set_rows( 3 )
                         ->set_required( true ),
+                    Field::make( 'separator', 'title_size_sep', __( 'Размеры текста заголовка' ) ),
+                    Field::make( 'text', 'title_size_desktop', __( 'Размер заголовка (ПК)' ) )
+                        ->set_help_text( 'Размер текста заголовка для десктопных устройств в rem (например: "1.5")' )
+                        ->set_attribute( 'type', 'number' )
+                        ->set_attribute( 'step', '0.1' ),
+                    Field::make( 'text', 'title_size_mobile', __( 'Размер заголовка (Мобильные)' ) )
+                        ->set_help_text( 'Размер текста заголовка для мобильных устройств в rem (например: "1.2")' )
+                        ->set_attribute( 'type', 'number' )
+                        ->set_attribute( 'step', '0.1' ),
+                    Field::make( 'separator', 'description_size_sep', __( 'Размеры текста описания' ) ),
+                    Field::make( 'text', 'description_size_desktop', __( 'Размер описания (ПК)' ) )
+                        ->set_help_text( 'Размер текста описания для десктопных устройств в rem (например: "1")' )
+                        ->set_attribute( 'type', 'number' )
+                        ->set_attribute( 'step', '0.1' ),
+                    Field::make( 'text', 'description_size_mobile', __( 'Размер описания (Мобильные)' ) )
+                        ->set_help_text( 'Размер текста описания для мобильных устройств в rem (например: "0.875")' )
+                        ->set_attribute( 'type', 'number' )
+                        ->set_attribute( 'step', '0.1' ),
                 ) ),
         ) );
 
@@ -437,9 +480,31 @@ function crb_attach_theme_options() {
                 ->set_help_text( 'Добавьте актеров для слайдера. Если не заполнено, будут использованы актеры по умолчанию.' )
                 ->set_layout( 'tabbed-vertical' )
                 ->add_fields( array(
-                    Field::make( 'image', 'image', __( 'Фото актера' ) )
-                        ->set_help_text( 'Фотография актера' )
+                    Field::make( 'select', 'media_type', __( 'Тип медиа' ) )
+                        ->set_help_text( 'Выберите тип медиа: обычное изображение или GIF/WebP' )
+                        ->set_options( array(
+                            'image' => 'Обычное изображение',
+                            'gif' => 'GIF/WebP',
+                        ) )
+                        ->set_default_value( 'image' )
                         ->set_required( true ),
+                    Field::make( 'image', 'image', __( 'Фото актера' ) )
+                        ->set_help_text( 'Фотография актера (используется если выбран тип "Обычное изображение")' )
+                        ->set_conditional_logic( array(
+                            array(
+                                'field' => 'media_type',
+                                'value' => 'image',
+                            )
+                        ) ),
+                    Field::make( 'file', 'gif_webp', __( 'GIF/WebP файл' ) )
+                        ->set_help_text( 'Загрузите GIF или WebP файл (используется если выбран тип "GIF/WebP")' )
+                        ->set_type( array( 'image' ) )
+                        ->set_conditional_logic( array(
+                            array(
+                                'field' => 'media_type',
+                                'value' => 'gif',
+                            )
+                        ) ),
                     Field::make( 'text', 'title', __( 'Заголовок' ) )
                         ->set_help_text( 'Заголовок актера (например: "#Актор 1")' )
                         ->set_attribute( 'placeholder', '#Актор 1' )

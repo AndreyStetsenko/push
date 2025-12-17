@@ -25,6 +25,38 @@ $services_items = get_field('services_items', 'option');
                         $service_title = isset($service['title']) ? $service['title'] : '';
                         $service_description = isset($service['description']) ? $service['description'] : '';
                         
+                        // Получаем размеры текста из Carbon Fields
+                        $title_size_desktop = isset($service['title_size_desktop']) && !empty($service['title_size_desktop']) ? floatval($service['title_size_desktop']) : null;
+                        $title_size_mobile = isset($service['title_size_mobile']) && !empty($service['title_size_mobile']) ? floatval($service['title_size_mobile']) : null;
+                        $description_size_desktop = isset($service['description_size_desktop']) && !empty($service['description_size_desktop']) ? floatval($service['description_size_desktop']) : null;
+                        $description_size_mobile = isset($service['description_size_mobile']) && !empty($service['description_size_mobile']) ? floatval($service['description_size_mobile']) : null;
+                        
+                        // Формируем inline стили для заголовка
+                        $title_styles = '';
+                        if ($title_size_desktop !== null || $title_size_mobile !== null) {
+                            $title_styles = ' style="';
+                            if ($title_size_desktop !== null) {
+                                $title_styles .= '--title-size-desktop: ' . esc_attr($title_size_desktop) . 'rem;';
+                            }
+                            if ($title_size_mobile !== null) {
+                                $title_styles .= '--title-size-mobile: ' . esc_attr($title_size_mobile) . 'rem;';
+                            }
+                            $title_styles .= '"';
+                        }
+                        
+                        // Формируем inline стили для описания
+                        $description_styles = '';
+                        if ($description_size_desktop !== null || $description_size_mobile !== null) {
+                            $description_styles = ' style="';
+                            if ($description_size_desktop !== null) {
+                                $description_styles .= '--description-size-desktop: ' . esc_attr($description_size_desktop) . 'rem;';
+                            }
+                            if ($description_size_mobile !== null) {
+                                $description_styles .= '--description-size-mobile: ' . esc_attr($description_size_mobile) . 'rem;';
+                            }
+                            $description_styles .= '"';
+                        }
+                        
                         // Преобразуем ID изображения в массив с url и alt
                         $service_image = $service_image_id ? crb_get_image($service_image_id) : null;
                         ?>
@@ -39,8 +71,8 @@ $services_items = get_field('services_items', 'option');
                                         )); ?>
                                     </div>
                                     <div class="item-body">
-                                        <span class="title"><?php echo esc_html($service_title); ?></span>
-                                        <span class="description"><?php echo esc_html($service_description); ?></span>
+                                        <span class="title"<?php echo $title_styles; ?>><?php echo esc_html($service_title); ?></span>
+                                        <span class="description"<?php echo $description_styles; ?>><?php echo esc_html($service_description); ?></span>
                                     </div>
                                 </div>
                             </div>
