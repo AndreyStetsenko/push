@@ -72,7 +72,7 @@
                 transition: all 0.2s ease;
 
                 .image {
-                    height: rem(320px);
+                    height: rem(200px);
                     border-radius: 12px;
                     background-image: url('../images/bg/back-actor.png');
                     background-size: cover;
@@ -83,7 +83,7 @@
                         width: 100%;
                         height: 100%;
                         object-fit: cover;
-                        object-position: center top;
+                        object-position: center;
                         transition: all 0.2s ease;
                     }
                 }
