@@ -100,7 +100,7 @@
             <div class="row">
                 <div class="col-1">
                     <div class="footer__nav">
-                        <span class="title">контакти</span>
+                        <span class="title"><?php echo esc_attr(pll__('Contacts')); ?></span>
                         <div class="menu">
                             <ul>
                                 <li><a href="https://t.me/push_admin_1">
@@ -140,7 +140,7 @@
                 </div>
                 <div class="col-2">
                     <div class="footer__nav">
-                        <span class="title">меню</span>
+                        <span class="title"><?php echo esc_attr(pll__('Menu')); ?></span>
                         <div class="menu">
                             <?php
                             wp_nav_menu(array(
