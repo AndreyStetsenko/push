@@ -32,7 +32,7 @@
 
         &__folders {
             margin-top: rem(120px);
-            margin-bottom: rem(300px); // Будет переопределено JS
+            margin-bottom: rem(100px); // Будет переопределено JS
             position: relative;
             min-height: 1px; // Будет переопределено JS, создаем контекст для absolute элементов
             
