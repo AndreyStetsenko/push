@@ -39,7 +39,7 @@ $actors_items = get_field('actors_items', 'option');
                                     if ($media_url) {
                                         // Определяем тип файла по расширению
                                         $file_extension = strtolower(pathinfo($media_url, PATHINFO_EXTENSION));
-                                        if (in_array($file_extension, ['webp', 'webm', 'gif'])) {
+                                        if (in_array($file_extension, ['webp', 'webm', 'gif', 'mp4'])) {
                                             $file_type = $file_extension;
                                         }
                                         // Получаем alt текст из метаданных
@@ -66,7 +66,7 @@ $actors_items = get_field('actors_items', 'option');
                                     <div class="item">
                                         <div class="image <?php echo $media_type === 'gif' ? 'gif' : ''; ?> <?php echo $file_type ? $file_type : ''; ?>">
                                             <?php if ($media_type === 'gif'): ?>
-                                                <?php if ($file_type === 'webm'): ?>
+                                                <?php if ($file_type === 'webm' || $file_type === 'gif' || $file_type === 'webp' || $file_type === 'mp4'): ?>
                                                     <video src="<?php echo esc_url($media_url); ?>" autoplay loop muted playsinline loading="lazy">
                                                         <?php echo esc_html($media_alt); ?>
                                                     </video>
