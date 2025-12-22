@@ -74,22 +74,13 @@ function compileJSFiles() {
       module: {
         rules: [
           {
-            test: /\.js$/,
-            exclude: /node_modules/,
-            use: {
-              loader: 'babel-loader',
-              options: {
-                presets: ['@babel/preset-env']
-              }
-            }
-          },
-          {
             test: /\.(css|scss)$/,
             use: 'ignore-loader' // Игнорируем CSS файлы
           }
         ]
       },
       devtool: 'source-map',
+      target: ['web', 'es2015'], // Поддержка современных браузеров без Babel
       externals: {
         // Исключаем внешние зависимости, если они подключаются отдельно
       }

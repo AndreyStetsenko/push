@@ -1,35 +1,53 @@
+import performanceDetector from '../utils/performanceDetector.js';
+
+// Флаг для предотвращения множественных обновлений
+let isUpdatingHeight = false;
+
+// Получаем конфигурацию анимаций в зависимости от производительности устройства
+const animationConfig = performanceDetector.getAnimationConfig();
+
 // Функция для вычисления и установки высоты контейнера папок
 function updateFoldersContainerHeight() {
+    if (isUpdatingHeight) return;
+    isUpdatingHeight = true;
+    
     const foldersContainer = document.querySelector('.faq__folders');
-    if (!foldersContainer) return;
+    if (!foldersContainer) {
+        isUpdatingHeight = false;
+        return;
+    }
     
     const folders = document.querySelectorAll('.folder');
-    if (folders.length === 0) return;
+    if (folders.length === 0) {
+        isUpdatingHeight = false;
+        return;
+    }
     
-    let maxBottom = 0;
-    
-    folders.forEach(folder => {
-        const rect = folder.getBoundingClientRect();
-        const containerRect = foldersContainer.getBoundingClientRect();
+    // Используем requestAnimationFrame для плавного обновления
+    requestAnimationFrame(() => {
+        let maxBottom = 0;
         
-        // Вычисляем позицию папки относительно контейнера
-        const relativeTop = rect.top - containerRect.top;
-        const folderHeight = rect.height;
-        const bottom = relativeTop + folderHeight;
+        folders.forEach(folder => {
+            // Вычисляем позицию напрямую из стилей для лучшей производительности
+            const topValue = parseFloat(folder.style.top || getComputedStyle(folder).top) || 0;
+            const folderHeight = folder.offsetHeight;
+            const bottom = topValue + folderHeight;
+            
+            if (bottom > maxBottom) {
+                maxBottom = bottom;
+            }
+        });
         
-        // Обновляем максимальную нижнюю границу
-        if (bottom > maxBottom) {
-            maxBottom = bottom;
-        }
+        // Добавляем отступ снизу
+        const paddingBottom = window.innerWidth <= 768 ? 50 : 0;
+        const minHeight = maxBottom + paddingBottom;
+        
+        // Используем transform вместо margin для лучшей производительности
+        foldersContainer.style.minHeight = `${minHeight}px`;
+        foldersContainer.style.paddingBottom = `${paddingBottom}px`;
+        
+        isUpdatingHeight = false;
     });
-    
-    // Добавляем отступ снизу (в пикселях)
-    const paddingBottom = window.innerWidth <= 768 ? 50 : 0;
-    const minHeight = maxBottom + paddingBottom;
-    
-    // Устанавливаем минимальную высоту контейнера
-    foldersContainer.style.minHeight = `${minHeight}px`;
-    foldersContainer.style.marginBottom = `${paddingBottom}px`;
 }
 
 // Функция для получения индекса папки из класса (например, folder--1 -> 1)
@@ -45,9 +63,12 @@ function getFolderIndex(folder) {
 
 // Функция для сдвига папок вниз при открытии
 function shiftFoldersDown(openFolder, folders) {
+    // Добавляем класс для предотвращения hover эффектов во время анимации
+    openFolder.classList.add('is-animating');
+    
     // Ждем один кадр для применения CSS стилей после добавления класса is-open
     requestAnimationFrame(() => {
-        // Получаем высоту открытой папки
+        // Получаем высоту открытой папки с учетом всего контента
         const openFolderHeight = openFolder.offsetHeight;
         
         // Получаем высоту закрытой папки из сохраненного значения или вычисляем
@@ -64,29 +85,43 @@ function shiftFoldersDown(openFolder, folders) {
         // Получаем исходную позицию открытой папки
         const openFolderOriginalTop = openFolder.dataset.originalTop 
             ? parseFloat(openFolder.dataset.originalTop) 
-            : (parseFloat(getComputedStyle(openFolder).top) || 0);
+            : 0;
+        
+        // Сохраняем информацию о том, какие папки нужно сдвинуть
+        const foldersToShift = [];
         
         folders.forEach(folder => {
             // Пропускаем саму открытую папку
-            if (folder === openFolder || folder.classList.contains('is-open')) {
+            if (folder === openFolder) {
                 return;
             }
             
             // Используем исходную позицию из data-атрибута
             const originalTop = folder.dataset.originalTop 
                 ? parseFloat(folder.dataset.originalTop) 
-                : (parseFloat(getComputedStyle(folder).top) || 0);
+                : 0;
             
             // Сдвигаем все папки, которые визуально находятся ниже открытой папки
-            // Сравниваем исходные позиции (top), а не индексы
             if (originalTop > openFolderOriginalTop) {
-                // Вычисляем новую позицию: исходная позиция + дополнительная высота открытой папки
-                const newTop = originalTop + additionalHeight;
-                
-                // Устанавливаем новый top
-                folder.style.top = `${newTop}px`;
+                foldersToShift.push({
+                    element: folder,
+                    originalTop: originalTop,
+                    newTop: originalTop + additionalHeight
+                });
             }
         });
+        
+        // Применяем трансформации одновременно для всех папок
+        foldersToShift.forEach(({ element, newTop }) => {
+            // Используем CSS custom property для более плавной анимации
+            element.style.setProperty('--shift-top', `${newTop}px`);
+            element.style.top = `${newTop}px`;
+        });
+        
+        // Убираем класс анимации после завершения (используем конфиг)
+        setTimeout(() => {
+            openFolder.classList.remove('is-animating');
+        }, animationConfig.transitionDuration);
     });
 }
 
@@ -104,6 +139,27 @@ function resetFoldersPosition(folders) {
     });
 }
 
+// Throttle функция для оптимизации событий
+function throttle(func, delay) {
+    let lastCall = 0;
+    return function(...args) {
+        const now = Date.now();
+        if (now - lastCall >= delay) {
+            lastCall = now;
+            func(...args);
+        }
+    };
+}
+
+// Debounce функция для оптимизации событий
+function debounce(func, delay) {
+    let timeout;
+    return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func(...args), delay);
+    };
+}
+
 // Компонент для разворачивания FAQ папок
 export function initFaqFolders() {
     const folders = document.querySelectorAll('.folder');
@@ -111,43 +167,66 @@ export function initFaqFolders() {
     
     if (!foldersContainer) return;
     
-    // Сохраняем исходные позиции и высоты папок при инициализации
-    // Используем requestAnimationFrame для гарантии, что CSS применен
-    requestAnimationFrame(() => {
-        folders.forEach(folder => {
-            // Получаем top из computed style (CSS), игнорируя inline стили
-            const computedStyle = getComputedStyle(folder);
-            const currentTop = parseFloat(computedStyle.top) || 0;
-            
-            // Сохраняем исходную позицию только если еще не сохранено
-            if (!folder.dataset.originalTop) {
+    // Устанавливаем CSS переменную для времени анимации
+    document.documentElement.style.setProperty('--faq-transition-duration', `${animationConfig.transitionDuration}ms`);
+    
+    // Добавляем класс для оптимизации производительности
+    foldersContainer.classList.add('faq-folders-initialized');
+    
+    // Переменная для отслеживания текущей открытой папки
+    let currentOpenFolder = null;
+    
+    // Функция инициализации позиций папок
+    const initFolderPositions = () => {
+        requestAnimationFrame(() => {
+            folders.forEach(folder => {
+                // Получаем top из computed style (CSS), игнорируя inline стили
+                const computedStyle = getComputedStyle(folder);
+                const currentTop = parseFloat(computedStyle.top) || 0;
+                
+                // Сохраняем исходную позицию
                 folder.dataset.originalTop = currentTop.toString();
-            }
-            
-            // Сохраняем высоту закрытой папки (высота вкладки)
-            if (!folder.dataset.closedHeight) {
+                
+                // Сохраняем высоту закрытой папки (высота вкладки)
                 const isMobile = window.innerWidth <= 768;
                 const closedHeight = isMobile ? 48 : 101; // Высота вкладки
                 folder.dataset.closedHeight = closedHeight.toString();
-            }
+                
+                // Добавляем CSS класс для оптимизации
+                folder.classList.add('folder-initialized');
+            });
+            
+            // Инициализация высоты после загрузки всех позиций
+            updateFoldersContainerHeight();
         });
-    });
+    };
     
+    // Инициализируем позиции папок
+    initFolderPositions();
+    
+    // Оптимизированный обработчик клика
     folders.forEach(folder => {
         const tab = folder.querySelector('.folder__tab');
         const content = folder.querySelector('.folder__content');
         
         if (!tab || !content) return;
         
-        // Обработчик клика на tab или folder
+        // Предотвращаем двойные клики
+        let isProcessing = false;
+        
+        // Обработчик клика на tab
         const handleClick = (e) => {
             e.stopPropagation();
+            
+            // Игнорируем повторные клики во время анимации
+            if (isProcessing) return;
+            isProcessing = true;
             
             const isOpen = folder.classList.contains('is-open');
             
             // Закрываем все другие папки
             folders.forEach(otherFolder => {
-                if (otherFolder !== folder) {
+                if (otherFolder !== folder && otherFolder.classList.contains('is-open')) {
                     otherFolder.classList.remove('is-open');
                 }
             });
@@ -158,32 +237,32 @@ export function initFaqFolders() {
             // Переключаем текущую папку
             if (isOpen) {
                 folder.classList.remove('is-open');
+                currentOpenFolder = null;
             } else {
                 folder.classList.add('is-open');
+                currentOpenFolder = folder;
                 
-                // Ждем задержки для начала анимации открытия и применения CSS
-                // Затем сдвигаем папки вниз
-                // Используем двойной requestAnimationFrame для гарантии применения стилей
+                // Сдвигаем папки вниз с оптимизацией
                 requestAnimationFrame(() => {
-                    requestAnimationFrame(() => {
-                        shiftFoldersDown(folder, folders);
-                    });
+                    shiftFoldersDown(folder, folders);
                 });
             }
             
             // Обновляем высоту контейнера после изменения состояния папки
             setTimeout(() => {
                 updateFoldersContainerHeight();
-            }, 500);
+                isProcessing = false;
+            }, animationConfig.transitionDuration + 50);
         };
         
-        tab.addEventListener('click', handleClick);
-        folder.addEventListener('click', handleClick);
+        // Используем только один обработчик на tab для лучшей производительности
+        tab.addEventListener('click', handleClick, { passive: true });
     });
     
     // Закрытие всех папок при клике вне них (один обработчик для всех)
-    document.addEventListener('click', (e) => {
+    const handleOutsideClick = debounce((e) => {
         let hasOpenFolder = false;
+        
         folders.forEach(folder => {
             if (folder.classList.contains('is-open') && !folder.contains(e.target)) {
                 folder.classList.remove('is-open');
@@ -193,25 +272,29 @@ export function initFaqFolders() {
         
         // Возвращаем все папки в исходное положение при закрытии
         if (hasOpenFolder) {
+            currentOpenFolder = null;
             resetFoldersPosition(folders);
             setTimeout(() => {
                 updateFoldersContainerHeight();
-            }, 450);
+            }, animationConfig.transitionDuration + 50);
         }
-    });
+    }, animationConfig.reducedMotion ? 50 : 100);
     
-    // Инициализация высоты при загрузке
-    updateFoldersContainerHeight();
+    document.addEventListener('click', handleOutsideClick);
     
-    // Обновление высоты при изменении размера окна
-    let resizeTimeout;
-    window.addEventListener('resize', () => {
-        clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(() => {
-            // При изменении размера окна возвращаем папки в исходное положение
-            resetFoldersPosition(folders);
-            
-            // Пересчитываем исходные позиции и высоты после изменения размера
+    // Обновление высоты при изменении размера окна с оптимизацией
+    const handleResize = debounce(() => {
+        // Закрываем все открытые папки при ресайзе для предотвращения проблем
+        folders.forEach(folder => {
+            folder.classList.remove('is-open');
+        });
+        currentOpenFolder = null;
+        
+        // При изменении размера окна возвращаем папки в исходное положение
+        resetFoldersPosition(folders);
+        
+        // Пересчитываем исходные позиции и высоты после изменения размера
+        requestAnimationFrame(() => {
             folders.forEach(folder => {
                 const currentTop = parseFloat(getComputedStyle(folder).top) || 0;
                 folder.dataset.originalTop = currentTop.toString();
@@ -223,7 +306,16 @@ export function initFaqFolders() {
             });
             
             updateFoldersContainerHeight();
-        }, 150);
+        });
+    }, 200);
+    
+    window.addEventListener('resize', handleResize, { passive: true });
+    
+    // Очистка при выгрузке страницы
+    window.addEventListener('beforeunload', () => {
+        window.removeEventListener('resize', handleResize);
+        document.removeEventListener('click', handleOutsideClick);
     });
 }
+
 

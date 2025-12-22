@@ -1,3 +1,4 @@
+import performanceDetector from './utils/performanceDetector.js';
 import { initLangSelector } from './components/langSelector.js';
 import { initCasesSlider } from './components/casesSlider.js';
 import { initCasesModal } from './components/casesModal.js';
@@ -10,6 +11,9 @@ import { initWhyusLight } from './components/whyusLight.js';
 import { initInfoTitle } from './components/infoTitle.js';
 import { initHeroTitle } from './components/heroTitle.js';
 import { initForms } from './components/forms.js';
+
+// Инициализация детектора производительности (импортируется автоматически)
+console.log('Device performance:', performanceDetector.devicePerformance);
 
 // Инициализация всех компонентов
 document.addEventListener('DOMContentLoaded', () => {
