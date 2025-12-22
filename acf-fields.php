@@ -481,10 +481,10 @@ function crb_attach_theme_options() {
                 ->set_layout( 'tabbed-vertical' )
                 ->add_fields( array(
                     Field::make( 'select', 'media_type', __( 'Тип медиа' ) )
-                        ->set_help_text( 'Выберите тип медиа: обычное изображение или GIF/WebP' )
+                        ->set_help_text( 'Выберите тип медиа: обычное изображение или GIF/WebP/WebM' )
                         ->set_options( array(
                             'image' => 'Обычное изображение',
-                            'gif' => 'GIF/WebP',
+                            'gif' => 'GIF/WebP/WebM',
                         ) )
                         ->set_default_value( 'image' )
                         ->set_required( true ),
@@ -496,9 +496,9 @@ function crb_attach_theme_options() {
                                 'value' => 'image',
                             )
                         ) ),
-                    Field::make( 'file', 'gif_webp', __( 'GIF/WebP файл' ) )
-                        ->set_help_text( 'Загрузите GIF или WebP файл (используется если выбран тип "GIF/WebP")' )
-                        ->set_type( array( 'image' ) )
+                    Field::make( 'file', 'gif_webp_webm', __( 'GIF/WebP/WebM файл' ) )
+                        ->set_help_text( 'Загрузите GIF, WebP или WebM файл (используется если выбран тип "GIF/WebP/WebM")' )
+                        ->set_type( array( 'image', 'video' ) )
                         ->set_conditional_logic( array(
                             array(
                                 'field' => 'media_type',
@@ -589,11 +589,29 @@ function crb_attach_theme_options() {
                         ->set_default_value( 'Натисни на подарунок, щоб' )
                         ->set_attribute( 'placeholder', 'Натисни на подарунок, щоб' )
                         ->set_required( true ),
+                    Field::make( 'separator', 'first_size_sep', __( 'Размеры текста первой строки' ) ),
+                    Field::make( 'text', 'first_size_desktop', __( 'Размер первой строки (ПК)' ) )
+                        ->set_help_text( 'Размер текста первой строки для десктопных устройств в rem (например: "2.5")' )
+                        ->set_attribute( 'type', 'number' )
+                        ->set_attribute( 'step', '0.1' ),
+                    Field::make( 'text', 'first_size_mobile', __( 'Размер первой строки (Мобильные)' ) )
+                        ->set_help_text( 'Размер текста первой строки для мобильных устройств в rem (например: "1.5")' )
+                        ->set_attribute( 'type', 'number' )
+                        ->set_attribute( 'step', '0.1' ),
                     Field::make( 'text', 'second', __( 'Вторая строка' ) )
                         ->set_help_text( 'Вторая строка заголовка' )
                         ->set_default_value( 'отримати бонус' )
                         ->set_attribute( 'placeholder', 'отримати бонус' )
                         ->set_required( true ),
+                    Field::make( 'separator', 'second_size_sep', __( 'Размеры текста второй строки' ) ),
+                    Field::make( 'text', 'second_size_desktop', __( 'Размер второй строки (ПК)' ) )
+                        ->set_help_text( 'Размер текста второй строки для десктопных устройств в rem (например: "2.5")' )
+                        ->set_attribute( 'type', 'number' )
+                        ->set_attribute( 'step', '0.1' ),
+                    Field::make( 'text', 'second_size_mobile', __( 'Размер второй строки (Мобильные)' ) )
+                        ->set_help_text( 'Размер текста второй строки для мобильных устройств в rem (например: "1.5")' )
+                        ->set_attribute( 'type', 'number' )
+                        ->set_attribute( 'step', '0.1' ),
                 ) ),
         // Изображения
             Field::make( 'image', 'bonus_image_close' . carbon_lang_prefix(), __( 'Изображение закрытого подарка' ) )

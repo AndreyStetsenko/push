@@ -240,6 +240,7 @@
                     left: 0;
                     right: 0;
                     padding: rem(40px) rem(32px);
+                    min-width: 0;
 
                     .title {
                         font-family: $font-family-base;
@@ -250,6 +251,9 @@
                         color: #FA6000;
                         text-transform: uppercase;
                         hyphens: none;
+                        word-break: normal;
+                        overflow-wrap: break-word;
+                        white-space: normal;
                         
                         // Использование CSS переменных из Carbon Fields для размера текста
                         @media (min-width: 769px) {
@@ -269,6 +273,10 @@
                         letter-spacing: -2%;
                         font-weight: 400;
                         color: #fff;
+                        word-break: normal;
+                        overflow-wrap: break-word;
+                        white-space: normal;
+                        hyphens: none;
                         
                         // Использование CSS переменных из Carbon Fields для размера текста
                         @media (min-width: 769px) {

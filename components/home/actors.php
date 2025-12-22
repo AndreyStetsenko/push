@@ -27,16 +27,26 @@ $actors_items = get_field('actors_items', 'option');
                             
                             $media_url = null;
                             $media_alt = '';
+                            $file_type = null; // 'webp', 'webm', 'gif' или null
                             $actor_image = null;
                             
                             if ($media_type === 'gif') {
-                                // Получаем GIF/WebP файл
-                                $gif_webp_id = isset($actor['gif_webp']) ? $actor['gif_webp'] : null;
-                                if ($gif_webp_id) {
-                                    $gif_webp_file = crb_get_image($gif_webp_id);
-                                    if ($gif_webp_file && isset($gif_webp_file['url'])) {
-                                        $media_url = $gif_webp_file['url'];
-                                        $media_alt = isset($gif_webp_file['alt']) ? $gif_webp_file['alt'] : $actor_title;
+                                // Получаем GIF/WebP/WebM файл
+                                $gif_webp_webm_id = isset($actor['gif_webp_webm']) ? $actor['gif_webp_webm'] : null;
+                                if ($gif_webp_webm_id) {
+                                    // Для файлов используем wp_get_attachment_url вместо crb_get_image
+                                    $media_url = wp_get_attachment_url($gif_webp_webm_id);
+                                    if ($media_url) {
+                                        // Определяем тип файла по расширению
+                                        $file_extension = strtolower(pathinfo($media_url, PATHINFO_EXTENSION));
+                                        if (in_array($file_extension, ['webp', 'webm', 'gif'])) {
+                                            $file_type = $file_extension;
+                                        }
+                                        // Получаем alt текст из метаданных
+                                        $media_alt = get_post_meta($gif_webp_webm_id, '_wp_attachment_image_alt', true);
+                                        if (empty($media_alt)) {
+                                            $media_alt = $actor_title;
+                                        }
                                     }
                                 }
                             } else {
@@ -54,9 +64,15 @@ $actors_items = get_field('actors_items', 'option');
                             <?php if ($media_url): ?>
                                 <div class="swiper-slide">
                                     <div class="item">
-                                        <div class="image <?php echo $media_type === 'gif' ? 'gif' : ''; ?>">
+                                        <div class="image <?php echo $media_type === 'gif' ? 'gif' : ''; ?> <?php echo $file_type ? $file_type : ''; ?>">
                                             <?php if ($media_type === 'gif'): ?>
-                                                <img src="<?php echo esc_url($media_url); ?>" alt="<?php echo esc_attr($media_alt); ?>" loading="lazy" fetchpriority="auto" decoding="async">
+                                                <?php if ($file_type === 'webm'): ?>
+                                                    <video src="<?php echo esc_url($media_url); ?>" autoplay loop muted playsinline loading="lazy">
+                                                        <?php echo esc_html($media_alt); ?>
+                                                    </video>
+                                                <?php else: ?>
+                                                    <img src="<?php echo esc_url($media_url); ?>" alt="<?php echo esc_attr($media_alt); ?>" loading="lazy" fetchpriority="auto" decoding="async">
+                                                <?php endif; ?>
                                             <?php else: ?>
                                                 <?php echo push_optimized_image($actor_image, 'full', array(
                                                     'loading' => 'lazy',

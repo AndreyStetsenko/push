@@ -3,6 +3,15 @@
 $bonus_title_group = get_field('bonus_title_group', 'option');
 $bonus_title_first = $bonus_title_group && isset($bonus_title_group['first']) ? $bonus_title_group['first'] : '';
 $bonus_title_second = $bonus_title_group && isset($bonus_title_group['second']) ? $bonus_title_group['second'] : '';
+
+// Размеры текста для первой строки
+$bonus_title_first_size_desktop = $bonus_title_group && isset($bonus_title_group['first_size_desktop']) ? $bonus_title_group['first_size_desktop'] : '';
+$bonus_title_first_size_mobile = $bonus_title_group && isset($bonus_title_group['first_size_mobile']) ? $bonus_title_group['first_size_mobile'] : '';
+
+// Размеры текста для второй строки
+$bonus_title_second_size_desktop = $bonus_title_group && isset($bonus_title_group['second_size_desktop']) ? $bonus_title_group['second_size_desktop'] : '';
+$bonus_title_second_size_mobile = $bonus_title_group && isset($bonus_title_group['second_size_mobile']) ? $bonus_title_group['second_size_mobile'] : '';
+
 $bonus_image_close_id = get_field('bonus_image_close', 'option');
 $bonus_image_open_id = get_field('bonus_image_open', 'option');
 $bonus_content_title = get_field('bonus_content_title', 'option') ?: '';
@@ -10,7 +19,50 @@ $bonus_content_title = get_field('bonus_content_title', 'option') ?: '';
 // Преобразуем ID изображений в массивы
 $bonus_image_close = $bonus_image_close_id ? crb_get_image($bonus_image_close_id) : null;
 $bonus_image_open = $bonus_image_open_id ? crb_get_image($bonus_image_open_id) : null;
+
+// Формируем стили для заголовков, если заданы значения
+$bonus_title_styles = '';
+if ($bonus_title_first_size_desktop || $bonus_title_first_size_mobile || $bonus_title_second_size_desktop || $bonus_title_second_size_mobile) {
+    $bonus_title_styles = '<style>';
+    
+    // Стили для первой строки
+    if ($bonus_title_first_size_desktop || $bonus_title_first_size_mobile) {
+        $bonus_title_styles .= '#bonus .bonus__title-first {';
+        if ($bonus_title_first_size_desktop) {
+            $bonus_title_styles .= 'font-size: ' . esc_attr($bonus_title_first_size_desktop) . 'rem;';
+        }
+        $bonus_title_styles .= '}';
+        
+        if ($bonus_title_first_size_mobile) {
+            $bonus_title_styles .= '@media (max-width: 767.98px) {';
+            $bonus_title_styles .= '#bonus .bonus__title-first {';
+            $bonus_title_styles .= 'font-size: ' . esc_attr($bonus_title_first_size_mobile) . 'rem;';
+            $bonus_title_styles .= '}';
+            $bonus_title_styles .= '}';
+        }
+    }
+    
+    // Стили для второй строки
+    if ($bonus_title_second_size_desktop || $bonus_title_second_size_mobile) {
+        $bonus_title_styles .= '#bonus .bonus__title-second {';
+        if ($bonus_title_second_size_desktop) {
+            $bonus_title_styles .= 'font-size: ' . esc_attr($bonus_title_second_size_desktop) . 'rem;';
+        }
+        $bonus_title_styles .= '}';
+        
+        if ($bonus_title_second_size_mobile) {
+            $bonus_title_styles .= '@media (max-width: 767.98px) {';
+            $bonus_title_styles .= '#bonus .bonus__title-second {';
+            $bonus_title_styles .= 'font-size: ' . esc_attr($bonus_title_second_size_mobile) . 'rem;';
+            $bonus_title_styles .= '}';
+            $bonus_title_styles .= '}';
+        }
+    }
+    
+    $bonus_title_styles .= '</style>';
+}
 ?>
+<?php echo $bonus_title_styles; ?>
 <div id="bonus" class="bonus">
     <div class="container">
         <div class="bonus__title">
