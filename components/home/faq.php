@@ -122,6 +122,7 @@ function get_contact_icon($name) {
                 $folder_index = $folder_counter;
                 $folder_title = isset($folder['title']) ? $folder['title'] : '';
                 $folder_color = isset($folder['color']) ? $folder['color'] : 'black';
+                $tab_max_width_mobile = isset($folder['tab_max_width_mobile']) ? trim($folder['tab_max_width_mobile']) : '';
                 $image_type = isset($folder['image_type']) ? $folder['image_type'] : 'single';
                 // Проверяем флаг контактов (ACF может вернуть массив, строку 'yes' или true)
                 $is_contacts = false;
@@ -137,7 +138,7 @@ function get_contact_icon($name) {
                 ?>
                 
                 <div class="folder folder--<?php echo esc_attr($folder_color); ?> folder--<?php echo esc_attr($folder_index); ?>">
-                    <div class="folder__tab">
+                    <div class="folder__tab"<?php if (!empty($tab_max_width_mobile)): ?> style="--tab-max-width-mobile: <?php echo esc_attr($tab_max_width_mobile); ?>;"<?php endif; ?>>
                         <span class="title"><?php echo esc_html($folder_title); ?></span>
                     </div>
                     <div class="folder__content">

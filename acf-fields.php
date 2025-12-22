@@ -654,6 +654,9 @@ function crb_attach_theme_options() {
                         ) )
                         ->set_default_value( 'black' )
                         ->set_required( true ),
+                    Field::make( 'text', 'tab_max_width_mobile', __( 'Max-width для мобильной версии (tab)' ) )
+                        ->set_help_text( 'Максимальная ширина вкладки для мобильной версии (например: 200px, 50%, auto). Оставьте пустым для значения по умолчанию.' )
+                        ->set_attribute( 'placeholder', '200px' ),
                     Field::make( 'select', 'image_type', __( 'Тип изображения' ) )
                         ->set_help_text( 'Тип изображения: одно изображение или социальные сети' )
                         ->set_options( array(
