@@ -811,5 +811,23 @@ function crb_attach_theme_options() {
                         ->set_attribute( 'placeholder', 'для твого бренду' )
                         ->set_required( true ),
                 ) ),
+        // Кнопка формы
+            Field::make( 'text', 'footer_form_button_text' . carbon_lang_prefix(), __( 'Текст кнопки' ) )
+                ->set_help_text( 'Текст на кнопке отправки формы' )
+                ->set_default_value( 'Зв\'язатись з нами' )
+                ->set_attribute( 'placeholder', 'Зв\'язатись з нами' )
+                ->set_required( true ),
+        // Заголовок контактов в футере
+            Field::make( 'text', 'footer_contacts_title' . carbon_lang_prefix(), __( 'Заголовок контактов' ) )
+                ->set_help_text( 'Заголовок секции контактов в футере' )
+                ->set_default_value( 'контакти' )
+                ->set_attribute( 'placeholder', 'контакти' )
+                ->set_required( true ),
+        // Заголовок меню в футере
+            Field::make( 'text', 'footer_menu_title' . carbon_lang_prefix(), __( 'Заголовок меню' ) )
+                ->set_help_text( 'Заголовок секции меню в футере' )
+                ->set_default_value( 'меню' )
+                ->set_attribute( 'placeholder', 'меню' )
+                ->set_required( true ),
         ) );
 }

@@ -58,6 +58,9 @@
     $footer_form_title_group = get_field('footer_form_title_group', 'option');
     $footer_form_title_first = $footer_form_title_group && isset($footer_form_title_group['first']) ? $footer_form_title_group['first'] : 'Push-старт';
     $footer_form_title_second = $footer_form_title_group && isset($footer_form_title_group['second']) ? $footer_form_title_group['second'] : 'для твого бренду';
+    $footer_form_button_text = get_field('footer_form_button_text', 'option') ?: 'Зв\'язатись з нами';
+    $footer_contacts_title = get_field('footer_contacts_title', 'option') ?: 'контакти';
+    $footer_menu_title = get_field('footer_menu_title', 'option') ?: 'меню';
     ?>
 
     <div id="formfooter" class="formfooter">
@@ -79,7 +82,7 @@
                                 <input type="text" name="your-name" placeholder="<?php echo esc_attr(pll__('Your name')); ?>" required>
                                 <input type="tel" name="your-phone" placeholder="<?php echo esc_attr(pll__('Your phone')); ?>" required>
                                 <button type="submit" class="formfooter__button">
-                                    <span><?php echo esc_attr(pll__('Send')); ?></span>
+                                    <span><?php echo esc_html($footer_form_button_text); ?></span>
                                     <div class="icon-wrap">
                                         <svg class="icon" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <path d="M10.5303 0.75V10.75M10.5303 0.75H0.530273M10.5303 0.75L0.530273 10.75" stroke="white" stroke-width="1.5"></path>
@@ -100,7 +103,7 @@
             <div class="row">
                 <div class="col-1">
                     <div class="footer__nav">
-                        <span class="title"><?php echo esc_attr(pll__('Contacts')); ?></span>
+                        <span class="title"><?php echo esc_html($footer_contacts_title); ?></span>
                         <div class="menu">
                             <ul>
                                 <li><a href="https://t.me/push_admin_1">
@@ -140,7 +143,7 @@
                 </div>
                 <div class="col-2">
                     <div class="footer__nav">
-                        <span class="title"><?php echo esc_attr(pll__('Menu')); ?></span>
+                        <span class="title"><?php echo esc_html($footer_menu_title); ?></span>
                         <div class="menu">
                             <?php
                             wp_nav_menu(array(
