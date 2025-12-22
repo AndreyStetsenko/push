@@ -277,9 +277,6 @@ function get_contact_icon($name) {
                                                     <span><?php echo esc_html($question_number . '/' . $question_text); ?></span>
                                                     <p><?php echo esc_html($question_answer); ?></p>
                                                 </div>
-                                                <div class="item__icon">
-                                                    <?php echo $question_icon; ?>
-                                                </div>
                                             </div>
                                         <?php endforeach; ?>
                                     <?php endif; ?>
