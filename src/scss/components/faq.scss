@@ -281,7 +281,7 @@
                             position: absolute;
                             width: 280px;
                             max-height: 320px;
-                            bottom: 80%;
+                            bottom: 70%;
                             left: 46%;
                         }
                     }
@@ -777,7 +777,7 @@
 
             &__folders {
                 margin-top: rem(80px);
-                margin-bottom: rem(200px); // Будет переопределено JS
+                margin-bottom: rem(50px); // Будет переопределено JS
                 position: relative;
                 min-height: 1px; // Будет переопределено JS
 

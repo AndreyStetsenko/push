@@ -107,7 +107,7 @@
             .swiper-slide {
                 &-active {
                     .item {
-                        transform: scale(1.15);
+                        transform: scale(1.1);
 
                         .image {
                             img {
@@ -179,7 +179,8 @@
                     padding-bottom: rem(24px);
 
                     .image {
-                        height: rem(240px);
+                        height: rem(140px);
+                        width: auto;
                     }
 
                     .body {
@@ -198,11 +199,11 @@
                 .swiper-slide {
                     &-active {
                         .item {
-                            transform: scale(1.15);
+                            // transform: scale(1.15);
 
                             .image {
                                 img {
-                                    transform: translateY(-16px) scale(1.15);
+                                    // transform: translateY(-16px) scale(1.15);
                                 }
                             }
                         }
