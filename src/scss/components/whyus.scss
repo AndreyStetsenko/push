@@ -149,7 +149,7 @@
             display: flex;
             flex-direction: column;
             font-family: $font-family-base;
-            font-size: rem(120px);
+            font-size: var(--title-font-size-desktop, #{rem(120px)});
             line-height: 82%;
             letter-spacing: -2%;
             font-weight: 700;
@@ -157,7 +157,7 @@
             text-transform: uppercase;
 
             @include media-breakpoint-down(md) {
-                font-size: 35px;
+                font-size: var(--title-font-size-mobile, 35px);
                 margin-left: rem(22px);
 
                 &::before {
@@ -303,7 +303,7 @@
 
         .whyus {
             &__title {
-                font-size: rem(35px);
+                font-size: var(--title-font-size-mobile, #{rem(35px)});
                 line-height: 85%;
             }
 

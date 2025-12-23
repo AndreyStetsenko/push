@@ -214,6 +214,16 @@ function crb_attach_theme_options() {
                         ->set_default_value( 'послуги' )
                         ->set_attribute( 'placeholder', 'послуги' )
                         ->set_required( true ),
+                    Field::make( 'text', 'font_size_desktop', __( 'Размер текста (ПК), rem' ) )
+                        ->set_help_text( 'Размер текста заголовка на десктопе в rem (например: 120)' )
+                        ->set_attribute( 'type', 'number' )
+                        ->set_attribute( 'step', '0.1' )
+                        ->set_attribute( 'placeholder', '120' ),
+                    Field::make( 'text', 'font_size_mobile', __( 'Размер текста (Мобильный), rem' ) )
+                        ->set_help_text( 'Размер текста заголовка на мобильных устройствах в rem (например: 28)' )
+                        ->set_attribute( 'type', 'number' )
+                        ->set_attribute( 'step', '0.1' )
+                        ->set_attribute( 'placeholder', '28' ),
                 ) ),
         // Repeater для услуг
             Field::make( 'complex', 'services_items' . carbon_lang_prefix(), __( 'Услуги' ) )
@@ -276,6 +286,16 @@ function crb_attach_theme_options() {
                         ->set_default_value( 'саме ми?' )
                         ->set_attribute( 'placeholder', 'саме ми?' )
                         ->set_required( true ),
+                    Field::make( 'text', 'font_size_desktop', __( 'Размер текста (ПК), rem' ) )
+                        ->set_help_text( 'Размер текста заголовка на десктопе в rem (например: 120)' )
+                        ->set_attribute( 'type', 'number' )
+                        ->set_attribute( 'step', '0.1' )
+                        ->set_attribute( 'placeholder', '120' ),
+                    Field::make( 'text', 'font_size_mobile', __( 'Размер текста (Мобильный), rem' ) )
+                        ->set_help_text( 'Размер текста заголовка на мобильных устройствах в rem (например: 35)' )
+                        ->set_attribute( 'type', 'number' )
+                        ->set_attribute( 'step', '0.1' )
+                        ->set_attribute( 'placeholder', '35' ),
                 ) ),
         // Repeater для элементов
             Field::make( 'complex', 'whyus_items' . carbon_lang_prefix(), __( 'Элементы' ) )

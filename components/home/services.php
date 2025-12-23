@@ -4,11 +4,28 @@ $services_title_group = get_field('services_title_group', 'option');
 $services_title_part1 = $services_title_group && isset($services_title_group['part1']) ? $services_title_group['part1'] : '';
 $services_title_part2 = $services_title_group && isset($services_title_group['part2']) ? $services_title_group['part2'] : '';
 
+// Получаем размеры текста из Carbon Fields
+$title_size_desktop = isset($services_title_group['font_size_desktop']) && !empty($services_title_group['font_size_desktop']) ? floatval($services_title_group['font_size_desktop']) : null;
+$title_size_mobile = isset($services_title_group['font_size_mobile']) && !empty($services_title_group['font_size_mobile']) ? floatval($services_title_group['font_size_mobile']) : null;
+
+// Формируем inline стили для заголовка
+$title_styles = '';
+if ($title_size_desktop !== null || $title_size_mobile !== null) {
+    $title_styles = ' style="';
+    if ($title_size_desktop !== null) {
+        $title_styles .= '--title-font-size-desktop: ' . esc_attr($title_size_desktop) . 'rem;';
+    }
+    if ($title_size_mobile !== null) {
+        $title_styles .= '--title-font-size-mobile: ' . esc_attr($title_size_mobile) . 'rem;';
+    }
+    $title_styles .= '"';
+}
+
 $services_items = get_field('services_items', 'option');
 ?>
 <div class="services" id="services">
     <div class="container">
-        <h2 class="services__title"><?php echo esc_html($services_title_part1); ?> <span><?php echo esc_html($services_title_part2); ?></span></h2>
+        <h2 class="services__title"<?php echo $title_styles; ?>><?php echo esc_html($services_title_part1); ?> <span><?php echo esc_html($services_title_part2); ?></span></h2>
 
         <div class="services__slider">
             <div class="light">

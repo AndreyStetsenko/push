@@ -4,6 +4,24 @@ $whyus_emoji = get_field('whyus_emoji', 'option');
 $whyus_title_group = get_field('whyus_title_group', 'option');
 $whyus_title_first = $whyus_title_group && isset($whyus_title_group['first']) ? $whyus_title_group['first'] : '';
 $whyus_title_second = $whyus_title_group && isset($whyus_title_group['second']) ? $whyus_title_group['second'] : '';
+
+// Получаем размеры текста из Carbon Fields
+$title_size_desktop = isset($whyus_title_group['font_size_desktop']) && !empty($whyus_title_group['font_size_desktop']) ? floatval($whyus_title_group['font_size_desktop']) : null;
+$title_size_mobile = isset($whyus_title_group['font_size_mobile']) && !empty($whyus_title_group['font_size_mobile']) ? floatval($whyus_title_group['font_size_mobile']) : null;
+
+// Формируем inline стили для заголовка
+$title_styles = '';
+if ($title_size_desktop !== null || $title_size_mobile !== null) {
+    $title_styles = ' style="';
+    if ($title_size_desktop !== null) {
+        $title_styles .= '--title-font-size-desktop: ' . esc_attr($title_size_desktop) . 'rem;';
+    }
+    if ($title_size_mobile !== null) {
+        $title_styles .= '--title-font-size-mobile: ' . esc_attr($title_size_mobile) . 'rem;';
+    }
+    $title_styles .= '"';
+}
+
 $whyus_items = get_field('whyus_items', 'option');
 
 // Преобразуем ID изображения эмодзи в массив
@@ -15,7 +33,7 @@ $whyus_emoji_image = $whyus_emoji ? crb_get_image($whyus_emoji) : null;
             <div class="col-1"></div>
             <div class="col">
                 <div class="whyus__head">
-                    <h2 class="whyus__title">
+                    <h2 class="whyus__title"<?php echo $title_styles; ?>>
                         <span class="whyus__title-first"><?php echo esc_html($whyus_title_first); ?></span>
                         <span><?php echo esc_html($whyus_title_second); ?></span>
                     </h2>
