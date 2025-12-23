@@ -69,22 +69,9 @@ $whyus_emoji_image = $whyus_emoji ? crb_get_image($whyus_emoji) : null;
                             $css_classes = !empty($item['css_classes']) ? esc_attr($item['css_classes']) : '';
                             $bg_image_id = isset($item['bg_image']) ? $item['bg_image'] : null;
                             $has_light = !empty($item['has_light']);
-                            
-                            // Преобразуем ID изображения в массив
-                            $bg_image = $bg_image_id ? crb_get_image($bg_image_id) : null;
-                            
-                            $bg_style = '';
-                            if ($bg_image && isset($bg_image['url'])) {
-                                $bg_style = 'style="background-image: url(\'' . esc_url($bg_image['url']) . '\');"';
-                            } elseif (!$bg_image) {
-                                // Fallback к дефолтному изображению, если есть классы
-                                if (!empty($css_classes)) {
-                                    $bg_style = 'style="background-image: url(\'' . img_url('bg/bg-whyus-item.png') . '\');"';
-                                }
-                            }
                             ?>
                             <div class="whyus__item <?php echo $css_classes; ?>">
-                                <div class="content" <?php echo $bg_style; ?>>
+                                <div class="content">
                                     <span class="num"><?php echo esc_html(isset($item['number']) ? $item['number'] : ''); ?></span>
                                     <span class="title"><?php echo esc_html(isset($item['title']) ? $item['title'] : ''); ?></span>
                                     <span class="description"><?php echo esc_html(isset($item['description']) ? $item['description'] : ''); ?></span>
@@ -116,22 +103,9 @@ $whyus_emoji_image = $whyus_emoji ? crb_get_image($whyus_emoji) : null;
                             $css_classes = !empty($item['css_classes']) ? esc_attr($item['css_classes']) : '';
                             $bg_image_id = isset($item['bg_image']) ? $item['bg_image'] : null;
                             $has_light = !empty($item['has_light']);
-                            
-                            // Преобразуем ID изображения в массив
-                            $bg_image = $bg_image_id ? crb_get_image($bg_image_id) : null;
-                            
-                            $bg_style = '';
-                            if ($bg_image && isset($bg_image['url'])) {
-                                $bg_style = 'style="background-image: url(\'' . esc_url($bg_image['url']) . '\');"';
-                            } elseif (!$bg_image) {
-                                // Fallback к дефолтному изображению, если есть классы
-                                if (!empty($css_classes)) {
-                                    $bg_style = 'style="background-image: url(\'' . img_url('bg/bg-whyus-item2.png') . '\');"';
-                                }
-                            }
                             ?>
                             <div class="whyus__item <?php echo $css_classes; ?>">
-                                <div class="content" <?php echo $bg_style; ?>>
+                                <div class="content">
                                     <span class="num"><?php echo esc_html(isset($item['number']) ? $item['number'] : ''); ?></span>
                                     <span class="title"><?php echo esc_html(isset($item['title']) ? $item['title'] : ''); ?></span>
                                     <span class="description"><?php echo esc_html(isset($item['description']) ? $item['description'] : ''); ?></span>

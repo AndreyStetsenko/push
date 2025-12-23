@@ -193,9 +193,16 @@
 
             &.colorist {
                 .content {
-                    background-size: cover;
-                    background-position: center;
-                    background-repeat: no-repeat;
+                    // background-size: cover;
+                    // background-position: center;
+                    // background-repeat: no-repeat;
+                    background: linear-gradient(
+                    135deg,
+                    #ffa000 0%,
+                    #ff7a00 25%,
+                    #ff3b00 55%,
+                    #d80000 100%
+                    );
 
                     .num, .title, .description {
                         color: #fff;

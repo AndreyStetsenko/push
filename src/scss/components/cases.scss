@@ -181,10 +181,15 @@
                 left: 0;
                 right: 0;
                 bottom: 0;
-                background-image: url('../images/bg/back-case.png');
-                background-size: cover;
-                background-position: center;
-                background-repeat: no-repeat;
+                background: linear-gradient(
+                    180deg,
+                    #8b0000 0%,
+                    #c40000 18%,
+                    #e23a0a 40%,
+                    #f26a1a 65%,
+                    #e23a0a 85%,
+                    #8b0000 100%
+                    );
                 opacity: 0;
                 transition: opacity 0.5s ease;
                 z-index: 0;

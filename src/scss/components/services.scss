@@ -204,10 +204,24 @@
             .item {
                 box-shadow: 0px 17px 70.2px 0px #00000026;
                 box-shadow: 33px 0px 77px 0px #FA60004D;
-                background-image: url('../images/services/back_service.png');
-                background-size: inherit;
-                background-position: center;
-                background-repeat: no-repeat;
+                // background-image: url('../images/services/back_service.png');
+                // background-size: inherit;
+                // background-position: center;
+                // background-repeat: no-repeat;
+                background:
+                radial-gradient(
+                    120% 100% at 80% 70%,
+                    #ff8a2a 0%,
+                    rgba(255,138,42,0.0) 60%
+                ),
+                linear-gradient(
+                    165deg,
+                    #6a0000 0%,
+                    #a80000 25%,
+                    #e23c0a 55%,
+                    #f26b1a 80%,
+                    #b81f00 100%
+                );
                 border-radius: rem(25px);
                 padding: 0;
                 height: 100%;
