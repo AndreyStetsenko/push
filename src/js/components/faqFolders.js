@@ -1,321 +1,253 @@
-import performanceDetector from '../utils/performanceDetector.js';
+/**
+ * FAQ Folders Component
+ * Управляет выдвижением папок FAQ
+ * Папки всегда открыты, при клике выбранная папка выдвигается, а папки ниже сдвигаются вниз
+ */
 
-// Флаг для предотвращения множественных обновлений
-let isUpdatingHeight = false;
-
-// Получаем конфигурацию анимаций в зависимости от производительности устройства
-const animationConfig = performanceDetector.getAnimationConfig();
-
-// Функция для вычисления и установки высоты контейнера папок
-function updateFoldersContainerHeight() {
-    if (isUpdatingHeight) return;
-    isUpdatingHeight = true;
-    
+export function initFaqFolders() {
     const foldersContainer = document.querySelector('.faq__folders');
-    if (!foldersContainer) {
-        isUpdatingHeight = false;
-        return;
+    if (!foldersContainer) return;
+
+    const folders = Array.from(foldersContainer.querySelectorAll('.folder'));
+    if (folders.length === 0) return;
+
+    // Проверка на мобильную версию
+    const isMobile = () => window.innerWidth <= 768;
+
+    // Инициализация: сохраняем базовые позиции папок из CSS
+    function initializeFolders() {
+        // Ждем, пока стили применятся
+        requestAnimationFrame(() => {
+            folders.forEach((folder, index) => {
+                const tab = folder.querySelector('.folder__tab');
+                const content = folder.querySelector('.folder__content');
+                
+                if (!tab || !content) return;
+                
+                // Получаем текущую позицию из CSS (уже установлена через классы --1, --2, и т.д.)
+                // Используем getBoundingClientRect для получения реальной позиции относительно родителя
+                const folderRect = folder.getBoundingClientRect();
+                const containerRect = foldersContainer.getBoundingClientRect();
+                const relativeTop = folderRect.top - containerRect.top;
+                
+                // Если позиция не установлена через CSS, используем вычисленную
+                const computedStyle = window.getComputedStyle(folder);
+                const cssTop = parseFloat(computedStyle.top);
+                const currentTop = (cssTop && !isNaN(cssTop)) ? cssTop : relativeTop;
+                
+                // Сохраняем базовую позицию
+                folder.dataset.baseTop = currentTop;
+                folder.style.top = currentTop + 'px';
+                
+                // Сохраняем высоты для расчетов
+                const tabHeight = tab.offsetHeight;
+                
+                // Временно показываем контент для измерения его высоты
+                const originalMaxHeight = content.style.maxHeight;
+                const originalPaddingTop = content.style.paddingTop;
+                const originalPaddingBottom = content.style.paddingBottom;
+                
+                content.style.maxHeight = 'none';
+                content.style.paddingTop = '';
+                content.style.paddingBottom = '';
+                content.style.visibility = 'hidden';
+                content.style.position = 'absolute';
+                
+                const contentHeight = content.scrollHeight;
+                
+                // Восстанавливаем стили
+                content.style.maxHeight = originalMaxHeight;
+                content.style.paddingTop = originalPaddingTop;
+                content.style.paddingBottom = originalPaddingBottom;
+                content.style.visibility = '';
+                content.style.position = '';
+                
+                folder.dataset.tabHeight = tabHeight;
+                folder.dataset.contentHeight = contentHeight;
+            });
+            
+            // Устанавливаем общую высоту контейнера
+            updateContainerHeight();
+        });
     }
-    
-    const folders = document.querySelectorAll('.folder');
-    if (folders.length === 0) {
-        isUpdatingHeight = false;
-        return;
-    }
-    
-    // Используем requestAnimationFrame для плавного обновления
-    requestAnimationFrame(() => {
+
+    // Обновление высоты контейнера
+    function updateContainerHeight() {
         let maxBottom = 0;
         
         folders.forEach(folder => {
-            // Вычисляем позицию напрямую из стилей для лучшей производительности
-            const topValue = parseFloat(folder.style.top || getComputedStyle(folder).top) || 0;
-            const folderHeight = folder.offsetHeight;
-            const bottom = topValue + folderHeight;
-            
-            if (bottom > maxBottom) {
-                maxBottom = bottom;
-            }
+            const top = parseFloat(folder.style.top) || 0;
+            const height = folder.offsetHeight;
+            const bottom = top + height;
+            maxBottom = Math.max(maxBottom, bottom);
         });
         
-        // Добавляем отступ снизу
-        const paddingBottom = window.innerWidth <= 768 ? 50 : 0;
-        const minHeight = maxBottom + paddingBottom;
-        
-        // Используем transform вместо margin для лучшей производительности
-        foldersContainer.style.minHeight = `${minHeight}px`;
-        foldersContainer.style.paddingBottom = `${paddingBottom}px`;
-        
-        isUpdatingHeight = false;
-    });
-}
-
-// Функция для получения индекса папки из класса (например, folder--1 -> 1)
-function getFolderIndex(folder) {
-    const classes = Array.from(folder.classList);
-    const folderClass = classes.find(cls => cls.startsWith('folder--'));
-    if (folderClass) {
-        const index = parseInt(folderClass.replace('folder--', ''));
-        return isNaN(index) ? 0 : index;
+        foldersContainer.style.minHeight = maxBottom + 100 + 'px'; // +100 для отступа снизу
     }
-    return 0;
-}
 
-// Функция для сдвига папок вниз при открытии
-function shiftFoldersDown(openFolder, folders) {
-    // Добавляем класс для предотвращения hover эффектов во время анимации
-    openFolder.classList.add('is-animating');
-    
-    // Ждем один кадр для применения CSS стилей после добавления класса is-open
-    requestAnimationFrame(() => {
-        // Получаем высоту открытой папки с учетом всего контента
-        const openFolderHeight = openFolder.offsetHeight;
-        
-        // Получаем высоту закрытой папки из сохраненного значения или вычисляем
-        const closedHeight = openFolder.dataset.closedHeight 
-            ? parseFloat(openFolder.dataset.closedHeight) 
-            : (() => {
-                const isMobile = window.innerWidth <= 768;
-                return isMobile ? 48 : 101; // Высота вкладки
-            })();
-        
-        // Вычисляем дополнительную высоту, на которую увеличилась папка при открытии
-        const additionalHeight = Math.max(0, openFolderHeight - closedHeight);
-        
-        // Получаем исходную позицию открытой папки
-        const openFolderOriginalTop = openFolder.dataset.originalTop 
-            ? parseFloat(openFolder.dataset.originalTop) 
-            : 0;
-        
-        // Сохраняем информацию о том, какие папки нужно сдвинуть
-        const foldersToShift = [];
-        
-        folders.forEach(folder => {
-            // Пропускаем саму открытую папку
-            if (folder === openFolder) {
-                return;
-            }
-            
-            // Используем исходную позицию из data-атрибута
-            const originalTop = folder.dataset.originalTop 
-                ? parseFloat(folder.dataset.originalTop) 
-                : 0;
-            
-            // Сдвигаем все папки, которые визуально находятся ниже открытой папки
-            if (originalTop > openFolderOriginalTop) {
-                foldersToShift.push({
-                    element: folder,
-                    originalTop: originalTop,
-                    newTop: originalTop + additionalHeight
-                });
+    // Активация папки (выдвижение)
+    function activateFolder(clickedFolder, clickedIndex) {
+        // Убираем активное состояние со всех папок
+        folders.forEach((folder, index) => {
+            if (folder.classList.contains('is-active')) {
+                deactivateFolder(folder, index);
             }
         });
         
-        // Применяем трансформации одновременно для всех папок
-        foldersToShift.forEach(({ element, newTop }) => {
-            // Используем CSS custom property для более плавной анимации
-            element.style.setProperty('--shift-top', `${newTop}px`);
-            element.style.top = `${newTop}px`;
-        });
+        // Активируем выбранную папку
+        clickedFolder.classList.add('is-active', 'is-animating');
         
-        // Убираем класс анимации после завершения (используем конфиг)
+        const content = clickedFolder.querySelector('.folder__content');
+        if (!content) return;
+        
+        // Временно показываем контент для измерения высоты
+        const originalMaxHeight = content.style.maxHeight;
+        const originalPaddingTop = content.style.paddingTop;
+        const originalPaddingBottom = content.style.paddingBottom;
+        
+        // Временно устанавливаем стили для измерения
+        content.style.maxHeight = 'none';
+        content.style.paddingTop = '';
+        content.style.paddingBottom = '';
+        content.style.visibility = 'hidden';
+        content.style.position = 'absolute';
+        
+        // Получаем полную высоту раскрытого контента
+        const fullContentHeight = content.scrollHeight;
+        
+        // Восстанавливаем стили
+        content.style.maxHeight = originalMaxHeight;
+        content.style.paddingTop = originalPaddingTop;
+        content.style.paddingBottom = originalPaddingBottom;
+        content.style.visibility = '';
+        content.style.position = '';
+        
+        // Вычисляем дополнительную высоту для выдвижения
+        // Базовый padding: 80px top + 300px bottom = 380px (на десктопе)
+        // Расширенный padding: 120px top + 400px bottom = 520px (на десктопе)
+        // На мобильных: padding меньше, поэтому уменьшаем разницу
+        const baseContentHeight = parseFloat(clickedFolder.dataset.contentHeight) || 0;
+        const paddingDifference = isMobile() ? 80 : 140; // Меньшая разница для мобильных
+        const expandHeight = fullContentHeight - baseContentHeight + paddingDifference;
+        
+        // Сохраняем высоту расширения
+        clickedFolder.dataset.expandHeight = expandHeight;
+        clickedFolder.dataset.fullContentHeight = fullContentHeight;
+        
+        // Сдвигаем все папки ниже текущей на величину расширения
+        for (let i = clickedIndex + 1; i < folders.length; i++) {
+            const nextFolder = folders[i];
+            const currentTop = parseFloat(nextFolder.style.top) || 0;
+            const newTop = currentTop + expandHeight;
+            nextFolder.style.top = newTop + 'px';
+        }
+        
+        // Обновляем высоту контейнера
+        updateContainerHeight();
+        
+        // Убираем класс анимации после завершения
         setTimeout(() => {
-            openFolder.classList.remove('is-animating');
-        }, animationConfig.transitionDuration);
-    });
-}
+            clickedFolder.classList.remove('is-animating');
+        }, 400);
+    }
 
-// Функция для возврата папок в исходное положение
-function resetFoldersPosition(folders) {
-    folders.forEach(folder => {
-        if (folder.dataset.originalTop) {
-            folder.style.top = `${folder.dataset.originalTop}px`;
-        } else {
-            // Если originalTop не сохранен, получаем из computed style
-            const computedStyle = getComputedStyle(folder);
-            const currentTop = parseFloat(computedStyle.top) || 0;
-            folder.style.top = `${currentTop}px`;
+    // Деактивация папки (возврат в нормальное состояние)
+    function deactivateFolder(folder, index) {
+        folder.classList.remove('is-active');
+        folder.classList.add('is-animating');
+        
+        // Получаем высоту расширения
+        const expandHeight = parseFloat(folder.dataset.expandHeight) || 0;
+        
+        // Сдвигаем все папки ниже текущей обратно вверх к их базовым позициям
+        for (let i = index + 1; i < folders.length; i++) {
+            const nextFolder = folders[i];
+            const baseTop = parseFloat(nextFolder.dataset.baseTop) || 0;
+            nextFolder.style.top = baseTop + 'px';
         }
-    });
-}
+        
+        // Обновляем высоту контейнера
+        updateContainerHeight();
+        
+        // Убираем класс анимации после завершения
+        setTimeout(() => {
+            folder.classList.remove('is-animating');
+        }, 400);
+    }
 
-// Throttle функция для оптимизации событий
-function throttle(func, delay) {
-    let lastCall = 0;
-    return function(...args) {
-        const now = Date.now();
-        if (now - lastCall >= delay) {
-            lastCall = now;
-            func(...args);
-        }
-    };
-}
-
-// Debounce функция для оптимизации событий
-function debounce(func, delay) {
-    let timeout;
-    return function(...args) {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => func(...args), delay);
-    };
-}
-
-// Компонент для разворачивания FAQ папок
-export function initFaqFolders() {
-    const folders = document.querySelectorAll('.folder');
-    const foldersContainer = document.querySelector('.faq__folders');
-    
-    if (!foldersContainer) return;
-    
-    // Устанавливаем CSS переменную для времени анимации
-    document.documentElement.style.setProperty('--faq-transition-duration', `${animationConfig.transitionDuration}ms`);
-    
-    // Добавляем класс для оптимизации производительности
-    foldersContainer.classList.add('faq-folders-initialized');
-    
-    // Переменная для отслеживания текущей открытой папки
-    let currentOpenFolder = null;
-    
-    // Функция инициализации позиций папок
-    const initFolderPositions = () => {
-        requestAnimationFrame(() => {
-            folders.forEach(folder => {
-                // Получаем top из computed style (CSS), игнорируя inline стили
-                const computedStyle = getComputedStyle(folder);
-                const currentTop = parseFloat(computedStyle.top) || 0;
-                
-                // Сохраняем исходную позицию
-                folder.dataset.originalTop = currentTop.toString();
-                
-                // Сохраняем высоту закрытой папки (высота вкладки)
-                const isMobile = window.innerWidth <= 768;
-                const closedHeight = isMobile ? 48 : 101; // Высота вкладки
-                folder.dataset.closedHeight = closedHeight.toString();
-                
-                // Добавляем CSS класс для оптимизации
-                folder.classList.add('folder-initialized');
-            });
-            
-            // Инициализация высоты после загрузки всех позиций
-            updateFoldersContainerHeight();
-        });
-    };
-    
-    // Инициализируем позиции папок
-    initFolderPositions();
-    
-    // Оптимизированный обработчик клика
+    // Обработчик клика на tab
     folders.forEach(folder => {
         const tab = folder.querySelector('.folder__tab');
-        const content = folder.querySelector('.folder__content');
-        
-        if (!tab || !content) return;
-        
-        // Предотвращаем двойные клики
-        let isProcessing = false;
-        
-        // Обработчик клика на tab
-        const handleClick = (e) => {
-            e.stopPropagation();
+        if (tab) {
+            tab.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const folderIndex = folders.indexOf(folder);
+                const isActive = folder.classList.contains('is-active');
+                
+                if (isActive) {
+                    // Если папка уже активна, деактивируем её
+                    deactivateFolder(folder, folderIndex);
+                } else {
+                    // Активируем папку
+                    activateFolder(folder, folderIndex);
+                }
+            });
+        }
+    });
+
+    // Инициализация при загрузке
+    initializeFolders();
+    
+    // Пересчет при изменении размера окна
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            // Перечитываем базовые позиции из CSS и применяем их
+            folders.forEach((folder, index) => {
+                const tab = folder.querySelector('.folder__tab');
+                const content = folder.querySelector('.folder__content');
+                if (!tab || !content) return;
+                
+                // Получаем базовую позицию из CSS (через computed style)
+                const computedStyle = window.getComputedStyle(folder);
+                const baseTop = parseFloat(computedStyle.top) || 0;
+                
+                // Обновляем базовую позицию
+                folder.dataset.baseTop = baseTop;
+                
+                // Если папка не активна, возвращаем её к базовой позиции
+                if (!folder.classList.contains('is-active')) {
+                    folder.style.top = baseTop + 'px';
+                }
+                
+                // Обновляем высоты
+                const tabHeight = tab.offsetHeight;
+                const contentHeight = content.offsetHeight;
+                folder.dataset.tabHeight = tabHeight;
+                folder.dataset.contentHeight = contentHeight;
+            });
             
-            // Игнорируем повторные клики во время анимации
-            if (isProcessing) return;
-            isProcessing = true;
-            
-            const isOpen = folder.classList.contains('is-open');
-            
-            // Закрываем все другие папки
-            folders.forEach(otherFolder => {
-                if (otherFolder !== folder && otherFolder.classList.contains('is-open')) {
-                    otherFolder.classList.remove('is-open');
+            // Пересчитываем позиции активных папок и папок ниже них
+            folders.forEach((folder, index) => {
+                if (folder.classList.contains('is-active')) {
+                    // Используем сохраненное значение или вычисляем заново с учетом мобильной версии
+                    const savedExpandHeight = parseFloat(folder.dataset.expandHeight);
+                    const defaultExpandHeight = isMobile() ? 80 : 200;
+                    const expandHeight = savedExpandHeight || defaultExpandHeight;
+                    const baseTop = parseFloat(folder.dataset.baseTop) || 0;
+                    
+                    // Сдвигаем все папки ниже активной
+                    for (let i = index + 1; i < folders.length; i++) {
+                        const nextFolder = folders[i];
+                        const nextBaseTop = parseFloat(nextFolder.dataset.baseTop) || 0;
+                        nextFolder.style.top = (nextBaseTop + expandHeight) + 'px';
+                    }
                 }
             });
             
-            // Возвращаем все папки в исходное положение перед переключением
-            resetFoldersPosition(folders);
-            
-            // Переключаем текущую папку
-            if (isOpen) {
-                folder.classList.remove('is-open');
-                currentOpenFolder = null;
-            } else {
-                folder.classList.add('is-open');
-                currentOpenFolder = folder;
-                
-                // Сдвигаем папки вниз с оптимизацией
-                requestAnimationFrame(() => {
-                    shiftFoldersDown(folder, folders);
-                });
-            }
-            
-            // Обновляем высоту контейнера после изменения состояния папки
-            setTimeout(() => {
-                updateFoldersContainerHeight();
-                isProcessing = false;
-            }, animationConfig.transitionDuration + 50);
-        };
-        
-        // Используем только один обработчик на tab для лучшей производительности
-        tab.addEventListener('click', handleClick, { passive: true });
-    });
-    
-    // Закрытие всех папок при клике вне них (один обработчик для всех)
-    const handleOutsideClick = debounce((e) => {
-        let hasOpenFolder = false;
-        
-        folders.forEach(folder => {
-            if (folder.classList.contains('is-open') && !folder.contains(e.target)) {
-                folder.classList.remove('is-open');
-                hasOpenFolder = true;
-            }
-        });
-        
-        // Возвращаем все папки в исходное положение при закрытии
-        if (hasOpenFolder) {
-            currentOpenFolder = null;
-            resetFoldersPosition(folders);
-            setTimeout(() => {
-                updateFoldersContainerHeight();
-            }, animationConfig.transitionDuration + 50);
-        }
-    }, animationConfig.reducedMotion ? 50 : 100);
-    
-    document.addEventListener('click', handleOutsideClick);
-    
-    // Обновление высоты при изменении размера окна с оптимизацией
-    const handleResize = debounce(() => {
-        // Закрываем все открытые папки при ресайзе для предотвращения проблем
-        folders.forEach(folder => {
-            folder.classList.remove('is-open');
-        });
-        currentOpenFolder = null;
-        
-        // При изменении размера окна возвращаем папки в исходное положение
-        resetFoldersPosition(folders);
-        
-        // Пересчитываем исходные позиции и высоты после изменения размера
-        requestAnimationFrame(() => {
-            folders.forEach(folder => {
-                const currentTop = parseFloat(getComputedStyle(folder).top) || 0;
-                folder.dataset.originalTop = currentTop.toString();
-                
-                // Обновляем высоту закрытой папки
-                const isMobile = window.innerWidth <= 768;
-                const closedHeight = isMobile ? 48 : 101;
-                folder.dataset.closedHeight = closedHeight.toString();
-            });
-            
-            updateFoldersContainerHeight();
-        });
-    }, 200);
-    
-    window.addEventListener('resize', handleResize, { passive: true });
-    
-    // Очистка при выгрузке страницы
-    window.addEventListener('beforeunload', () => {
-        window.removeEventListener('resize', handleResize);
-        document.removeEventListener('click', handleOutsideClick);
+            updateContainerHeight();
+        }, 250);
     });
 }
-
-

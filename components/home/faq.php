@@ -141,7 +141,7 @@ function get_contact_icon($name) {
                     <div class="folder__tab"<?php if (!empty($tab_max_width_mobile)): ?> style="--tab-max-width-mobile: <?php echo esc_attr($tab_max_width_mobile); ?>;"<?php endif; ?>>
                         <span class="title"><?php echo esc_html($folder_title); ?></span>
                     </div>
-                    <div class="folder__content">
+                    <div class="folder__content <?php if ($is_contacts): ?>folder__content--contacts<?php endif; ?>">
                         <?php if ($is_contacts): ?>
                             <?php
                             // Секция контактов - данные теперь внутри самой папки

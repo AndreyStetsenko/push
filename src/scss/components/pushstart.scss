@@ -260,6 +260,7 @@
                 width: rem(85px);
                 height: rem(100px);
                 object-fit: contain;
+                transform: rotate(-35deg);
 
                 @include media-breakpoint-down(md) {
                     transform: rotate(-35deg) !important;
@@ -268,7 +269,6 @@
                 &.cursor-1 {
                     bottom: rem(20px);
                     right: rem(-30px);
-                    transform: rotate(-35deg);
 
                     @include media-breakpoint-down(md) {
                         bottom: rem(-40px);
@@ -279,7 +279,6 @@
                 &.cursor-2 {
                     bottom: rem(100px);
                     right: rem(-50px);
-                    transform: rotate(-15deg);
 
                     @include media-breakpoint-down(md) {
                         bottom: rem(15px);
@@ -290,7 +289,6 @@
                 &.cursor-3 {
                     bottom: rem(200px);
                     right: rem(-20px);
-                    transform: rotate(-45deg);
 
                     @include media-breakpoint-down(md) {
                         bottom: rem(80px);
@@ -301,7 +299,6 @@
                 &.cursor-4 {
                     bottom: rem(50px);
                     right: rem(40px);
-                    transform: rotate(-20deg);
 
                     @include media-breakpoint-down(md) {
                         bottom: rem(80px);
@@ -312,7 +309,6 @@
                 &.cursor-5 {
                     bottom: rem(130px);
                     right: rem(80px);
-                    transform: rotate(-30deg);
 
                     @include media-breakpoint-down(md) {
                         bottom: rem(25px);
@@ -323,7 +319,6 @@
                 &.cursor-6 {
                     bottom: rem(170px);
                     right: rem(136px);
-                    transform: rotate(-10deg);
 
                     @include media-breakpoint-down(md) {
                         bottom: rem(-20px);
@@ -334,7 +329,6 @@
                 &.cursor-7 {
                     bottom: rem(30px);
                     right: rem(140px);
-                    transform: rotate(-25deg);
                     
                     @include media-breakpoint-down(md) {
                         bottom: rem(60px);
@@ -345,7 +339,6 @@
                 &.cursor-8 {
                     bottom: rem(130px);
                     right: rem(200px);
-                    transform: rotate(-40deg);
 
                     @include media-breakpoint-down(md) {
                         bottom: rem(40px);
@@ -356,7 +349,6 @@
                 &.cursor-9 {
                     bottom: rem(230px);
                     right: rem(60px);
-                    transform: rotate(-18deg);
 
                     @include media-breakpoint-down(md) {
                         bottom: rem(-30px);
@@ -367,7 +359,6 @@
                 &.cursor-10 {
                     bottom: rem(320px);
                     right: rem(54px);
-                    transform: rotate(-32deg);
 
                     @include media-breakpoint-down(md) {
                         bottom: rem(0px);
@@ -378,7 +369,6 @@
                 &.cursor-11 {
                     bottom: rem(80px);
                     right: rem(260px);
-                    transform: rotate(-28deg);
 
                     @include media-breakpoint-down(md) {
                         bottom: rem(70px);
@@ -389,7 +379,6 @@
                 &.cursor-12 {
                     bottom: rem(140px);
                     right: rem(416px);
-                    transform: rotate(-22deg);
 
                     @include media-breakpoint-down(md) {
                         bottom: rem(-15px);
@@ -400,7 +389,6 @@
                 &.cursor-13 {
                     bottom: rem(150px);
                     right: rem(300px);
-                    transform: rotate(-38deg);
 
                     @include media-breakpoint-down(md) {
                         display: none;
