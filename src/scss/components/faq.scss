@@ -142,13 +142,16 @@
                         right: 9%;
                     }
 
-                    .folder__content--image {
-                        @include media-breakpoint-up(md) {
-                            position: absolute;
-                            width: 280px;
-                            bottom: 76%;
-                            left: 55%;
-                            max-height: 320px;
+                    &:not(.is-open) {
+                        .folder__content--image {
+                            @include media-breakpoint-up(md) {
+                                position: absolute;
+                                width: 280px;
+                                top: -200px;
+                                left: 55%;
+                                max-height: 320px;
+                                transform: rotate(-15deg);
+                            }
                         }
                     }
                     
@@ -172,11 +175,8 @@
 
                     .folder__content--image {
                         @include media-breakpoint-up(md) {
-                            position: absolute;
                             width: 500px;
                             max-height: 300px;
-                            bottom: 104%;
-                            left: 40%;
 
                             .socials {
                                 position: relative;
@@ -206,6 +206,16 @@
                         }
                     }
 
+                    &:not(.is-open) {
+                        .folder__content--image {
+                            @include media-breakpoint-up(md) {
+                                position: absolute;
+                                top: -20px;
+                                left: 40%;
+                            }
+                        }
+                    }
+
                     &.is-open {
                         .folder__content--image {
                             @include media-breakpoint-up(md) {
@@ -224,19 +234,24 @@
                         left: 5%;
                     }
 
-                    .folder__content--image {
-                        @include media-breakpoint-up(md) {
-                            position: absolute;
-                            width: 280px;
-                            max-height: 320px;
-                            bottom: 65%;
-                            left: 20%;
+                    &:not(.is-open) {
+                        .folder__content--image {
+                            @include media-breakpoint-up(md) {
+                                position: absolute;
+                                width: 280px;
+                                max-height: 320px;
+                                top: -40px;
+                                left: 20%;
+                                transform: rotate(-15deg);
+                            }
                         }
                     }
                     
                     &.is-open {
                         .folder__content--image {
                             @include media-breakpoint-up(md) {
+                                width: 280px;
+                                max-height: 320px;
                                 bottom: 10%;
                                 left: 15%;
                             }
@@ -252,19 +267,23 @@
                         right: 10%;
                     }
 
-                    .folder__content--image {
-                        @include media-breakpoint-up(md) {
-                            position: absolute;
-                            width: 280px;
-                            max-height: 320px;
-                            bottom: 55%;
-                            left: 70%;
+                    &:not(.is-open) {
+                        .folder__content--image {
+                            @include media-breakpoint-up(md) {
+                                position: absolute;
+                                width: 280px;
+                                max-height: 320px;
+                                top: -20px;
+                                left: 70%;
+                            }
                         }
                     }
                     
                     &.is-open {
                         .folder__content--image {
                             @include media-breakpoint-up(md) {
+                                width: 280px;
+                                max-height: 320px;
                                 bottom: 10%;
                                 left: 82%;
                             }
@@ -280,19 +299,23 @@
                         left: 25%;
                     }
 
-                    .folder__content--image {
-                        @include media-breakpoint-up(md) {
-                            position: absolute;
-                            width: 280px;
-                            max-height: 320px;
-                            bottom: 70%;
-                            left: 46%;
+                    &:not(.is-open) {
+                        .folder__content--image {
+                            @include media-breakpoint-up(md) {
+                                position: absolute;
+                                width: 280px;
+                                max-height: 320px;
+                                top: -150px;
+                                left: 50%;
+                            }
                         }
                     }
                     
                     &.is-open {
                         .folder__content--image {
                             @include media-breakpoint-up(md) {
+                                width: 280px;
+                                max-height: 320px;
                                 bottom: 10%;
                                 left: 85%;
                             }
@@ -308,19 +331,24 @@
                         left: 5%;
                     }
 
-                    .folder__content--image {
-                        @include media-breakpoint-up(md) {
-                            position: absolute;
-                            width: 280px;
-                            max-height: 320px;
-                            bottom: 70%;
-                            left: 15%;
+                    &:not(.is-open) {
+                        .folder__content--image {
+                            @include media-breakpoint-up(md) {
+                                position: absolute;
+                                width: 280px;
+                                max-height: 320px;
+                                top: -50px;
+                                left: 15%;
+                                transform: rotate(-15deg);
+                            }
                         }
                     }
                     
                     &.is-open {
                         .folder__content--image {
                             @include media-breakpoint-up(md) {
+                                width: 280px;
+                                max-height: 320px;
                                 bottom: 10%;
                                 left: 10%;
                             }
@@ -336,20 +364,24 @@
                         right: 10%;
                     }
 
-                    .folder__content--image {
-                        @include media-breakpoint-up(md) {
-                            position: absolute;
-                            width: 280px;
-                            max-height: 320px;
-                            bottom: 60%;
-                            left: 84%;
+                    &:not(.is-open) {
+                        .folder__content--image {
+                            @include media-breakpoint-up(md) {
+                                position: absolute;
+                                width: 280px;
+                                max-height: 320px;
+                                top: -60px;
+                                left: 84%;
+                            }
                         }
                     }
                     
                     &.is-open {
                         .folder__content--image {
                             @include media-breakpoint-up(md) {
-                                bottom: 10%;
+                                width: 280px;
+                                max-height: 320px;
+                                bottom: 0%;
                                 left: 85%;
                             }
                         }
