@@ -36,9 +36,7 @@
 
         &__folders {
             margin-top: rem(120px);
-            margin-bottom: rem(100px); // Будет переопределено JS
-            position: relative;
-            min-height: 1px; // Будет переопределено JS, создаем контекст для absolute элементов
+            margin-bottom: rem(100px);
             
             // Оптимизация производительности
             contain: layout style;
@@ -48,38 +46,38 @@
 
             .folder {
                 width: 100%;
-                position: absolute;
-                // Используем CSS переменную для динамического времени анимации
-                --transition-time: var(--faq-transition-duration, 400ms);
-                transition: top var(--transition-time) cubic-bezier(0.4, 0, 0.2, 1);
-                backface-visibility: hidden;
-                transform: translateZ(0);
+                position: relative;
+                margin-bottom: rem(20px);
                 
                 // Оптимизация для мобильных устройств
                 @media (max-width: 768px) {
-                    --transition-time: var(--faq-transition-duration, 300ms);
+                    margin-bottom: rem(10px);
                 }
 
-                &:hover:not(.is-active):not(.is-animating) {
-                    transform: translateY(-10px) translateZ(0);
-                    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), top var(--transition-time) cubic-bezier(0.4, 0, 0.2, 1);
-                    
-                    @media (max-width: 768px) {
-                        transform: translateZ(0); // Отключаем hover на мобильных
+                .temp {
+                    width: 100%;
+                    height: 200px;
+                    position: absolute;
+                    border-radius: 0 0 30px 30px;
+                    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+                    @include media-breakpoint-down(md) {
+                        top: calc(100% - 12px);
                     }
                 }
                 
-                &.is-animating {
-                    pointer-events: none;
+                // Скрываем checkbox
+                &__input {
+                    position: absolute;
+                    opacity: 0;
+                    z-index: -1;
                 }
                 
-                &.is-active {
-                    transform: translateZ(0);
-                    z-index: 10; // Активная папка поверх остальных
-
-                    .folder__content {
-                        max-height: 5000px; // Достаточно большое значение для контента
-                        padding-top: rem(120px); // Увеличиваем padding при активации
+                // Активное состояние через :checked
+                &__input:checked ~ .folder__content {
+                    width: 100%;
+                    max-height: 5000px;
+                    padding-top: rem(120px);
                         padding-bottom: rem(400px);
                         
                         &--contacts {
@@ -87,27 +85,54 @@
                         }
                     }
 
-                    .folder__content--image {
+                &__input:checked ~ .folder__content .folder__content--image {
                         bottom: 0;
                         left: 80%;
-                        transition: bottom var(--transition-time) cubic-bezier(0.4, 0, 0.2, 1), left var(--transition-time) cubic-bezier(0.4, 0, 0.2, 1);
-                        z-index: 1; // Предотвращаем наложение на текст
+                    z-index: 1;
                     }
                     
-                    .folder__content--wrapp {
-                        opacity: 1; // Показываем контент при активации
+                &__input:checked ~ .folder__content .folder__content--wrapp {
+                    opacity: 1;
                         transition: opacity 0.3s ease 0.2s;
                         
-                        // Показываем оверлей когда папка активна
                         &::before {
                             opacity: 1;
+                        }
+                }
+                
+                // Hover эффект для закрытых папок
+                &:hover:not(:has(&__input:checked)) {
+                    .folder__tab {
+                        transform: translateY(-10px);
+                        
+                        @media (max-width: 768px) {
+                            transform: none;
+                        }
+                    }
+                    
+                    .temp {
+                        transform: translateY(-10px);
+                        
+                        @media (max-width: 768px) {
+                            transform: none;
                         }
                     }
                 }
                 
-                // Для обратной совместимости с is-open
-                &.is-open {
-                    @extend .is-active;
+                // Для обратной совместимости (если нужно)
+                &.is-active {
+                    .folder__input {
+                        &:not(:checked) {
+                            opacity: 0;
+                            
+                            & + .folder__tab + .folder__content {
+                                width: 100%;
+                                max-height: 5000px;
+                                padding-top: rem(120px);
+                                padding-bottom: rem(400px);
+                            }
+                        }
+                    }
                 }
 
                 &--black {
@@ -122,9 +147,13 @@
                             background-image: url('../images/faq/shape-right-black.svg');
                         }
 
-                        .tab {
-                            color: #1A1A1A;
+                        .title {
+                            color: #fff;
                         }
+                    }
+
+                    .temp {
+                        background: #1a1a1a;
                     }
                 }
 
@@ -140,361 +169,168 @@
                             background-image: url('../images/faq/shape-right-orange.svg');
                         }
 
-                        .tab {
-                            color: #FA6000;
+                        .title {
+                            color: #fff;
                         }
                     }
-                }
 
-                // Базовые стили для наложения папок друг на друга
-                // Каждая следующая папка немного смещена вниз для эффекта наложения
-                $folder-overlap: 80px; // Перекрытие папок
+                    .temp {
+                        background: #FA6000;
+                    }
+                }
                 
                 &--1 {
-                    top: 0;
                     z-index: 1;
+
                     .folder__tab {
-                        right: 9%;
+                        left: 70%;
                     }
 
-                    // Изображения всегда видны, так как папки всегда открыты
-                    &:not(.is-active) {
-                        .folder__content--image {
-                            @include media-breakpoint-up(md) {
-                                top: -180px;
-                                left: 52%;
-                                width: 220px;
-                                transform: rotate(-15deg);
-                            }
-                        }
-                    }
-                    
-                    &.is-active {
-                        .folder__content--image {
-                            @include media-breakpoint-up(md) {
-                                bottom: 10%; // Предотвращаем наложение на текст
-                                left: 82%;
-                            }
-                        }
+                    .folder__content--image {
+                        bottom: -160px;
+                        width: 200px;
+                        right: 40%;
+                        transform: rotate(-15deg);
                     }
                 }
-
-                &--2 {
-                    top: calc(#{$folder-overlap} - 40px);
+                
+                &--2 { 
                     z-index: 2;
 
                     .folder__tab {
-                        left: 20%;
+                        left: 30%;
                     }
 
                     .folder__content--image {
-                        @include media-breakpoint-up(md) {
-                            width: 500px;
-                            max-height: 300px;
-
-                            .socials {
-                                position: relative;
-
-                                picture {
-                                    width: 180px;
-                                    max-height: 180px;
-                                    object-fit: contain;
-                                    position: absolute;
-
-                                    &:nth-child(1) {
-                                        top: 0;
-                                        left: 120px;
-                                    }
-
-                                    &:nth-child(2) {
-                                        top: 0;
-                                        left: 0;
-                                    }
-
-                                    &:nth-child(3) {
-                                        top: 0;
-                                        left: -105px;
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    // Изображения всегда видны
-                    .folder__content--image {
-                        @include media-breakpoint-up(md) {
-                            top: 0; // Поднимаем выше для предотвращения наложения
-                            left: 43%;
-                        }
-                    }
-                    
-                    &.is-active {
-                        .folder__content--image {
-                            @include media-breakpoint-up(md) {
-                                bottom: 40%; // Поднимаем выше для предотвращения наложения
-                                left: 85%;
-                            }
-                        }
+                        bottom: -140px;
+                        width: 300px;
+                        right: 40%;
                     }
                 }
-
-                &--3 {
-                    top: calc(#{$folder-overlap} * 2 + 20px);
-                    z-index: 3;
-
-                    .folder__tab {
-                        left: 5%;
-                    }
-
-                    &:not(.is-active) {
-                        .folder__content--image {
-                            @include media-breakpoint-up(md) {
-                                position: absolute;
-                                width: 280px;
-                                max-height: 320px;
-                                top: -50px;
-                                left: 25%;
-                                transform: rotate(-15deg);
-                            }
-                        }
-                    }
-                    
-                    &.is-active {
-                        .folder__content--image {
-                            @include media-breakpoint-up(md) {
-                                width: 280px;
-                                max-height: 320px;
-                                bottom: 10%;
-                                left: 15%;
-                            }
-                        }
-                    }
-                }
-
-                &--4 {
-                    top: calc(#{$folder-overlap} * 3 + 80px);
-                    z-index: 4;
-
-                    .folder__tab {
-                        right: 10%;
-                    }
-
-                    &:not(.is-active) {
-                        .folder__content--image {
-                            @include media-breakpoint-up(md) {
-                                position: absolute;
-                                width: 280px;
-                                max-height: 320px;
-                                top: -20px;
-                                left: 70%;
-                            }
-                        }
-                    }
-                    
-                    &.is-active {
-                        .folder__content--image {
-                            @include media-breakpoint-up(md) {
-                                width: 280px;
-                                max-height: 320px;
-                                bottom: 10%;
-                                left: 82%;
-                            }
-                        }
-                    }
-                }
-
-                &--5 {
-                    top: calc(#{$folder-overlap} * 4 + 140px);
-                    z-index: 5;
-
-                    .folder__tab {
-                        left: 25%;
-                    }
-
-                    &:not(.is-active) {
-                        .folder__content--image {
-                            @include media-breakpoint-up(md) {
-                                position: absolute;
-                                width: 280px;
-                                max-height: 320px;
-                                top: -150px;
-                                left: 50%;
-                            }
-                        }
-                    }
-                    
-                    &.is-active {
-                        .folder__content--image {
-                            @include media-breakpoint-up(md) {
-                                width: 280px;
-                                max-height: 320px;
-                                bottom: 10%;
-                                left: 85%;
-                            }
-                        }
-                    }
-                }
-
-                &--6 {
-                    top: calc(#{$folder-overlap} * 5 + 200px);
-                    z-index: 6;
-
-                    .folder__tab {
-                        left: 5%;
-                    }
-
-                    &:not(.is-active) {
-                        .folder__content--image {
-                            @include media-breakpoint-up(md) {
-                                position: absolute;
-                                width: 280px;
-                                max-height: 320px;
-                                top: -50px;
-                                left: 15%;
-                                transform: rotate(-15deg);
-                            }
-                        }
-                    }
-                    
-                    &.is-active {
-                        .folder__content--image {
-                            @include media-breakpoint-up(md) {
-                                width: 280px;
-                                max-height: 320px;
-                                bottom: 10%;
-                                left: 10%;
-                            }
-                        }
-                    }
-                }
-
-                &--7 {
-                    top: calc(#{$folder-overlap} * 6 + 270px);
-                    z-index: 7;
-
-                    .folder__tab {
-                        right: 10%;
-                    }
-
-                    &:not(.is-active) {
-                        .folder__content--image {
-                            @include media-breakpoint-up(md) {
-                                position: absolute;
-                                width: 190px;
-                                max-height: 320px;
-                                top: -60px;
-                                left: 84%;
-                            }
-                        }
-                    }
-                    
-                    &.is-active {
-                        .folder__content--image {
-                            @include media-breakpoint-up(md) {
-                                width: 280px;
-                                max-height: 320px;
-                                bottom: 0%;
-                                left: 85%;
-                            }
-                        }
-                    }
-                }
-
-                &--8 {
-                    top: calc(#{$folder-overlap} * 6 + 380px);
-                    z-index: 7;
+                &--3 { 
+                    z-index: 3; 
 
                     .folder__tab {
                         left: 10%;
                     }
 
-                    &:not(.is-active) {
-                        .folder__content--image {
-                            @include media-breakpoint-up(md) {
-                                position: absolute;
-                                width: 190px;
-                                max-height: 320px;
-                                top: -60px;
-                                left: 14%;
-                            }
-                        }
-                    }
-                    
-                    &.is-active {
-                        .folder__content--image {
-                            @include media-breakpoint-up(md) {
-                                width: 280px;
-                                max-height: 320px;
-                                bottom: 0%;
-                                left: 85%;
-                            }
-                        }
+                    .folder__content--image {
+                        bottom: -190px;
+                        width: 250px;
+                        left: 30%;
+                        transform: rotate(-15deg);
                     }
                 }
+                &--4 { 
+                    z-index: 4;
 
-                &--9 {
-                    top: calc(#{$folder-overlap} * 6 + 490px);
+                    .folder__tab {
+                        left: 60%;
+                    }
+
+                    .folder__content--image {
+                        bottom: -190px;
+                        width: 200px;
+                        right: 23%;
+                    }
+                }
+                &--5 { 
+                    z-index: 5;
+
+                    .folder__tab {
+                        left: 30%;
+                    }
+
+                    .folder__content--image {
+                        bottom: -210px;
+                        width: 200px;
+                        right: 33%;
+                        transform: rotate(-15deg);
+                    }
+                }
+                &--6 { 
+                    z-index: 6;
+
+                    .folder__tab {
+                        left: 10%;
+                    }
+
+                    .folder__content--image {
+                        bottom: -150px;
+                        width: 200px;
+                        left: 33%;
+                        transform: rotate(-15deg);
+                    }
+                }
+                &--7 { 
                     z-index: 7;
 
                     .folder__tab {
-                        right: 10%;
+                        left: 60%;
                     }
 
-                    &:not(.is-active) {
-                        .folder__content--image {
-                            @include media-breakpoint-up(md) {
-                                position: absolute;
-                                width: 160px;
-                                max-height: 320px;
-                                top: -60px;
-                                left: 84%;
-                            }
-                        }
-                    }
-                    
-                    &.is-active {
-                        .folder__content--image {
-                            @include media-breakpoint-up(md) {
-                                width: 230px;
-                                max-height: 320px;
-                                bottom: 0%;
-                                left: 85%;
-                            }
-                        }
+                    .folder__content--image {
+                        bottom: -130px;
+                        width: 200px;
+                        right: 13%;
+                        transform: rotate(-15deg);
                     }
                 }
-
-                &--10 {
-                    top: calc(#{$folder-overlap} * 7 + 550px);
+                &--8 { 
                     z-index: 8;
 
                     .folder__tab {
-                        width: rem(340px);
-                        left: 7%;
+                        left: 30%;
                     }
 
-                    .folder__content--wrapp {
-                        opacity: 1;
+                    .folder__content--image {
+                        bottom: -140px;
+                        width: 200px;
+                        left: 35%;
+                        transform: rotate(-15deg);
+                    }
+                }
+                &--9 { 
+                    z-index: 9;
+
+                    .folder__tab {
+                        left: 70%;
+                    }
+
+                    .folder__content--image {
+                        bottom: -210px;
+                        width: 200px;
+                        right: 33%;
+                        transform: rotate(-15deg);
+                    }
+                }
+                &--10 { 
+                    z-index: 10;
+
+                    .folder__tab {
+                        left: 15%;
                     }
                 }
 
                 &__tab {
-                    position: absolute;
-                    top: -101px;
-                    height: 101px;
+                    position: relative;
+                    min-height: 100px;
                     display: flex;
                     align-items: center;
                     justify-content: center;
                     text-align: center;
-                    --r: 20px; /* control the radius */
-                    line-height: 1.8; /* control the height */
+                    --r: 20px;
+                    line-height: 1.8;
                     padding: rem(30px) rem(36px) rem(20px);
                     border-inline: var(--r) solid #0000;
                     width: fit-content;
+                    cursor: pointer;
+                    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                    // border-radius: rem(50px) rem(50px) 0 0;
 
                     @include media-breakpoint-down(md) {
-                        padding-left: 0;
-                        padding-right: 0;
+                        min-height: auto;
+                        padding: 0;
                     }
 
                     &::before {
@@ -530,18 +366,16 @@
                 }
 
                 &__content {
-                    // box-shadow: 0px -9px 97px 0px #00000040;
-                    min-height: 50vh;
+                    max-height: 0;
+                    min-height: 0;
                     border-radius: 0 0 rem(50px) rem(50px);
-                    overflow: hidden; // Предотвращаем выход контента за пределы
-                    // max-height: 0;
+                    overflow: hidden;
                     padding-top: 0;
                     padding-bottom: 0;
-                    transition: max-height var(--transition-time) cubic-bezier(0.4, 0, 0.2, 1),
-                                padding-top var(--transition-time) cubic-bezier(0.4, 0, 0.2, 1),
-                                padding-bottom var(--transition-time) cubic-bezier(0.4, 0, 0.2, 1);
+                    transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                                padding-top 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                                padding-bottom 0.35s cubic-bezier(0.4, 0, 0.2, 1);
                     
-                    // Создаем stacking context для правильного наложения
                     isolation: isolate;
 
                     &--image {
@@ -847,43 +681,10 @@
     // Отключение анимаций для пользователей с ограниченными возможностями
     @media (prefers-reduced-motion: reduce) {
         .folder {
-            transition: none !important;
-            
-            &:hover:not(.is-active) {
-                transform: none !important;
-            }
-            
+            .folder__content,
+            .folder__tab,
             .folder__content--image {
                 transition: none !important;
-            }
-        }
-    }
-    
-    // Адаптация анимаций для слабых устройств
-    html[data-performance="low"] & {
-        .folder {
-            transition: top 0.2s ease;
-            
-            &:hover:not(.is-active):not(.is-animating) {
-                transform: none; // Отключаем hover на слабых устройствах
-            }
-            
-            .folder__content--image {
-                transition: all 0.2s ease;
-            }
-            
-            .folder__content--wrapp {
-                transition: opacity 0.2s ease;
-            }
-        }
-    }
-    
-    html[data-performance="medium"] & {
-        .folder {
-            transition: top 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            
-            .folder__content--image {
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             }
         }
     }
@@ -903,57 +704,10 @@
 
             &__folders {
                 margin-top: rem(80px);
-                margin-bottom: rem(50px); // Будет переопределено JS
-                position: relative;
-                min-height: 1px; // Будет переопределено JS
+                margin-bottom: rem(50px);
 
                 .folder {
-                    // Улучшаем производительность на мобильных
-                    transform: translateZ(0);
-                    backface-visibility: hidden;
-                    
-                    // Уменьшаем отступы между папками на мобильных
-                    $mobile-folder-overlap: 40px; // Уменьшенное перекрытие для мобильных
-                    
-                    &--1 {
-                        top: 0;
-                    }
-                    
-                    &--2 {
-                        top: calc(#{$mobile-folder-overlap} - 20px);
-                    }
-                    
-                    &--3 {
-                        top: calc(#{$mobile-folder-overlap} * 2 + 10px);
-                    }
-                    
-                    &--4 {
-                        top: calc(#{$mobile-folder-overlap} * 3 + 40px);
-                    }
-                    
-                    &--5 {
-                        top: calc(#{$mobile-folder-overlap} * 4 + 70px);
-                    }
-                    
-                    &--6 {
-                        top: calc(#{$mobile-folder-overlap} * 5 + 100px);
-                    }
-                    
-                    &--7 {
-                        top: calc(#{$mobile-folder-overlap} * 6 + 135px);
-                    }
-                    
-                    &--8 {
-                        top: calc(#{$mobile-folder-overlap} * 6 + 190px);
-                    }
-                    
-                    &--9 {
-                        top: calc(#{$mobile-folder-overlap} * 6 + 245px);
-                    }
-                    
-                    &--10 {
-                        top: calc(#{$mobile-folder-overlap} * 7 + 275px);
-                    }
+                    margin-bottom: rem(15px);
                     
                     .folder__content--image {
                         position: absolute;
@@ -969,34 +723,16 @@
                         }
                     }
 
-                    &.is-active {
-                        .folder__content--image {
-                            bottom: 10%; // Поднимаем выше, чтобы не залезать на текст
+                    &__input:checked ~ .folder__content .folder__content--image {
+                        bottom: 10%;
                             right: 5%;
                             left: auto;
-                            max-width: 120px; // Уменьшаем размер на мобильных
-                        }
+                        max-width: 120px;
                     }
 
-                    &--1, &--3, &--5, &--7 {
-                        .folder__tab {
-                            left: auto;
-                            right: 60px;
-                        }
-                    }
-
-                    &--2, &--4, &--6, &--8 {
-                        .folder__tab {
-                            left: 12%;
-                            right: auto;
-                        }
-                    }
-
-                    .folder__tab {
-                        // Max-width для мобильной версии через Carbon Fields
-                        @media (max-width: 767.98px) {
-                            max-width: var(--tab-max-width-mobile);
-                        }
+                    &__tab {
+                        max-width: 150px;
+                        height: 48px;
                     }
 
                     &--1 {
@@ -1171,9 +907,8 @@
                     }
 
                     &__tab {
-                        max-width: 150px;
-                        height: 48px;
-                        top: -48px;
+                        max-width: 100%;
+                        height: 60px;
 
                         &::before,
                         &::after {
@@ -1198,55 +933,19 @@
                     }
 
                     &__content {
-                        // max-height: 0;
-                        padding-top: 0;
-                        padding-bottom: 0;
                         border-radius: 0 0 rem(25px) rem(25px);
-                        transition: max-height var(--transition-time) cubic-bezier(0.4, 0, 0.2, 1),
-                                    padding-top var(--transition-time) cubic-bezier(0.4, 0, 0.2, 1),
-                                    padding-bottom var(--transition-time) cubic-bezier(0.4, 0, 0.2, 1);
-                        
-                        // Улучшаем производительность на мобильных
                         -webkit-overflow-scrolling: touch;
                     }
                     
-                    &.is-active {
-                        .folder__content {
-                            max-height: 5000px;
+                    &__input:checked ~ .folder__content {
+                            margin-top: -12px;
                             padding-top: rem(40px);
                             padding-bottom: rem(180px);
-                        }
-
-                        &--image {
-                            position: absolute;
-                            width: 100%;
-                            max-width: rem(200px);
-                            height: auto;
-                            max-height: rem(200px);
-                            top: auto;
-                            left: auto;
-                            right: auto;
-                            bottom: auto;
-                            margin: rem(16px) auto;
-                            transform: translateZ(0); // Ускорение анимации
-                            
-                            img {
-                                object-fit: contain;
-                            }
-                        }
-
-                        &--wrapp {
-                            flex-direction: column;
-                            gap: rem(24px);
-
+                        
+                        .folder__content--wrapp {
                             .item {
-                                width: 100%;
-                                align-items: center;
-                                gap: rem(16px);
-
                                 span {
                                     font-size: rem(18px);
-                                    // Усиливаем тень на мобильных
                                     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5), 0 1px 4px rgba(0, 0, 0, 0.7);
                                 }
                                 
@@ -1364,4 +1063,5 @@
             }
         }
     }
+    
 }

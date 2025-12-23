@@ -104,7 +104,7 @@ function get_contact_icon($name) {
         <span class="faq__title"><?php echo esc_html($faq_title); ?></span>
     </div>
 
-    <div class="faq__folders">
+    <div class="faq__folders accordion">
         <?php if (!empty($faq_folders) && is_array($faq_folders)): ?>
             <?php 
             // Нормализуем массив для получения числовых индексов (после фильтрации выше)
@@ -138,9 +138,11 @@ function get_contact_icon($name) {
                 ?>
                 
                 <div class="folder folder--<?php echo esc_attr($folder_color); ?> folder--<?php echo esc_attr($folder_index); ?>">
-                    <div class="folder__tab"<?php if (!empty($tab_max_width_mobile)): ?> style="--tab-max-width-mobile: <?php echo esc_attr($tab_max_width_mobile); ?>;"<?php endif; ?>>
+                    <input type="checkbox" name="faq-accordion" id="faq-<?php echo esc_attr($folder_index); ?>" class="folder__input">
+                    <label for="faq-<?php echo esc_attr($folder_index); ?>" class="folder__tab"<?php if (!empty($tab_max_width_mobile)): ?> style="--tab-max-width-mobile: <?php echo esc_attr($tab_max_width_mobile); ?>;"<?php endif; ?>>
                         <span class="title"><?php echo esc_html($folder_title); ?></span>
-                    </div>
+                    </label>
+                    <div class="temp"></div>
                     <div class="folder__content <?php if ($is_contacts): ?>folder__content--contacts<?php endif; ?>">
                         <?php if ($is_contacts): ?>
                             <?php
