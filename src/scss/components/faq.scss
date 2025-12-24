@@ -35,7 +35,7 @@
         }
 
         &__folders {
-            margin-top: rem(120px);
+            margin-top: rem(20px);
             margin-bottom: rem(100px);
             
             // Оптимизация производительности
@@ -62,7 +62,7 @@
                     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
                     @include media-breakpoint-down(md) {
-                        top: calc(100% - 12px);
+                        top: 48px;
                     }
                 }
                 
@@ -258,7 +258,7 @@
                     .folder__content--image {
                         bottom: -150px;
                         width: 200px;
-                        left: 33%;
+                        left: 23%;
                         transform: rotate(-15deg);
                     }
                 }
@@ -284,7 +284,7 @@
                     }
 
                     .folder__content--image {
-                        bottom: -140px;
+                        bottom: -220px;
                         width: 200px;
                         left: 35%;
                         transform: rotate(-15deg);
@@ -298,9 +298,9 @@
                     }
 
                     .folder__content--image {
-                        bottom: -210px;
+                        bottom: -150px;
                         width: 200px;
-                        right: 33%;
+                        right: 9%;
                         transform: rotate(-15deg);
                     }
                 }
@@ -708,6 +708,10 @@
 
                 .folder {
                     margin-bottom: rem(15px);
+
+                    &.is-active {
+                        margin-bottom: -70px;
+                    }
                     
                     .folder__content--image {
                         position: absolute;
@@ -736,6 +740,10 @@
                     }
 
                     &--1 {
+                        .folder__tab {
+                            left: 60%;
+                        }
+                        
                         &:not(.is-active) {
                             .folder__content--image {
                                 width: 100px;
@@ -749,6 +757,10 @@
                     }
 
                     &--2 {
+                        .folder__tab {
+                            left: 15%;
+                        }
+
                         &:not(.is-active) {
                             .folder__content--image {
                                 width: 160px;
@@ -839,7 +851,7 @@
                             .folder__content--image {
                                 width: 140px;
                                 height: auto;
-                                top: -25px;
+                                top: 30px;
                                 left: 0%;
                                 max-height: 160px;
                             }
@@ -851,7 +863,7 @@
                             .folder__content--image {
                                 width: 120px;
                                 height: auto;
-                                top: -60px;
+                                top: 0px;
                                 left: 74%;
                                 max-height: 140px;
                             }
@@ -863,7 +875,7 @@
                             .folder__content--image {
                                 width: 140px;
                                 height: auto;
-                                top: -30px;
+                                top: 20px;
                                 left: 10%;
                                 max-height: 160px;
                             }
@@ -875,7 +887,7 @@
                             .folder__content--image {
                                 width: 100px;
                                 height: auto;
-                                top: -30px;
+                                top: 20px;
                                 left: 74%;
                                 max-height: 120px;
                             }
@@ -887,8 +899,8 @@
                             .folder__content--image {
                                 width: 100px;
                                 height: auto;
-                                top: -30px;
-                                left: 24%;
+                                top: 30px;
+                                left: 15%;
                                 max-height: 120px;
                             }
                         }
@@ -899,7 +911,7 @@
                             .folder__content--image {
                                 width: 100px;
                                 height: auto;
-                                top: -30px;
+                                top: 30px;
                                 left: 74%;
                                 max-height: 120px;
                             }
@@ -945,12 +957,15 @@
                         .folder__content--wrapp {
                             .item {
                                 span {
+                                    font-family: $font-family-base;
                                     font-size: rem(18px);
                                     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5), 0 1px 4px rgba(0, 0, 0, 0.7);
                                 }
                                 
                                 p {
                                     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5), 0 1px 4px rgba(0, 0, 0, 0.7);
+                                    font-size: rem(16px);
+                                    line-height: 120%;
                                 }
 
                                 &__icon {
